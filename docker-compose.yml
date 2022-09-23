@@ -1,0 +1,60 @@
+#version: "3.7"
+#
+#services:
+#  backend:
+#    container_name: backend
+#    build: .
+#    volumes:
+#      - ./src:/app
+#    ports:
+#      - "8000:8000"
+#    stdin_open: true
+#    tty: true
+#    depends_on:
+#      - db
+#    environment:
+#      - DJANGO_SETTINGS_MODULE=src.settings
+#
+#  db:
+#    container_name: db
+#    image: postgres:14.0-alpine
+#    environment:
+#      - POSTGRES_DB=${DB_NAME}
+#      - POSTGRES_USER=${DB_USER}
+#      - POSTGRES_PASSWORD=${DB_PASSWORD}
+#    volumes:
+#      - postgres-data:/var/lib/postgresql/data
+#    ports:
+#      - "5432:5432"
+#
+#volumes:
+#  postgres-data:
+#  node-modules:
+
+version: '3.7'
+services:
+  backend:
+    container_name: backend
+    build: .
+    volumes:
+      - ./src:/app/src
+    stdin_open: true
+    tty: true
+    ports:
+      - 8000:8000
+    env_file: env/.env.backend
+    depends_on:
+      - db
+#    restart: on-failure
+
+  db:
+    container_name: db
+    image: postgres:14.0-alpine
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    env_file:
+      - env/.env.db
+#    restart: unless-stopped
+
+volumes:
+  postgres_data:
