@@ -1,0 +1,148 @@
+###############################################################################
+##### FOLDERS
+# my folders
+
+# ide
+.idea/
+
+# version control
+.git/
+
+# venv
+venv/
+
+# deployment
+build/
+
+# study
+materials/
+others/
+
+# py
+__pycache__/
+
+# debug
+*.dSYM/
+
+# Kernel Module Compile Results
+.tmp_versions/
+
+# react + django
+tmp_email/
+/backend/db.sqlite3
+*/settings/local.py
+/staticfiles/*
+/mediafiles/*
+/.vscode/
+/coverage/
+node_modules/
+/frontend/bundles/*
+/frontend/webpack_bundles/*
+/venv/
+/env/
+/output/
+/cache/
+/{{project_name}}-venv/
+spritesmith-generated/
+
+
+
+###############################################################################
+##### FILES
+# my files
+tags
+cscope.out
+
+# macOS
+.DS_Store
+
+# program
+*.lock
+*.txt
+!requirements.txt
+*.my_xml
+*.my_xml_diff
+*.my_rc
+*.my_out
+*.env
+
+# latex
+*.{aux,dvi,log,ps,out,toc,xml}
+*.aux,dvi,log,ps,out,toc,xml}
+*.aux
+*.dvi
+*.log
+*.ps
+*.out
+*.toc
+*.xml
+*.blg
+*.bbl
+
+# pack
+*.zip
+
+# Prerequisites
+*.d
+
+# Object files
+*.o
+*.ko
+*.obj
+*.elf
+
+# Linker output
+*.ilk
+*.map
+*.exp
+
+# Precompiled Headers
+*.gch
+*.pch
+
+# Libraries
+*.lib
+*.a
+*.la
+*.lo
+
+# Shared objects (inc. Windows DLLs)
+*.dll
+*.so
+*.so.*
+*.dylib
+
+# Executables
+*.exe
+#*.out # already defined above
+*.app
+*.i*86
+*.x86_64
+*.hex
+
+# Debug files
+*.su
+*.idb
+*.pdb
+
+# Kernel Module Compile Results
+*.mod*
+*.cmd
+modules.order
+Module.symvers
+Mkfile.old
+dkms.conf
+
+# react + django
+.direnv
+.envrc
+.tool-versions
+spritesmith.scss
+boilerplate.zip
+.sass-cache
+*.dump
+webpack-stats.json
+npm-debug.log
+.coverage
+*.pyc
+.env
