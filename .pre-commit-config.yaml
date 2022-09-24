@@ -43,3 +43,7 @@ repos:
     rev: v0.1.0
     hooks:
       - id: dockerfilelint
+  - repo: https://github.com/zahorniak/pre-commit-circleci.git
+    rev: v0.5 # Ensure this is the latest tag, comparing to the Releases tab
+    hooks:
+      - id: circleci_validate
