@@ -2,7 +2,7 @@ version: 2.1
 
 orbs:
   heroku: circleci/heroku@1.2.6 # Use the Heroku orb in your config
-  pre-commit: skoblenick/pre-commit@0.2.0
+  pre-commit: oandacorp/pre-commit@0.10.0
 
 executors:
   my-executor:
@@ -16,6 +16,7 @@ jobs:
     steps:
       - checkout
       - pre-commit/all-files
+
   deploy-dev:
     machine: true
     steps:
