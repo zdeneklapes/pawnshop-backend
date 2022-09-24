@@ -27,11 +27,9 @@ jobs:
           name: Deploy to Heroku
           command: |
             set -x
-            docker build -t backend:v1 .
-            sudo curl https://cli-assets.heroku.com/install.sh | sh
             HEROKU_API_KEY=${HEROKU_API_KEY} heroku container:login 
-            HEROKU_API_KEY=${HEROKU_API_KEY} heroku container:push -a pawnshop-backend backend:v1
-            HEROKU_API_KEY=${HEROKU_API_KEY} heroku container:release -a pawnshop-backend backend:v1
+            HEROKU_API_KEY=${HEROKU_API_KEY} heroku container:push -a pawnshop-backend web # this build it automatically
+            HEROKU_API_KEY=${HEROKU_API_KEY} heroku container:release -a pawnshop-backend web
 
 workflows:
   build-test-deploy:
