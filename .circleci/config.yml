@@ -17,7 +17,7 @@ jobs:
       - run:
           name: Build and push Docker image to Heroku
           command: |
-            docker-compose -f docker-compose.yml up --build -d
+            docker build -t backend:v1 .
   build-deploy:
     machine: true
     steps:
