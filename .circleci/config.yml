@@ -1,18 +1,12 @@
 version: 2.1
 
 orbs:
-    heroku: circleci/heroku@x.y # Use the Heroku orb in your config
+    heroku: circleci/heroku@1.2.6 # Use the Heroku orb in your config
 
 
 jobs:
-  say-hello:
-    docker:
-      - image: cimg/base:stable
-    steps:
-      - checkout
-      - run:
-          name: "Say hello"
-          command: "echo Hello, World!"
+  test_django:
+    
   deploy-to-heroku:
     docker:
       - image: cimg/base:stable
