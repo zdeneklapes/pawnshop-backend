@@ -1,7 +1,7 @@
-from django.urls import path, include
+from django.urls import include, path
 
 from . import views
 
 urlpatterns = [
-    path('', views.cocktail_list),
+    path("", views.cocktail_list),
 ]
