@@ -25,9 +25,9 @@ COPY src/ .
 
 #CMD ["gunicorn", "--bind", ":8000", "--workers", "3", "src.wsgi:application"]
 #CMD ["gunicorn", "--timeout", "1000", "--workers=3", "--bind=:8000","--log-level", "debug", "src.wsgi:application"]
-CMD gunicorn --timeout 1000 --workers=3 --bind=0.0.0.0:$PORT --log-level debug src.wsgi:application
-#RUN chmod +x entrypoint.sh
-#ENTRYPOINT [ "/app/src/entrypoint.sh", "dev"]
+#CMD gunicorn --timeout 1000 --workers=3 --bind=0.0.0.0:$PORT --log-level debug src.wsgi:application
+RUN chmod +x entrypoint.sh
+ENTRYPOINT [ "/app/src/entrypoint.sh", "dev"]
 
 
 
