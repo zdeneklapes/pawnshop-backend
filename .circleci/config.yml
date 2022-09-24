@@ -11,9 +11,13 @@ executors:
 
 jobs:
   build-test:
-    executor: my-executor
+    machine: true
     steps:
-      - run: echo 'test'
+      - checkout
+      - run:
+          name: Build and push Docker image to Heroku
+          command: |
+            docker-compose -f docker-compose.yml up --build -d
   build-deploy:
     machine: true
     steps:
@@ -21,6 +25,7 @@ jobs:
       - run:
           name: Build and push Docker image to Heroku
           command: |
+            docker-compose -f docker-compose.yml up --build -d
             set -x
             sud curl https://cli-assets.heroku.com/install.sh | sh
             HEROKU_API_KEY=${HEROKU_API_KEY} heroku container: login
@@ -29,8 +34,12 @@ jobs:
 
 # See: https://circleci.com/docs/2.0/configuration-reference/#workflows
 workflows:
-  build-deploy:
+  build-test:
     jobs:
-      - heroku/deploy-via-git:
-          branches:
-            only: dev # only run deploy-via-git job on main branch
+      - build-test
+#  build-deploy:
+#    jobs:
+#      - build-deploy
+#      - heroku/deploy-via-git:
+#          branches:
+#            only: dev # only run deploy-via-git job on main branch
