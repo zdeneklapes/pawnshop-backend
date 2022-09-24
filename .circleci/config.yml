@@ -17,8 +17,12 @@ jobs:
     machine: true
     steps:
       - checkout
-      - tools/install-pre-commit
-      - run: pre-commit run --all-files
+#      - tools/install-pre-commit
+      - run:
+          name:
+          command: |
+            sudo pip3 install pre-commit
+            pre-commit run --all-files
 
   deploy-dev:
     machine: true
