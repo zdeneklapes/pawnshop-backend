@@ -10,24 +10,41 @@ executors:
 
 
 jobs:
-  deploy:
+  deploy-main:
     machine: true
     steps:
       - checkout
       - run:
-          name: Deploy to Heroku
+          name: Buidl and Deploy to Heroku
           command: |
             set -x
             HEROKU_API_KEY=${HEROKU_API_KEY} heroku container:login 
-            HEROKU_API_KEY=${HEROKU_API_KEY} heroku container:push -a pawnshop-backend web # this build it automatically
-            HEROKU_API_KEY=${HEROKU_API_KEY} heroku container:release -a pawnshop-backend web
+            HEROKU_API_KEY=${HEROKU_API_KEY} heroku container:push -a dev-pawnshop-backend web # this build it automatically
+            HEROKU_API_KEY=${HEROKU_API_KEY} heroku container:release -a dev-pawnshop-backend web
+  deploy-dev:
+    machine: true
+    steps:
+      - checkout
+      - run:
+          name: Buidl and Deploy to Heroku
+          command: |
+            set -x
+            HEROKU_API_KEY=${HEROKU_API_KEY} heroku container:login 
+            HEROKU_API_KEY=${HEROKU_API_KEY} heroku container:push -a dev-pawnshop-backend web # this build it automatically
+            HEROKU_API_KEY=${HEROKU_API_KEY} heroku container:release -a dev-pawnshop-backend web
 
 workflows:
-  build-test-deploy:
+  deploy-dev:
     jobs:
-      - deploy:
+      - deploy-dev:
+          filters:
+            branches:
+              only:
+                - dev
+  deploy-main:
+    jobs:
+      - deploy-main:
           filters:
             branches:
               only:
                 - main
-                - dev
