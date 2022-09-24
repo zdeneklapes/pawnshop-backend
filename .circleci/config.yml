@@ -37,9 +37,6 @@ workflows:
   build-test:
     jobs:
       - build-test
-#  build-deploy:
-#    jobs:
-#      - build-deploy
-#      - heroku/deploy-via-git:
-#          branches:
-#            only: dev # only run deploy-via-git job on main branch
+  build-deploy:
+    jobs:
+      - build-deploy
