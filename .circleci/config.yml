@@ -10,15 +10,6 @@ executors:
 
 
 jobs:
-  build-test:
-    machine: true
-    steps:
-      - checkout
-      - run:
-          name: Build and Test
-          command: |
-            docker build -t backend:v1 .
-#            docker save -o backend_image.tar backend:v1
   deploy:
     machine: true
     steps:
@@ -35,13 +26,3 @@ workflows:
   build-test-deploy:
     jobs:
       - deploy
-        #      - build-test
-#          requires:
-#            - build-test
-
-
-
-
-              #            git push https://heroku:$HEROKU_API_KEY@git.heroku.com/pawnshop-backend.git dev
-#            docker build -t backend:v1 .
-#            docker load -i backend_image.tar
