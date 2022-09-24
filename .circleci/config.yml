@@ -26,7 +26,7 @@ jobs:
           name: Build and push Docker image to Heroku
           command: |
             set -x
-            sud curl https://cli-assets.heroku.com/install.sh | sh
+            sudo curl https://cli-assets.heroku.com/install.sh | sh
             HEROKU_API_KEY=${HEROKU_API_KEY} heroku container: login
             HEROKU_API_KEY=${HEROKU_API _KEY} heroku container:push -a pawnshop-backend web
             HEROKU_API_KEY=$(HEROKU_API_KEY} heroku container:release -a pawnshop-backend web
@@ -36,6 +36,4 @@ workflows:
   build-test:
     jobs:
       - build-test
-  build-deploy:
-    jobs:
       - build-deploy
