@@ -12,11 +12,11 @@ orbs:
 
 
 jobs:
-  lint:
+  linting:
     machine: true
     steps:
       - checkout
-      - pre-commit
+      - pre-commit/all-files
 
   deploy-dev:
     machine: true
@@ -43,9 +43,9 @@ jobs:
             HEROKU_API_KEY=${HEROKU_API_KEY} heroku container:release -a pawnshop-backend web
 
 workflows:
-  deploy:
+  push:
     jobs:
-      - lint
+      - linting
       - deploy-dev:
           filters:
             branches:
