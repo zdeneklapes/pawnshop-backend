@@ -12,12 +12,15 @@ executors:
 jobs:
   build-test:
     machine: true
+    heroku container:push web
     steps:
       - checkout
       - run:
           name: Build and push Docker image to Heroku
           command: |
             docker build -t backend:v1 .
+            docker save -o backend_image.tar backend:v1
+
   deploy:
     machine: true
     steps:
@@ -25,15 +28,20 @@ jobs:
       - run:
           name: Build and push Docker image to Heroku
           command: |
+#            git push https://heroku:$HEROKU_API_KEY@git.heroku.com/pawnshop-backend.git dev
+#            docker build -t backend:v1 .
+            docker load -i backend_image.tar
             set -x
             sudo curl https://cli-assets.heroku.com/install.sh | sh
-            HEROKU_API_KEY=${HEROKU_API_KEY} heroku container: login
-            HEROKU_API_KEY=${HEROKU_API _KEY} heroku container:push -a pawnshop-backend web
-            HEROKU_API_KEY=$(HEROKU_API_KEY} heroku container:release -a pawnshop-backend web
+            HEROKU_API_KEY=${HEROKU_API_KEY} heroku container:login 
+            HEROKU_API_KEY=${HEROKU_API _KEY} heroku container:push -a pawnshop-backend backend:v1
+            HEROKU_API_KEY=$(HEROKU_API_KEY} heroku container:release -a pawnshop-backend backend:v1
 
-# See: https://circleci.com/docs/2.0/configuration-reference/#workflows
 workflows:
-  build-test:
+  build-test-deploy:
     jobs:
-      - build-test
+#      - build-test
       - deploy
+
+
+
