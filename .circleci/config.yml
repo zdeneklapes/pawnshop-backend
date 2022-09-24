@@ -25,7 +25,6 @@ jobs:
       - run:
           name: Build and push Docker image to Heroku
           command: |
-            docker-compose -f docker-compose.yml up --build -d
             set -x
             sud curl https://cli-assets.heroku.com/install.sh | sh
             HEROKU_API_KEY=${HEROKU_API_KEY} heroku container: login
