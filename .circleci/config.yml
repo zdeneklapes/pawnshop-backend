@@ -18,7 +18,7 @@ jobs:
           name: Build and push Docker image to Heroku
           command: |
             docker build -t backend:v1 .
-  build-deploy:
+  deploy:
     machine: true
     steps:
       - checkout
@@ -36,4 +36,4 @@ workflows:
   build-test:
     jobs:
       - build-test
-      - build-deploy
+      - deploy
