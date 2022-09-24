@@ -25,4 +25,9 @@ jobs:
 workflows:
   build-test-deploy:
     jobs:
-      - deploy
+      - deploy:
+          filters:
+            branches:
+              only:
+                - main
+                - dev
