@@ -15,7 +15,8 @@ jobs:
     machine: true
     steps:
       - checkout
-      - pre-commit/all-files
+      - pre-commit:
+        - all-files: true
 
   deploy-dev:
     machine: true
