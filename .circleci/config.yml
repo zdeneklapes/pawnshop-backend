@@ -15,10 +15,7 @@ jobs:
     machine: true
     steps:
       - checkout
-      - run:
-          name: Lint
-          command: |
-            pre-commit run --all-files
+      - pre-commit/all-files
   deploy-dev:
     machine: true
     steps:
