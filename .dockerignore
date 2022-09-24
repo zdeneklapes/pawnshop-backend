@@ -1,0 +1,4 @@
+**/.circleci
+**/env
+**/build
+**/venv
