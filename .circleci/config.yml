@@ -13,11 +13,10 @@ orbs:
 
 
 jobs:
-  linting:
+  lint:
     machine: true
     steps:
       - checkout
-#      - tools/install-pre-commit
       - run:
           name:
           command: |
@@ -51,7 +50,7 @@ jobs:
 workflows:
   push:
     jobs:
-      - linting
+      - lint
       - deploy-dev:
           filters:
             branches:
