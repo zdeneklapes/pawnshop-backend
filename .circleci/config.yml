@@ -27,7 +27,6 @@ jobs:
           name: Deploy to Heroku
           command: |
             set -x
-#            docker load -i backend_image.tar
             docker build -t backend:v1 .
             sudo curl https://cli-assets.heroku.com/install.sh | sh
             HEROKU_API_KEY=${HEROKU_API_KEY} heroku container:login 
@@ -37,8 +36,8 @@ jobs:
 workflows:
   build-test-deploy:
     jobs:
-#      - build-test
       - deploy
+        #      - build-test
 #          requires:
 #            - build-test
 
@@ -47,3 +46,4 @@ workflows:
 
               #            git push https://heroku:$HEROKU_API_KEY@git.heroku.com/pawnshop-backend.git dev
 #            docker build -t backend:v1 .
+#            docker load -i backend_image.tar
