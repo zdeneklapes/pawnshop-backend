@@ -34,15 +34,13 @@ jobs:
             HEROKU_API_KEY=${HEROKU_API_KEY} heroku container:release -a dev-pawnshop-backend web
 
 workflows:
-  deploy-dev:
+  deploy:
     jobs:
       - deploy-dev:
           filters:
             branches:
               only:
                 - dev
-  deploy-main:
-    jobs:
       - deploy-main:
           filters:
             branches:
