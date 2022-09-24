@@ -1,8 +1,5 @@
 version: 2.1
 
-orbs:
-  heroku: circleci/heroku@1.2.6 # Use the Heroku orb in your config
-  pre-commit: oandacorp/pre-commit@0.10.0
 
 executors:
   my-executor:
@@ -10,13 +7,16 @@ executors:
       - image: zlapik/pawnshop-backend_backend
 
 
+orbs:
+  pre-commit: skoblenick/pre-commit@0.2.0
+
+
 jobs:
   lint:
     machine: true
     steps:
       - checkout
-      - pre-commit:
-        - all-files: true
+      - pre-commit
 
   deploy-dev:
     machine: true
@@ -72,3 +72,5 @@ workflows:
 #            pip install --user pre-commit
 #            pre-commit run --all-files
 #
+#  heroku: circleci/heroku@1.2.6 # Use the Heroku orb in your config
+#  pre-commit: oandacorp/pre-commit@0.10.0
