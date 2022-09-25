@@ -5,8 +5,7 @@ services:
     container_name: backend
     build:
       context: .
-      dockerfile: Dockerfile.dev
-      target:
+      dockerfile: Dockerfile.web
     volumes:
       - ./src:/app/src
     stdin_open: true
