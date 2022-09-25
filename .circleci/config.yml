@@ -52,11 +52,15 @@ workflows:
     jobs:
       - lint
       - deploy-dev:
+          requires:
+            - lint
           filters:
             branches:
               only:
                 - dev
       - deploy-main:
+          requires:
+            - lint
           filters:
             branches:
               only:
