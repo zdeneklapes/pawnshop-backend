@@ -1,7 +1,7 @@
 from django.urls import include, path
 
-from . import views
+from .viewsets import viewsets_user
 
 urlpatterns = [
-    path("", views.cocktail_list),
+    path("", viewsets_user.cocktail_list),
 ]

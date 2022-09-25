@@ -14,10 +14,8 @@ class Shop(models.Model):
 
 
 class CustomUser(User):
-    username = models.CharField(max_length=255)
     creation_date = models.DateTimeField(auto_now_add=True)
     updated_date = models.DateTimeField(auto_now=True)
-    password = models.CharField(max_length=255)
     action_edit_custom_user = models.BooleanField()
     action_detailed_stats = models.BooleanField()
     action_day_stats = models.BooleanField()
@@ -55,7 +53,7 @@ class Product(models.Model):
     description = models.TextField()
     buy_price = models.PositiveIntegerField()
     sell_price = models.PositiveIntegerField()
-    amount = models.PositiveIntegerField()
+    quantity = models.PositiveIntegerField(default=1)
     shop = models.ForeignKey(to=Shop, on_delete=models.CASCADE)
 
     creation_date = models.DateTimeField(

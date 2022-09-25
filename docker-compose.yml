@@ -4,14 +4,14 @@ services:
   backend:
     container_name: backend
     build:
-      context: .
-      dockerfile: Dockerfile.dev
+#      context: .
+      dockerfile: Dockerfile.web
     volumes:
       - ./src:/app/src
     stdin_open: true
     tty: true
     ports:
-      - 8000:8000
+      - "8000:8000"
     env_file: env/.env.backend
     depends_on:
       - db
@@ -22,7 +22,7 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data/
     ports:
-      - 5432:5432
+      - "5432:5432"
     env_file:
       - env/.env.db
 

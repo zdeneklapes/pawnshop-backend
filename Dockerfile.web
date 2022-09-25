@@ -14,7 +14,6 @@ RUN set -ex && \
     pip install --no-cache-dir -r /app/requirements.txt
 
 ENV PORT 8000
-ENV DOCKER_CONTAINER Yes
 EXPOSE 8000
 
 #####################################
