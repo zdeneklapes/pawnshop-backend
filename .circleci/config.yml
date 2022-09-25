@@ -32,8 +32,8 @@ jobs:
           command: |
             set -x
             HEROKU_API_KEY=${HEROKU_API_KEY} heroku container:login
-            HEROKU_API_KEY=${HEROKU_API_KEY} heroku container:push -a dev-pawnshop-backend web # this build it automatically
-            HEROKU_API_KEY=${HEROKU_API_KEY} heroku container:release -a dev-pawnshop-backend web
+            HEROKU_API_KEY=${HEROKU_API_KEY} heroku container:push -a dev-pawnshop-backend prod # this build it automatically
+            HEROKU_API_KEY=${HEROKU_API_KEY} heroku container:release -a dev-pawnshop-backend prod
 
   deploy-main:
     machine: true

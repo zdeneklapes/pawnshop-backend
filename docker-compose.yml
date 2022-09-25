@@ -6,6 +6,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.dev
+      target:
     volumes:
       - ./src:/app/src
     stdin_open: true
