@@ -87,12 +87,18 @@ function usage() {
     '-h' | '--help' | *) usage ;;"
 }
 
+function clean_db_local() {
+    find src -type d -iname "migrations" | xargs ${RM}
+
+}
+
 ##### PARSE CLI-ARGS
 [[ "$#" -eq 0 ]] && usage && exit 0
 while [ "$#" -gt 0 ]; do
     case "$1" in
     '-c' | '--clean') clean ;;
     '-cd' | '--clean-docker') clean_docker ;;
+    '-cdb' | '--clean-db') clean_db_local ;;
     '-id' | '--install-docker') install_docker ;;
     '-idd' | '--install-docker-deploy') install_docker_deploy ;;
     '-dsip' | '--install-docker-deploy') docker_show_ipaddress ;;

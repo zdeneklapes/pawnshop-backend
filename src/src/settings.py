@@ -9,10 +9,7 @@ ROOT_DIR = Path(__file__).resolve().parent.parent.parent
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # env
-if load_dotenv(path.join(ROOT_DIR, "env", ".env.backend")):
-    print("ENV laoded from file")
-else:
-    print("ENV loaded from docker")
+load_dotenv(path.join(ROOT_DIR, "env", ".env.backend"))
 
 #
 SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY", "development")
@@ -27,6 +24,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "api.apps.ApiAppConfig",
 ]
 
 MIDDLEWARE = [

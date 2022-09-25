@@ -1,4 +1,5 @@
 import uuid
+
 from django.db import models
 
 
@@ -10,7 +11,7 @@ class User(models.Model):
 
 
 class Customer(models.Model):
-    GENDERS = (('M', 'Male'), ('F', 'Female'))
+    GENDERS = (("M", "Male"), ("F", "Female"))
 
     personal_identification_number = models.CharField(max_length=255, primary_key=True)
     full_name = models.CharField(max_length=255)
@@ -21,25 +22,49 @@ class Customer(models.Model):
     gender = models.CharField(max_length=1, choices=GENDERS)
 
 
-class BaseDates(models.Model):
-    creation_date = models.DateTimeField(primary_key=True)  # when product was taken into custody
-    extended_deadline_date = models.DateTimeField(null=True)  # when mortgage contract was extend
+# class BaseDates(models.Model):
+#     creation_date = models.DateTimeField(primary_key=True)  # when product was taken into custody
+#     extended_deadline_date = models.DateTimeField(null=True)  # when mortgage contract was extend
 
 
-class Product(BaseDates):
+class Product(models.Model):
     description = models.TextField()
     buy_price = models.PositiveIntegerField(max_length=10)
     sell_price = models.PositiveIntegerField(max_length=10)
 
+    creation_date = models.DateTimeField(
+        primary_key=True
+    )  # when product was taken into custody
+    extended_deadline_date = models.DateTimeField(
+        null=True
+    )  # when mortgage contract was extend
+    end_date = models.DateTimeField(null=True)  # last day of contract
 
-class MortgageContract(BaseDates):
-    # TODO: father wants ID as incrementing number, but there could be a problem, so ID+FROM_DATE must create Primary Key:
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4)
+
+class MortgageContract(models.Model):
+    # TODO: father wants ID as incrementing number,
+    #  but there could be a problem, so ID+FROM_DATE must create Primary Key:
+    id = models.AutoField(primary_key=True)
+    creation_date = models.DateTimeField()  # when product was taken into custody
+
+    extended_deadline_date = models.DateTimeField(
+        null=True
+    )  # when mortgage contract was extend
     end_date = models.DateTimeField()  # last day of contract
+
     buy_price = models.PositiveIntegerField(max_length=10)
     rate = models.DecimalField(max_digits=3, decimal_places=1)
     product = models.ForeignKey(to=Product, on_delete=models.CASCADE)
     person = models.ForeignKey(to=Customer, on_delete=models.CASCADE)
+
+    # Source: https://stackoverflow.com/a/16800384/14471542
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=["id", "creation_date"],
+                name="unique_id_creation_date_combination",
+            )
+        ]
 
 
 class Shop(models.Model):
