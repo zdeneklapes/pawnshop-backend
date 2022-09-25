@@ -29,8 +29,8 @@ class Customer(models.Model):
 
 class Product(models.Model):
     description = models.TextField()
-    buy_price = models.PositiveIntegerField(max_length=10)
-    sell_price = models.PositiveIntegerField(max_length=10)
+    buy_price = models.PositiveIntegerField()
+    sell_price = models.PositiveIntegerField()
 
     creation_date = models.DateTimeField(
         primary_key=True
@@ -42,7 +42,10 @@ class Product(models.Model):
 
 
 class MortgageContract(models.Model):
-    # TODO: father wants ID as incrementing number, but there could be a problem, so ID+FROM_DATE must create Primary Key:
+    # TODO: father wants ID as incrementing number,
+    #  but there could be a problem, so ID+FROM_DATE must create Primary Key:
+    #  e.g.: 1 customer have contract from 2022 and another customer will come
+    #  in 2023 and because all contracts start from 00001 as year begins so the ids can become same
     id = models.AutoField(primary_key=True)
     creation_date = models.DateTimeField()  # when product was taken into custody
 
@@ -51,7 +54,7 @@ class MortgageContract(models.Model):
     )  # when mortgage contract was extend
     end_date = models.DateTimeField()  # last day of contract
 
-    buy_price = models.PositiveIntegerField(max_length=10)
+    buy_price = models.PositiveIntegerField()
     rate = models.DecimalField(max_digits=3, decimal_places=1)
     product = models.ForeignKey(to=Product, on_delete=models.CASCADE)
     person = models.ForeignKey(to=Customer, on_delete=models.CASCADE)
