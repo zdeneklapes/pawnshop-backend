@@ -9,12 +9,12 @@ ROOT_DIR = Path(__file__).resolve().parent.parent.parent
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # env
-load_dotenv(path.join(ROOT_DIR, "env", ".env.backend"))
+load_dotenv(path.join(ROOT_DIR, "env", ".env.backend.heroku"))
 
 #
 SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY", "development")
-DEBUG = os.environ.get("DEBUG")
-ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS").split(",")
+DEBUG = os.environ.get("DJANGO_DEBUG")
+ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOWED_HOSTS").split(",")
 
 # Application definition
 INSTALLED_APPS = [
@@ -37,7 +37,7 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
-ROOT_URLCONF = "src.urls"
+ROOT_URLCONF = "config.urls"
 
 TEMPLATES = [
     {
@@ -55,13 +55,13 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = "src.wsgi.application"
+WSGI_APPLICATION = "config.wsgi.application"
 
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
 
-if os.environ.get("DOCKER_CONTAINER"):
+if os.environ.get("SQL_SERVER"):
     DATABASES = {
         "default": {
             "ENGINE": os.environ.get("SQL_ENGINE"),

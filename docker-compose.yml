@@ -5,7 +5,7 @@ services:
     container_name: backend
     build:
       context: .
-      dockerfile: Dockerfile.web
+      dockerfile: Dockerfile.dev
     volumes:
       - ./src:/app/src
     stdin_open: true
@@ -21,6 +21,8 @@ services:
     image: postgres:14.0-alpine
     volumes:
       - postgres_data:/var/lib/postgresql/data/
+    ports:
+      - 5432:5432
     env_file:
       - env/.env.db
 

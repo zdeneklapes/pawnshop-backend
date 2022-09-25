@@ -1,13 +1,37 @@
 import uuid
 
+from django.contrib.auth.models import User
 from django.db import models
 
 
-class User(models.Model):
+class Shop(models.Model):
+    name = models.CharField(max_length=255)
+    address = models.CharField(max_length=255)
+    district = models.CharField(max_length=255)
+    phone = models.CharField(max_length=255)
+    open_hours = models.TimeField()
+    close_hours = models.TimeField()
+
+
+class CustomUser(User):
     username = models.CharField(max_length=255)
     creation_date = models.DateTimeField(auto_now_add=True)
     updated_date = models.DateTimeField(auto_now=True)
     password = models.CharField(max_length=255)
+    action_edit_custom_user = models.BooleanField()
+    action_detailed_stats = models.BooleanField()
+    action_day_stats = models.BooleanField()
+    action_edit_subject = models.BooleanField()
+    action_edit_all_item = models.BooleanField()
+    action_edit_date = models.BooleanField()
+    action_edit_sell_price = models.BooleanField()
+    action_edit_cash_register = models.BooleanField()
+    action_can_divide = models.BooleanField()
+    action_move_to_pawnshop_tab = models.BooleanField()
+    action_complete_win = models.BooleanField()
+    action_getout_without_eet = models.BooleanField()
+    action_price_in_stats = models.BooleanField()
+    action_have_access_to_shop = models.ManyToManyField(Shop)
 
 
 class Customer(models.Model):
@@ -32,6 +56,7 @@ class Product(models.Model):
     buy_price = models.PositiveIntegerField()
     sell_price = models.PositiveIntegerField()
     amount = models.PositiveIntegerField()
+    shop = models.ForeignKey(to=Shop, on_delete=models.CASCADE)
 
     creation_date = models.DateTimeField(
         primary_key=True
@@ -68,12 +93,3 @@ class MortgageContract(models.Model):
                 name="unique_id_creation_date_combination",
             )
         ]
-
-
-class Shop(models.Model):
-    name = models.CharField(max_length=255)
-    address = models.CharField(max_length=255)
-    district = models.CharField(max_length=255)
-    phone = models.CharField(max_length=255)
-    open_hours = models.TimeField()
-    close_hours = models.TimeField()
