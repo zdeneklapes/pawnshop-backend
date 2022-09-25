@@ -42,8 +42,7 @@ class Product(models.Model):
 
 
 class MortgageContract(models.Model):
-    # TODO: father wants ID as incrementing number,
-    #  but there could be a problem, so ID+FROM_DATE must create Primary Key:
+    # TODO: father wants ID as incrementing number, but there could be a problem, so ID+FROM_DATE must create Primary Key:
     id = models.AutoField(primary_key=True)
     creation_date = models.DateTimeField()  # when product was taken into custody
 
