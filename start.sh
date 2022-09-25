@@ -41,11 +41,11 @@ function create_env_samples() {
     cd env || error_exit "cd"
 
     # Clean all samples
-    find . -type f -iname "sample*" | xargs "${RM}"
+    find . -type f -iname "sample*" -delete
 
     # Create new samples
     for f in $(find . -type f -iname ".env*" | cut -d/ -f2);do
-        cat "${f}" | cut -d "=" -f1 > "sample${f}"
+        cat "${f}" | cut -d '=' -f1 | xargs -I "%" echo "%=" > "sample${f}"
     done
 
     cd .. || error_exit "cd"

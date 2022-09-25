@@ -31,6 +31,7 @@ class Product(models.Model):
     description = models.TextField()
     buy_price = models.PositiveIntegerField()
     sell_price = models.PositiveIntegerField()
+    amount = models.PositiveIntegerField()
 
     creation_date = models.DateTimeField(
         primary_key=True
