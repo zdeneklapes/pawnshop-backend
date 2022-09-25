@@ -2,13 +2,11 @@
 ## AUTHORS:
 * Zdeněk Lapeš <lapes.zdenek@gmail.com> (xlapes02)
 * Andrej Bínovský <binovsky.andrej@gmail.com> (xbinov00)
-* Richard Buban <binovsky.andrej@gmail.com> (xbuban00)
+* Richard Buban <sisoriso777@gmail.com> (xbuban00)
 
 ---
 
-## SYSTEM REQUIREMENTS
-
-## Projekt:
+## SYSTEM REQUIREMENTS:
 
 ---
 
@@ -41,10 +39,10 @@ __Obsluha:__
 - má k dispozici jen nezbytně nutné informace pro práci (přistup k zastaveným věcem, věcem na prodej a jejich cenám pro danou pobočku)
 - spravuje zákazníky
 
-### Admin:
+__Admin:__
 - má k dispozici stejné akce jako obsluha
 
-a navíc:
+_a navíc:_
 
 - vidí statistiky, které obsluha nevídí (denni tržba, měsíční trřba)
 - vidí možné akce, které obsluha nevidí (vymazaní statistik pro konkretní období)
