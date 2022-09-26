@@ -23,7 +23,7 @@ a vhodně je zobrazovat uživatelům systému.
 
 Pro pochopení business logic uvádím pár jednoduchých příkladů:
 
-__Příklad 1__: Zákazník přijde do prodejny a chce zastavit něco (cokoli, např.: telefon), obsluha podle OP, zadá do systému info o zákazníkovi a zastavované věci, lhůta pro zaplacení dlužné částky je systémem automaticky nastavena na 4 týdny, přičemž zákazník si muže věc vyzvednout kdykoli (vyplatí dlužnou částku plus sjednaný úrok (ten je počítán po týdnu)), pokud se blíží konec lhůty, a zákazník má zájem zastavenou věc vyplatit později, muže zaplatit pouze úrok za uplynulé období (bez dlužné částky) a lhůta je znova prodloužena o další 4 týdny.
+__Příklad 1__: Zákazník přijde do prodejny a chce zastavit něco (cokoli, např.: telefon), obsluha podle OP, zadá do systému info o zákazníkovi a zastavované věci, lhůta pro zaplacení dlužné částky je systémem automaticky nastavena do 4 týdnů, (zákazník do 4 týdnů vyplatí dlužnou částku plus sjednaný úrok (ten je počítán po týdnu)), pokud se blíží konec lhůty, a zákazník má zájem zastavenou věc vyplatit později, muže zaplatit pouze úrok za uplynulé období (bez dlužné částky) a lhůta je znova prodloužena o další 4 týdny.
 
 __Příklad 2__: Přijde zákazník na pobočku a chce si něco koupit. Obsluha zákazníkovi produkt prodá s tím, že v systému se musí produkt označit jako prodaný (to musí být vidět i v historii všech uskutečněných transakcí) a pokud to zakazník vyžaduje, obsluha vystaví zákazníkovi účtenku.
 
@@ -40,12 +40,13 @@ __Obsluha:__
 - spravuje zákazníky
 
 __Admin:__
+
 - má k dispozici stejné akce jako obsluha
 
 _a navíc:_
 
-- vidí statistiky, které obsluha nevídí (denni tržba, měsíční trřba)
-- vidí možné akce, které obsluha nevidí (vymazaní statistik pro konkretní období)
+- vidí statistiky, které obsluha nevídí (tržba, ...)
+- vidí možné akce, které obsluha nevidí (editace předmětu smlouvy, ...)
 - spravuje obsluhu
 
 ### Technologie, které budou použity pro implementaci:
