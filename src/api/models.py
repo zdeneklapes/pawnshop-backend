@@ -2,6 +2,7 @@ import uuid
 
 from django.contrib.auth.models import User
 from django.db import models
+from django.utils.timezone import now
 
 
 class Shop(models.Model):
@@ -70,7 +71,15 @@ class MortgageContract(models.Model):
     #  but there could be a problem, so ID+FROM_DATE must create Primary Key:
     #  e.g.: 1 customer have contract from 2022 and another customer will come
     #  in 2023 and because all contracts start from 00001 as year begins so the ids can become same
-    id = models.AutoField(primary_key=True)
+    # Source: https://stackoverflow.com/a/71909815/14471542
+
+    @classmethod
+    def next_number(self):
+        return self._base_manager.filter(date__year=now().year).count() + 1
+
+    num_contract_in_year = models.PositiveIntegerField(
+        default=next_number, editable=False
+    )
     creation_date = models.DateTimeField()  # when product was taken into custody
 
     extended_deadline_date = models.DateTimeField(
