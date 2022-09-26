@@ -12,10 +12,17 @@ ROOT_DIR = Path(__file__).resolve().parent.parent.parent
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Env
+env_file = {
+    "local": ".env.local",
+    "heroku": ".env.heroku",
+    "docker_backend": ".env.docker",
+    "docker_db": ".env.docker.db",
+}
+
 if "test" in sys.argv or not os.environ.get("SQL_SERVER") == "False":
-    load_dotenv(path.join(ROOT_DIR, "env", ".env.backend.local"))
-    print("DB Test")
-elif load_dotenv(path.join(ROOT_DIR, "env", ".env.backend.heroku")):
+    load_dotenv(path.join(ROOT_DIR, "env", ".env.docker.local"))
+    print("Loading")
+elif load_dotenv(path.join(ROOT_DIR, "env", ".env.docker.heroku")):
     print("DB Heroku")
 else:
     print("DB Docker")
@@ -26,7 +33,6 @@ DEBUG = os.environ.get("DJANGO_DEBUG") == "True"
 print(f"{DEBUG=}")
 ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOWED_HOSTS").split(",")
 DJANGO_LOG_LEVEL = "DEBUG"
-
 
 LOGGING = {
     "version": 1,

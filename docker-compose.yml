@@ -12,7 +12,7 @@ services:
     tty: true
     ports:
       - 8000:8000
-    env_file: env/.env.backend
+    env_file: env/.env.docker
     depends_on:
       - db
     restart: on-failure
@@ -25,7 +25,7 @@ services:
     ports:
       - 5432:5432
     env_file:
-      - env/.env.db
+      - env/.env.docker.db
 
 volumes:
   postgres_data:
