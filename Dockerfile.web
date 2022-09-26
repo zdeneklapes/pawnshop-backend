@@ -1,9 +1,8 @@
 ##### VENV
-FROM python:3
+FROM python:3 as base
 
-#####################################
-
-ENV PYTHONUNBUFFERED 1
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONUNBUFFERED=1
 
 WORKDIR /app
 
@@ -16,14 +15,12 @@ RUN set -ex && \
 ENV PORT 8000
 EXPOSE 8000
 
-#####################################
-
 WORKDIR /app/src
 
 COPY src/ .
 
 RUN chmod +x entrypoint.sh
-ENTRYPOINT [ "/app/src/entrypoint.sh", "dev"]
+ENTRYPOINT [ "/app/src/entrypoint.sh", "web"]
 
 
 

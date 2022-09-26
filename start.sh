@@ -89,7 +89,6 @@ function usage() {
 
 function clean_db_local() {
     find src -type d -iname "migrations" | xargs ${RM}
-
 }
 
 ##### PARSE CLI-ARGS

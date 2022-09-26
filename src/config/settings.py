@@ -1,15 +1,24 @@
 import os
+import sys
 from os import path
 from pathlib import Path
 
 from dotenv import load_dotenv
 
+# TODO: docker db run before backend problem
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 ROOT_DIR = Path(__file__).resolve().parent.parent.parent
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# env
-load_dotenv(path.join(ROOT_DIR, "env", ".env.backend"))
+# Env
+if "test" in sys.argv:
+    load_dotenv(path.join(ROOT_DIR, "env", ".env.backend.test"))
+    print("DB Test")
+elif load_dotenv(path.join(ROOT_DIR, "env", ".env.backend.heroku")):
+    print("DB Heroku")
+else:
+    print("DB Docker")
 
 #
 SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY", "development")
@@ -61,7 +70,7 @@ WSGI_APPLICATION = "config.wsgi.application"
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
 
-if os.environ.get("SQL_SERVER"):
+if os.environ.get("SQL_SERVER") == "True":
     DATABASES = {
         "default": {
             "ENGINE": os.environ.get("SQL_ENGINE"),
