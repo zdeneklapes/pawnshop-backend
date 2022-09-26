@@ -1,25 +1,31 @@
-version: "3.9"
+version: '3.6'
 
 services:
-  db:
-    image: postgres
-    volumes:
-      - ./data/db:/var/lib/postgresql/data
-    environment:
-      - POSTGRES_DB=postgres
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
-  web:
+  backend:
+    container_name: backend
     build:
+      context: .
       dockerfile: Dockerfile.dev
-    command: python src/manage.py runserver 0.0.0.0:8000
     volumes:
-      - .:/code
+      - ./src:/app/src
+    stdin_open: true
+    tty: true
     ports:
-      - "8000:8000"
-    environment:
-      - POSTGRES_NAME=postgres
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
+      - 8000:8000
+    env_file: env/.env.backend
     depends_on:
       - db
+    restart: on-failure
+
+  db:
+    container_name: db
+    image: postgres:14.0-alpine
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    ports:
+      - 5432:5432
+    env_file:
+      - env/.env.db
+
+volumes:
+  postgres_data:
