@@ -1,5 +1,5 @@
 ##### VENV
-FROM python:3
+FROM python:3.9
 
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
@@ -17,7 +17,9 @@ EXPOSE 8000
 
 WORKDIR /app/src
 
-COPY src/ .
+#COPY src/ .
 
-RUN chmod +x entrypoint.sh
-ENTRYPOINT [ "/app/src/entrypoint.sh", "dev"]
+#RUN chmod +x entrypoint.sh
+#ENTRYPOINT [ "/app/src/entrypoint.sh", "dev"]
+#ENTRYPOINT [ "/bin/bash", "-c"]
+CMD python ./manage.py runserver 0.0.0.0:8000

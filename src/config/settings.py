@@ -12,8 +12,8 @@ ROOT_DIR = Path(__file__).resolve().parent.parent.parent
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Env
-if "test" in sys.argv:
-    load_dotenv(path.join(ROOT_DIR, "env", ".env.backend.test"))
+if "test" in sys.argv or not os.environ.get("SQL_SERVER") == "False":
+    load_dotenv(path.join(ROOT_DIR, "env", ".env.backend.local"))
     print("DB Test")
 elif load_dotenv(path.join(ROOT_DIR, "env", ".env.backend.heroku")):
     print("DB Heroku")
@@ -22,8 +22,26 @@ else:
 
 #
 SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY", "development")
-DEBUG = os.environ.get("DJANGO_DEBUG")
+DEBUG = os.environ.get("DJANGO_DEBUG") == "True"
+print(f"{DEBUG=}")
 ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOWED_HOSTS").split(",")
+DJANGO_LOG_LEVEL = "DEBUG"
+
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "handlers": {
+        "console": {
+            "class": "logging.StreamHandler",
+        },
+    },
+    "loggers": {
+        "django": {
+            "handlers": ["console"],
+            "level": os.getenv("DJANGO_LOG_LEVEL", "INFO"),
+        },
+    },
+}
 
 # Application definition
 INSTALLED_APPS = [
