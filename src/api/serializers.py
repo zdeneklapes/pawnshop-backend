@@ -1,7 +1,13 @@
 from rest_framework import serializers
 
-from api.models import Shop
+from . import models
 
 
-class ShopSerializer(serializers.Serializer):
-    pass
+class UserSerializer(serializers.ModelSerializer):
+    snippet = serializers.PrimaryKeyRelatedField(
+        many=True, queryset=models.User.object.all()
+    )
+
+    class Meta:
+        model = models.User
+        fields = [""]  # TODO

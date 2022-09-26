@@ -1,7 +1,9 @@
-from django.urls import include, path
+from django.urls import path
 
-from .viewsets import viewsets_user
+from . import views
 
 urlpatterns = [
-    path("", viewsets_user.cocktail_list),
+    # path("", viewsets_user.cocktail_list),
+    path("users/", views.UserView.as_view()),
+    path("users/<int:pk>", views.UserIdView.as_view()),
 ]

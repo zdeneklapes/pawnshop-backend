@@ -27,6 +27,7 @@ print(f"{DEBUG=}")
 ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOWED_HOSTS").split(",")
 DJANGO_LOG_LEVEL = "DEBUG"
 
+
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
