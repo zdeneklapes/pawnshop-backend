@@ -48,7 +48,7 @@ class User(AbstractUser):
 
 
 class Rights(models.Model):
-    user = models.ForeignKey(User)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     action_edit_custom_user = models.BooleanField()
     action_detailed_stats = models.BooleanField()
     action_day_stats = models.BooleanField()
