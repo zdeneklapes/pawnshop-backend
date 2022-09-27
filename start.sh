@@ -53,7 +53,10 @@ function tags() {
 }
 
 function clean_django_migrations() {
-    find "$(find src -type d -iname "migrations")" -type f | grep --invert-match "__init__.py" | xargs ${RM}
+    for path in $(find src -type d -iname "migrations"); do
+        find "${path}" -type f | grep --invert-match "__init__.py" | xargs ${RM}
+    done
+    rm src/db.sqlite3
 }
 
 # Docker
@@ -110,6 +113,12 @@ function samples_to_envs() {
     cd .. || error_exit "cd"
 }
 
+function start_django() {
+    cd src || error_exit "cd"
+    ./entrypoint.sh 'local'
+    cd .. || error_exit "cd"
+}
+
 # Main arguments loop
 [[ "$#" -eq 0 ]] && usage && exit 0
 while [ "$#" -gt 0 ]; do
@@ -121,6 +130,7 @@ while [ "$#" -gt 0 ]; do
     '--docker-show-ipaddress') docker_show_ipaddress ;;
     '--envs-to-samples') envs_to_samples ;;
     '--samples-to-envs') samples_to_envs ;;
+    '--start-django') start_django ;;
     '--tags') tags ;;
     '-h' | '--help') usage ;;
     esac

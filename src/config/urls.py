@@ -15,6 +15,7 @@ Including another URLconf
 """
 from django.urls import include, path
 
+from authentication import urls as auth_urls
 from shop import urls as shop_urls
 
 # router = routers.DefaultRouter()
@@ -23,5 +24,6 @@ from shop import urls as shop_urls
 
 urlpatterns = [
     # path("admin/", admin.site.urls),
-    path("shops/", include(shop_urls))
+    path("users/", include(auth_urls)),
+    path("shops/", include(shop_urls)),
 ]
