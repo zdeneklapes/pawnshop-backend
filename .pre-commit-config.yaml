@@ -87,10 +87,9 @@ repos:
     rev: v0.5 # Ensure this is the latest tag, comparing to the Releases tab
     hooks:
       - id: circleci_validate
-
-  - repo: https://github.com/pycqa/pylint
-    rev: pylint-2.6.0
-    hooks:
-      - id: pylint
-        args:
-          - --rcfile=./.pylintrc
+#  - repo: https://github.com/pycqa/pylint
+#    rev: pylint-2.6.0
+#    hooks:
+#      - id: pylint
+#        args:
+#          - --rcfile=./.pylintrc
