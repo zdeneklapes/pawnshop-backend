@@ -51,13 +51,13 @@ LOGGING = {
 
 # Application definition
 INSTALLED_APPS = [
-    # "django.contrib.admin",
+    "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    "django.contrib.sites",
+    # "django.contrib.sites",
     #
     "rest_framework",
     #
@@ -125,6 +125,10 @@ AUTH_USER_MODEL = "authentication.User"
 
 REST_FRAMEWORK = {
     "NON_FIELD_ERRORS_KEY": "error",
+    # 'TEST_REQUEST_DEFAULT_FORMAT': 'json',
+    # 'DEFAULT_PARSER_CLASSES': [
+    #     'rest_framework.parsers.JSONParser',
+    # ]
 }
 
 AUTH_PASSWORD_VALIDATORS = [

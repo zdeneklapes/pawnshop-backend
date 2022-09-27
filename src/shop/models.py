@@ -9,8 +9,9 @@ class Shop(models.Model):
     open_hours = models.TimeField()
     close_hours = models.TimeField()
 
-    class Meta:
-        app_label = "shop_app"
+    # TODO: Why when it is here, migration not apply
+    # class Meta:
+    #     app_label = "shop_app"
 
     def __str__(self):
         return self.name.name
