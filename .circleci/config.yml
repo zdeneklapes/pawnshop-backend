@@ -47,9 +47,9 @@ jobs:
             HEROKU_API_KEY=${HEROKU_API_KEY} heroku container:push -a pawnshop-backend web --recursive # this build it automatically
             HEROKU_API_KEY=${HEROKU_API_KEY} heroku container:release -a pawnshop-backend web
 
-  build:
+  run-tests:
     docker:
-      - image: circleci/python:3.6
+      - image: circleci/python:3
     steps:
       - checkout
       - restore_cache:
@@ -76,13 +76,13 @@ workflows:
   push:
     jobs:
       - lint
-      - build:
+      - run-tests:
           requires:
             - lint
       - deploy-dev:
           requires:
             - lint
-            - build
+            - run-tests
           filters:
             branches:
               only:
@@ -90,26 +90,8 @@ workflows:
       - deploy-main:
           requires:
             - lint
-            - build
+            - run-tests
           filters:
             branches:
               only:
                 - main
-
-
-
-
-
-#  lint:
-#    machine: true
-#    steps:
-#      - checkout
-#      - run:
-#          name: Linting from .pre-commit-config.yaml
-#          command: |
-#            set -x
-#            pip install --user pre-commit
-#            pre-commit run --all-files
-#
-#  heroku: circleci/heroku@1.2.6 # Use the Heroku orb in your config
-#  pre-commit: oandacorp/pre-commit@0.10.0
