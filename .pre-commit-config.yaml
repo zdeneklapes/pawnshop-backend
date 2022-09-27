@@ -79,17 +79,17 @@ repos:
       - id: bandit
         args: [ -r ]
         require_serial: true
-  - repo: https://github.com/pryorda/dockerfilelint-precommit-hooks
-    rev: v0.1.0
-    hooks:
-      - id: dockerfilelint
+#  - repo: https://github.com/pryorda/dockerfilelint-precommit-hooks
+#    rev: v0.1.0
+#    hooks:
+#      - id: dockerfilelint
   - repo: https://github.com/zahorniak/pre-commit-circleci.git
     rev: v0.5 # Ensure this is the latest tag, comparing to the Releases tab
     hooks:
       - id: circleci_validate
-#  - repo: https://github.com/pycqa/pylint
-#    rev: pylint-2.6.0
-#    hooks:
-#      - id: pylint
-#        args:
-#          - --rcfile=./.pylintrc
+  - repo: https://github.com/pycqa/pylint
+    rev: pylint-2.6.0
+    hooks:
+      - id: pylint
+        args:
+          - --rcfile=./.pylintrc
