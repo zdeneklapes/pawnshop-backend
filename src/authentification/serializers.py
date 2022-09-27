@@ -5,7 +5,7 @@ from . import models
 
 class UserSerializer(serializers.ModelSerializer):
     snippet = serializers.PrimaryKeyRelatedField(
-        many=True, queryset=models.User.object.all()
+        many=True, queryset=models.User.objects.all()
     )
 
     class Meta:

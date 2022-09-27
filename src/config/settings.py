@@ -57,7 +57,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    "authentification.apps.AuthConfig",
+    "authentification.apps.AuthentificationConfig",
 ]
 
 MIDDLEWARE = [
@@ -115,6 +115,8 @@ else:
 
 # Password validation
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators
+
+AUTH_USER_MODEL = "authentification.User"
 
 AUTH_PASSWORD_VALIDATORS = [
     {
