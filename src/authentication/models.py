@@ -1,6 +1,7 @@
 from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.db import models
-from phonenumber_field.modelfields import PhoneNumberField
+
+from shop.models import Shop
 
 
 class CustomUserManager(BaseUserManager):
@@ -21,7 +22,6 @@ class CustomUserManager(BaseUserManager):
         return new_user
 
     def create_superuser(self, email, password, **extra_fields):
-
         extra_fields.setdefault("is_superuser", True)
         extra_fields.setdefault("is_staff", True)
         extra_fields.setdefault("is_active", True)
@@ -38,31 +38,30 @@ class CustomUserManager(BaseUserManager):
 class User(AbstractUser):
     username = models.CharField(max_length=255, unique=True)
     email = models.EmailField(max_length=255, unique=True)
-    phone = PhoneNumberField(max_length=15, unique=True)
     creation_date = models.DateTimeField(auto_now_add=True)
     updated_date = models.DateTimeField(auto_now=True)
 
     USERNAME_FIELD = "email"
 
-    REQUIRED_FIELDS = ["username", "phone_number"]
+    REQUIRED_FIELDS = ["username"]
 
 
-class Rights(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    action_edit_custom_user = models.BooleanField()
-    action_detailed_stats = models.BooleanField()
-    action_day_stats = models.BooleanField()
-    action_edit_subject = models.BooleanField()
-    action_edit_all_item = models.BooleanField()
-    action_edit_date = models.BooleanField()
-    action_edit_sell_price = models.BooleanField()
-    action_edit_cash_register = models.BooleanField()
-    action_can_divide = models.BooleanField()
-    action_move_to_pawnshop_tab = models.BooleanField()
-    action_complete_win = models.BooleanField()
-    action_getout_without_eet = models.BooleanField()
-    action_price_in_stats = models.BooleanField()
-    # action_have_access_to_shop = models.ManyToManyField(Shop) # TODO: Create Shop model
+class UserProfile(models.Model):
+    user = models.OneToOneField(User, primary_key=True, on_delete=models.CASCADE)
+    action_edit_custom_user = models.BooleanField(default=False)
+    action_detailed_stats = models.BooleanField(default=False)
+    action_day_stats = models.BooleanField(default=False)
+    action_edit_subject = models.BooleanField(default=False)
+    action_edit_all_item = models.BooleanField(default=False)
+    action_edit_date = models.BooleanField(default=False)
+    action_edit_sell_price = models.BooleanField(default=False)
+    action_edit_cash_register = models.BooleanField(default=False)
+    action_can_divide = models.BooleanField(default=False)
+    action_move_to_pawnshop_tab = models.BooleanField(default=False)
+    action_complete_win = models.BooleanField(default=False)
+    action_getout_without_eet = models.BooleanField(default=False)
+    action_price_in_stats = models.BooleanField(default=False)
+    action_have_access_to_shop = models.ManyToManyField(Shop)
 
 
 # class Statistics(models.Model):
