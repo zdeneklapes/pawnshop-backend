@@ -19,7 +19,10 @@ else:  # Docker, because env folder nto available
 # Django Settings
 SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY", "development")
 DEBUG = os.environ.get("DJANGO_DEBUG") == "True"
-ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOWED_HOSTS").split(",")
+try:
+    ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOWED_HOSTS").split(",")
+except AttributeError:
+    ALLOWED_HOSTS = ["localhost", "127.0.0.1"]
 
 # Application definition
 INSTALLED_APPS = [
