@@ -15,7 +15,6 @@ services:
     env_file: env/.env.docker
     depends_on:
       - db
-    restart: on-failure
 
   db:
     container_name: db

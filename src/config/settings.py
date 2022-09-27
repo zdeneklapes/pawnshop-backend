@@ -58,6 +58,8 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "authentification.apps.AuthentificationConfig",
+    "rest_framework",
+    "shop.apps.ShopConfig",
 ]
 
 MIDDLEWARE = [
@@ -117,6 +119,10 @@ else:
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators
 
 AUTH_USER_MODEL = "authentification.User"
+
+REST_FRAMEWORK = {
+    "NON_FIELD_ERRORS_KEY": "error",
+}
 
 AUTH_PASSWORD_VALIDATORS = [
     {

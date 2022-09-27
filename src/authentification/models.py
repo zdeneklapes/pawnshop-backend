@@ -65,15 +65,6 @@ class Rights(models.Model):
     # action_have_access_to_shop = models.ManyToManyField(Shop) # TODO: Create Shop model
 
 
-# class Shop(models.Model):
-#     name = models.CharField(max_length=255)
-#     address = models.CharField(max_length=255)
-#     district = models.CharField(max_length=255)
-#     phone = models.CharField(max_length=255)
-#     open_hours = models.TimeField()
-#     close_hours = models.TimeField()
-#
-#
 # class Statistics(models.Model):
 #     date = models.DateTimeField(auto_now_add=True)
 #     description = models.CharField(max_length=255)

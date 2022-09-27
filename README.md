@@ -1,12 +1,4 @@
-# PAWNSHOP-BACKEND
-
-## AUTHORS:
-
-* Zdeněk Lapeš <lapes.zdenek@gmail.com> (xlapes02)
-* Andrej Bínovský <binovsky.andrej@gmail.com> (xbinov00)
-* Richard Buban <sisoriso777@gmail.com> (xbuban00)
-
----
+# PAWNSHOP-SYSTEM
 
 ## SYSTÉMOVÉ POŽADAVKY:
 
@@ -24,17 +16,17 @@ a vhodně je zobrazovat uživatelům systému.
 
 Pro pochopení business logic uvádím pár jednoduchých příkladů:
 
-__Příklad 1__: Zákazník přijde do prodejny a chce zastavit něco (cokoli, např.: telefon), obsluha podle OP, zadá do
+__Příklad 1 (Zástava)__: Zákazník přijde do prodejny a chce zastavit něco (cokoli, např.: telefon), obsluha podle OP, zadá do
 systému info o zákazníkovi a zastavované věci, lhůta pro zaplacení dlužné částky je systémem automaticky nastavena do 4
 týdnů, (zákazník do 4 týdnů vyplatí dlužnou částku plus sjednaný úrok (ten je počítán po týdnu)), pokud se blíží konec
 lhůty, a zákazník má zájem zastavenou věc vyplatit později, muže zaplatit pouze úrok za uplynulé období (bez dlužné
 částky) a lhůta je znova prodloužena o další 4 týdny.
 
-__Příklad 2__: Přijde zákazník na pobočku a chce si něco koupit. Obsluha zákazníkovi produkt prodá s tím, že v systému
+__Příklad 2 (Prodej)__: Přijde zákazník na pobočku a chce si něco koupit. Obsluha zákazníkovi produkt prodá s tím, že v systému
 se musí produkt označit jako prodaný (to musí být vidět i v historii všech uskutečněných transakcí) a pokud to zakazník
 vyžaduje, obsluha vystaví zákazníkovi účtenku.
 
-__Příklad 3__: Přijde zákazník na pobočku a chce něco prodat. Obsluha opět vyplní formulář podle OP zákazníka a vyplní
+__Příklad 3 (Nákup)__: Přijde zákazník na pobočku a chce něco prodat. Obsluha opět vyplní formulář podle OP zákazníka a vyplní
 popis a výkupní cenu prodávaného zboží. Údaje se uloží do systému a zákazník dostane peníze.
 
 ### Cílová skupina uživatelů:
