@@ -4,50 +4,22 @@ from pathlib import Path
 
 from dotenv import load_dotenv
 
-# TODO: docker db run before backend problem
-
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 ROOT_DIR = Path(__file__).resolve().parent.parent.parent
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Env
-env_file = {
-    "local": ".env.local",
-    "heroku": ".env.heroku",
-    "docker": ".env.docker",
-    "docker_db": ".env.docker.db",
-}
+if load_dotenv(path.join(ROOT_DIR, "env", ".env.local")):
+    print("ENV: local")
+elif load_dotenv(path.join(ROOT_DIR, "env", ".env.heroku")):
+    print("ENV: heroku")
+else:  # Docker, because env folder nto available
+    print("ENV: docker")
 
-if load_dotenv(
-    path.join(ROOT_DIR, "env", env_file["local"])
-):  # Means that .env... exists
-    print(f"ENV: {env_file['local']}")
-elif load_dotenv(path.join(ROOT_DIR, "env", ".env.docker.heroku")):
-    print(f"ENV: {env_file['heroku']}")
-else:
-    print(f"ENV: {env_file['docker']}")
-
-#
+# Django Settings
 SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY", "development")
 DEBUG = os.environ.get("DJANGO_DEBUG") == "True"
 ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOWED_HOSTS").split(",")
-DJANGO_LOG_LEVEL = "DEBUG"
-
-LOGGING = {
-    "version": 1,
-    "disable_existing_loggers": False,
-    "handlers": {
-        "console": {
-            "class": "logging.StreamHandler",
-        },
-    },
-    "loggers": {
-        "django": {
-            "handlers": ["console"],
-            "level": os.getenv("DJANGO_LOG_LEVEL", "INFO"),
-        },
-    },
-}
 
 # Application definition
 INSTALLED_APPS = [
@@ -94,10 +66,6 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = "config.wsgi.application"
-
-# Database
-# https://docs.djangoproject.com/en/4.1/ref/settings/#databases
-
 
 if os.environ.get("SQL_SERVER") == "True":
     DATABASES = {
@@ -146,28 +114,40 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-# Internationalization
-# https://docs.djangoproject.com/en/4.1/topics/i18n/
-
 LANGUAGE_CODE = "en-us"
-
 TIME_ZONE = "UTC"
-
 USE_I18N = True
-
 USE_TZ = True
-
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/4.1/howto/static-files/
-
 STATIC_URL = "static/"
-
-# Default primary key field type
-# https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
-
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
+# TODO: Idk if needed?
 ADMINS = [
     ("John", "john@example.com"),
     ("Mary", "mary@example.com"),
-]  # TODO: Not working
+]
+
+SWAGGER_SETTINGS = {
+    "SECURITY_DEFINITIONS": {
+        "Basic": {"type": "basic"},
+        "Bearer": {"type": "apiKey", "name": "Authorization", "in": "header"},
+    }
+}
+
+# Logging
+DJANGO_LOG_LEVEL = "DEBUG"
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "handlers": {
+        "console": {
+            "class": "logging.StreamHandler",
+        },
+    },
+    "loggers": {
+        "django": {
+            "handlers": ["console"],
+            "level": os.getenv("DJANGO_LOG_LEVEL", "INFO"),
+        },
+    },
+}

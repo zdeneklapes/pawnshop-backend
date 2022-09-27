@@ -64,22 +64,22 @@ class UserProfile(models.Model):
     action_have_access_to_shop = models.ManyToManyField(Shop)
 
 
+class CustomerProfile(models.Model):
+    GENDERS = (("M", "Male"), ("F", "Female"))
+
+    personal_identification_number = models.CharField(max_length=255, primary_key=True)
+    full_name = models.CharField(max_length=255)
+    identity_card_number = models.CharField(max_length=255)
+    residence = models.CharField(max_length=255)
+    citizenship = models.CharField(max_length=255)
+    place_of_birth = models.CharField(max_length=255)
+    gender = models.CharField(max_length=1, choices=GENDERS)
+
+
 # class Statistics(models.Model):
 #     date = models.DateTimeField(auto_now_add=True)
 #     description = models.CharField(max_length=255)
 #     # TODO: FK of the object which has changed
-#
-#
-# class Customer(models.Model):
-#     GENDERS = (("M", "Male"), ("F", "Female"))
-#
-#     personal_identification_number = models.CharField(max_length=255, primary_key=True)
-#     full_name = models.CharField(max_length=255)
-#     identity_card_number = models.CharField(max_length=255)
-#     residence = models.CharField(max_length=255)
-#     citizenship = models.CharField(max_length=255)
-#     place_of_birth = models.CharField(max_length=255)
-#     gender = models.CharField(max_length=1, choices=GENDERS)
 #
 #
 # class Product(models.Model):
