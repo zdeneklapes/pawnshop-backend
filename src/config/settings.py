@@ -1,5 +1,4 @@
 import os
-import sys
 from os import path
 from pathlib import Path
 
@@ -15,22 +14,22 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 env_file = {
     "local": ".env.local",
     "heroku": ".env.heroku",
-    "docker_backend": ".env.docker",
+    "docker": ".env.docker",
     "docker_db": ".env.docker.db",
 }
 
-if "test" in sys.argv or not os.environ.get("SQL_SERVER") == "False":
-    load_dotenv(path.join(ROOT_DIR, "env", ".env.docker.local"))
-    print("Loading")
+if load_dotenv(
+    path.join(ROOT_DIR, "env", env_file["local"])
+):  # Means that .env... exists
+    print(f"ENV: {env_file['local']}")
 elif load_dotenv(path.join(ROOT_DIR, "env", ".env.docker.heroku")):
-    print("DB Heroku")
+    print(f"ENV: {env_file['heroku']}")
 else:
-    print("DB Docker")
+    print(f"ENV: {env_file['docker']}")
 
 #
 SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY", "development")
 DEBUG = os.environ.get("DJANGO_DEBUG") == "True"
-print(f"{DEBUG=}")
 ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOWED_HOSTS").split(",")
 DJANGO_LOG_LEVEL = "DEBUG"
 
@@ -58,7 +57,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    "api.apps.ApiAppConfig",
+    "auth.apps.AuthConfig",
 ]
 
 MIDDLEWARE = [

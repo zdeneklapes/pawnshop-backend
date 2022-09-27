@@ -1,3 +1,10 @@
 from django.test import TestCase
 
-# Create your tests here.
+
+class TestUserAuthorization(TestCase):
+    pass
+
+
+class TestUserAuthentication(TestCase):
+    def test_foo(self):
+        self.assertIs(True, True)
