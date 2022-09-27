@@ -20,13 +20,16 @@ function error_exit() {
 
 function usage() {
     echo "USAGE:
-    '-r' | '--run') run ;;
     '-c' | '--clean') clean ;;
-    '-z' | '--zip') zip_project ;;
-    '-sz' | '--ssh-zdenek') ssh 'xlapes02' ;;
-    '--cloc') line_of_codes ;;
+    '--rm-docker-images-volumes') rm_docker_images_volumes ;;
+    '--clean-django-migrations') clean_django_migrations ;;
+    '--build-up-docker') build_up_docker ;;
+    '--docker-show-ipaddress') docker_show_ipaddress ;;
+    '--envs-to-samples') envs_to_samples ;;
+    '--samples-to-envs') samples_to_envs ;;
     '--tags') tags ;;
-    '-h' | '--help' | *) usage ;;"
+    '-h' | '--help') usage ;;
+"
 }
 
 # Project
@@ -50,7 +53,7 @@ function tags() {
 }
 
 function clean_django_migrations() {
-    find src -type d -iname "migrations" | xargs ${RM}
+    find "$(find src -type d -iname "migrations")" -type f | grep --invert-match "__init__.py" | xargs ${RM}
 }
 
 # Docker
@@ -112,9 +115,9 @@ function samples_to_envs() {
 while [ "$#" -gt 0 ]; do
     case "$1" in
     '-c' | '--clean') clean ;;
-    '--rm_docker_images_volumes') rm_docker_images_volumes ;;
-    '--clean_django_migrations') clean_django_migrations ;;
-    '--build_up_docker') build_up_docker ;;
+    '--rm-docker-images-volumes') rm_docker_images_volumes ;;
+    '--clean-django-migrations') clean_django_migrations ;;
+    '--build-up-docker') build_up_docker ;;
     '--docker-show-ipaddress') docker_show_ipaddress ;;
     '--envs-to-samples') envs_to_samples ;;
     '--samples-to-envs') samples_to_envs ;;

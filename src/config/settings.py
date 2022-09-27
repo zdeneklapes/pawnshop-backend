@@ -51,14 +51,15 @@ LOGGING = {
 
 # Application definition
 INSTALLED_APPS = [
-    "django.contrib.admin",
+    # "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    "authentification.apps.AuthentificationConfig",
+    "django.contrib.sites",
     "rest_framework",
+    "authentication.apps.AuthenticationConfig",
     "shop.apps.ShopConfig",
 ]
 
@@ -118,7 +119,7 @@ else:
 # Password validation
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators
 
-AUTH_USER_MODEL = "authentification.User"
+AUTH_USER_MODEL = "authentication.User"
 
 REST_FRAMEWORK = {
     "NON_FIELD_ERRORS_KEY": "error",
