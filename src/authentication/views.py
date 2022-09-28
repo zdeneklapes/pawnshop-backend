@@ -4,10 +4,9 @@ from . import models, serializers
 
 
 class UserViewSet(viewsets.ModelViewSet):
-    queryset = models.User.objects.all()
-    serializer_class = serializers.UserSerializer
+    pass
 
 
-class UserProfileViewSet(viewsets.ModelViewSet):
-    queryset = models.UserProfile.objects.all()
-    serializer_class = serializers.UserProfileSerializer
+class AttendantProfileViewSet(viewsets.ModelViewSet):
+    queryset = models.AttendantProfile.objects.all()
+    serializer_class = serializers.AttendantProfileSerializer

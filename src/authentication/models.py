@@ -1,5 +1,6 @@
 from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.db import models
+from phonenumber_field.modelfields import PhoneNumberField
 
 from shop.models import Shop
 
@@ -12,11 +13,8 @@ class CustomUserManager(BaseUserManager):
             raise ValueError("Please enter an email address")
 
         email = self.normalize_email(email)
-
         new_user = self.model(email=email, **extra_fields)
-
         new_user.set_password(password)
-
         new_user.save()
 
         return new_user
@@ -36,17 +34,20 @@ class CustomUserManager(BaseUserManager):
 
 
 class User(AbstractUser):
-    username = models.CharField(max_length=255, unique=True)
-    email = models.EmailField(max_length=255, unique=True)
+    email = models.EmailField(max_length=255, primary_key=True, unique=True)
+    phone_number = PhoneNumberField(max_length=20, null=True, unique=True)
+
     creation_date = models.DateTimeField(auto_now_add=True)
     updated_date = models.DateTimeField(auto_now=True)
 
     USERNAME_FIELD = "email"
+    EMAIL_FIELD = "email"
+    REQUIRED_FIELDS = [
+        ""
+    ]  # Note: Must be here, because this inherits from parent class and produce error
 
-    REQUIRED_FIELDS = ["username"]
 
-
-class UserProfile(models.Model):
+class AttendantProfile(User):
     user = models.OneToOneField(User, primary_key=True, on_delete=models.CASCADE)
     action_edit_custom_user = models.BooleanField(default=False)
     action_detailed_stats = models.BooleanField(default=False)
@@ -63,17 +64,22 @@ class UserProfile(models.Model):
     action_price_in_stats = models.BooleanField(default=False)
     action_have_access_to_shop = models.ManyToManyField(Shop)
 
+    # class Meta:
+    #     proxy = True
+    # fields = None
 
-class CustomerProfile(models.Model):
-    GENDERS = (("M", "Male"), ("F", "Female"))
+
+class CustomerProfile(User):
+    GENDERS_CHOICES = (("M", "Male"), ("F", "Female"))
 
     personal_identification_number = models.CharField(max_length=255, primary_key=True)
     full_name = models.CharField(max_length=255)
-    identity_card_number = models.CharField(max_length=255)
+    id_card_number = models.CharField(max_length=255)
+    id_card_number_expiration_date = models.DateField()
     residence = models.CharField(max_length=255)
     citizenship = models.CharField(max_length=255)
     place_of_birth = models.CharField(max_length=255)
-    gender = models.CharField(max_length=1, choices=GENDERS)
+    gender = models.CharField(max_length=1, choices=GENDERS_CHOICES)
 
 
 # class Statistics(models.Model):

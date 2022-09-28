@@ -1,17 +1,16 @@
+from django.contrib.auth import get_user_model
 from django.db import models
+
+User = get_user_model()
 
 
 class Shop(models.Model):
     name = models.CharField(max_length=255)
-    address = models.CharField(max_length=255)
+    address = models.CharField(max_length=255, unique=True)
     town = models.CharField(max_length=255)
-    phone = models.CharField(max_length=255)
+    phone_number = models.CharField(max_length=255, unique=True)
+
     open_hours = models.TimeField()
     close_hours = models.TimeField()
 
-    # TODO: Why when it is here, migration not apply
-    # class Meta:
-    #     app_label = "shop_app"
-
-    def __str__(self):
-        return self.name.name
+    is_active = models.BooleanField(default=True)  # Can shop provide services?
