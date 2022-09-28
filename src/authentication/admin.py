@@ -1,11 +1,8 @@
 from django.contrib import admin
 
-from .models import User
+from . import models
 
-
-class UserAdmin(admin.ModelAdmin):
-    fields = [""]
-    # fieldsets = None
-
-
-admin.site.register(User, UserAdmin)
+# Note all Usertypes must be registered, otherwise error
+admin.site.register(models.User)
+admin.site.register(models.AttendantProfile)
+admin.site.register(models.CustomerProfile)

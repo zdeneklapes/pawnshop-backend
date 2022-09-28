@@ -48,7 +48,6 @@ class User(AbstractUser):
 
 
 class AttendantProfile(User):
-    user = models.OneToOneField(User, primary_key=True, on_delete=models.CASCADE)
     action_edit_custom_user = models.BooleanField(default=False)
     action_detailed_stats = models.BooleanField(default=False)
     action_day_stats = models.BooleanField(default=False)

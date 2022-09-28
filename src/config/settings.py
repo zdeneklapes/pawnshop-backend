@@ -36,8 +36,8 @@ INSTALLED_APPS = [
     "rest_framework",
     "drf_yasg",
     #
-    "authentication.apps.AuthenticationConfig",
-    "shop.apps.ShopConfig",
+    "authentication",  # .apps.AuthenticationConfig",
+    "shop",  # .apps.ShopConfig",
 ]
 
 MIDDLEWARE = [
