@@ -35,10 +35,26 @@ INSTALLED_APPS = [
     #
     "rest_framework",
     "drf_yasg",
+    "djoser"
     #
     "authentication",  # .apps.AuthenticationConfig",
     "shop",  # .apps.ShopConfig",
 ]
+
+REST_FRAMEWORK = {
+    "NON_FIELD_ERRORS_KEY": "errors",
+    "DEFAULT_AUTHENTICATION_CLASSES": (
+        "rest_framework.authentication.TokenAuthentication",
+    ),
+    # 'TEST_REQUEST_DEFAULT_FORMAT': 'json',
+    # 'DEFAULT_PARSER_CLASSES': [
+    #     'rest_framework.parsers.JSONParser',
+    # ]
+}
+
+SIMPLE_JWT = {
+    "AUTH_HEADER_TYPES": ("Bearer",),
+}
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
@@ -88,14 +104,6 @@ else:
             "NAME": BASE_DIR / "db.sqlite3",
         }
     }
-
-REST_FRAMEWORK = {
-    "NON_FIELD_ERRORS_KEY": "error",
-    # 'TEST_REQUEST_DEFAULT_FORMAT': 'json',
-    # 'DEFAULT_PARSER_CLASSES': [
-    #     'rest_framework.parsers.JSONParser',
-    # ]
-}
 
 AUTH_USER_MODEL = "authentication.User"
 

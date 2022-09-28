@@ -8,6 +8,12 @@ class TestGroupAllPermision:
     pass
 
 
-class TestAuthentication(APITestCase):
-    def test_user(self):
+class TestAttendantCreate(APITestCase):
+    def test_user_is_authenticated(self):
+        self.assert_(False, "Not Implemented")
+
+    def test_user_is_allowed_to_create_attendant(self):
+        self.assert_(False, "Not Implemented")
+
+    def test_user_is_not_allowed_to_create_attendant(self):
         self.assert_(False, "Not Implemented")

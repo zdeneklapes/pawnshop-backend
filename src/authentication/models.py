@@ -34,11 +34,14 @@ class CustomUserManager(BaseUserManager):
 
 
 class User(AbstractUser):
+    username = models.CharField(max_length=255, null=True, blank=True)
     email = models.EmailField(max_length=255, primary_key=True, unique=True)
-    phone_number = PhoneNumberField(max_length=20, null=True, unique=True)
+    phone_number = PhoneNumberField(max_length=20, unique=True)
 
     creation_date = models.DateTimeField(auto_now_add=True)
     updated_date = models.DateTimeField(auto_now=True)
+
+    date_joined = models.DateTimeField(auto_now_add=True)
 
     USERNAME_FIELD = "email"
     EMAIL_FIELD = "email"
@@ -61,7 +64,7 @@ class AttendantProfile(User):
     action_complete_win = models.BooleanField(default=False)
     action_getout_without_eet = models.BooleanField(default=False)
     action_price_in_stats = models.BooleanField(default=False)
-    action_have_access_to_shop = models.ManyToManyField(Shop)
+    action_have_access_to_shop = models.ManyToManyField(Shop, blank=True)
 
 
 class CustomerProfile(User):
