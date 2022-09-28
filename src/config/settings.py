@@ -89,11 +89,6 @@ else:
         }
     }
 
-# Password validation
-# https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators
-
-AUTH_USER_MODEL = "authentication.User"
-
 REST_FRAMEWORK = {
     "NON_FIELD_ERRORS_KEY": "error",
     # 'TEST_REQUEST_DEFAULT_FORMAT': 'json',
@@ -101,6 +96,8 @@ REST_FRAMEWORK = {
     #     'rest_framework.parsers.JSONParser',
     # ]
 }
+
+AUTH_USER_MODEL = "authentication.User"
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -124,11 +121,7 @@ USE_TZ = True
 STATIC_URL = "static/"
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-# TODO: Idk if needed?
-ADMINS = [
-    ("John", "john@example.com"),
-    ("Mary", "mary@example.com"),
-]
+# ADMINS = []
 
 SWAGGER_SETTINGS = {
     "SECURITY_DEFINITIONS": {

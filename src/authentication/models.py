@@ -64,10 +64,6 @@ class AttendantProfile(User):
     action_price_in_stats = models.BooleanField(default=False)
     action_have_access_to_shop = models.ManyToManyField(Shop)
 
-    # class Meta:
-    #     proxy = True
-    # fields = None
-
 
 class CustomerProfile(User):
     GENDERS_CHOICES = (("M", "Male"), ("F", "Female"))

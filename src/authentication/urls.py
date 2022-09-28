@@ -1,13 +1,9 @@
-import requests
-from django.urls import path
+from rest_framework.routers import DefaultRouter
 
-# from . import views
+from . import views
 
-urlpatterns = [
-    path(
-        "user/",
-        lambda req: requests.get("https://jsonplaceholder.typicode.com/posts/1"),
-    ),
-    # path("users/", views.UserView.as_view()),
-    # path("users/<int:pk>", views.UserIdView.as_view()),
-]
+# Automatically find all url based on ViewSet (all?)
+router = DefaultRouter()
+router.register(prefix=r"", viewset=views.AttendantProfileViewSet)
+
+urlpatterns = router.urls
