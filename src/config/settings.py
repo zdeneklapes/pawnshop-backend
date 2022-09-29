@@ -60,9 +60,8 @@ REST_FRAMEWORK = {
 }
 
 SIMPLE_JWT = {
-    "AUTH_HEADER_TYPES": ("Bearer",),
-    "ACCESS_TOKEN_LIFETIME": timedelta(hours=1),
-    "REFRESH_TOKEN_LIFETIME": timedelta(hours=1),
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=10),
+    "REFRESH_TOKEN_LIFETIME": timedelta(minutes=10),
     # 'ROTATE_REFRESH_TOKENS': False,
     "BLACKLIST_AFTER_ROTATION": False,
     # 'UPDATE_LAST_LOGIN': False,
@@ -75,7 +74,7 @@ SIMPLE_JWT = {
     # 'JWK_URL': None,
     # 'LEEWAY': 0,
     #
-    # 'AUTH_HEADER_TYPES': ('Bearer',),
+    "AUTH_HEADER_TYPES": ("Bearer",),
     # 'AUTH_HEADER_NAME': 'HTTP_AUTHORIZATION',
     # 'USER_ID_FIELD': 'id',
     # 'USER_ID_CLAIM': 'user_id',
