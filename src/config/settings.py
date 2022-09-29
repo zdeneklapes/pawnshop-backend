@@ -39,8 +39,13 @@ INSTALLED_APPS = [
     "djoser",
     "rest_framework_simplejwt",
     #
-    "authentication",  # .apps.AuthenticationConfig",
-    "shop",  # .apps.ShopConfig",
+    "authentication",
+    "cashdesk",
+    "loan",
+    "offer",
+    "product",
+    "shop",
+    "statistic",
 ]
 
 REST_FRAMEWORK = {

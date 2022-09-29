@@ -17,6 +17,7 @@ class AttendantProfileSerializer(serializers.ModelSerializer):
     email = serializers.EmailField(max_length=255)
     phone_number = PhoneNumberField(allow_null=False, allow_blank=False)
     password = serializers.CharField(min_length=8, write_only=True)
+    role = serializers.CharField(max_length=50, required=False)
 
     class Meta:
         model = models.AttendantProfile

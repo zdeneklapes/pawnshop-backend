@@ -33,8 +33,15 @@ urlpatterns = [
 ]
 
 urlpatterns += [
+    #
     path("admin/", admin.site.urls),
-    path("auth/", include("authentication.urls")),
-    path("auth/", include("djoser.urls.jwt")),
-    path("shops/", include("shop.urls")),
+    path("authentication/", include("djoser.urls.jwt")),
+    #
+    path("authentication/", include("authentication.urls")),
+    # path("cashdesk/", include("cashdesk.urls")), # Note: It doesn't need routing
+    path("loans/", include("loan.urls")),
+    path("offers/", include("offer.urls")),
+    # path("products/", include("products.urls")),  # Note: It doesn't need routing
+    path("shop/", include("shop.urls")),
+    path("statistics/", include("statistic.urls")),
 ]

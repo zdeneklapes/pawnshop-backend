@@ -30,15 +30,7 @@ class CustomUserManager(BaseUserManager):
         if extra_fields.get("is_staff") is not True:
             raise ValueError("Superuser must have is_staff=True")
 
-        # return self.create_user(email, password, **extra_fields)
-
-        user = self.model(email=self.normalize_email(email))
-        user.set_password(password)
-        user.admin = True
-        user.staff = True
-        user.active = True
-        user.save(using=self._db)
-        return user
+        return self.create_user(email=email, password=password, **extra_fields)
 
 
 class User(AbstractUser):
@@ -96,69 +88,14 @@ class AttendantProfile(User):
 class CustomerProfile(models.Model):
     GENDERS_CHOICES = (("M", "Male"), ("F", "Female"))
 
+    # id
+    id_number_person = models.CharField(primary_key=True, max_length=255)
+
+    #
     full_name = models.CharField(max_length=255)
-    personal_identification_number = models.CharField(max_length=255, primary_key=True)
-    id_card_number = models.CharField(max_length=255)
-    id_card_number_expiration_date = models.DateField()
+    id_number_card = models.CharField(max_length=255)
+    id_number_card_expiration_date = models.DateField()
     residence = models.CharField(max_length=255)
     citizenship = models.CharField(max_length=255)
     place_of_birth = models.CharField(max_length=255)
     gender = models.CharField(max_length=1, choices=GENDERS_CHOICES)
-
-
-# class Statistics(models.Model):
-#     date = models.DateTimeField(auto_now_add=True)
-#     description = models.CharField(max_length=255)
-#     # TODO: FK of the object which has changed
-#
-#
-# class Product(models.Model):
-#     description = models.TextField()
-#     buy_price = models.PositiveIntegerField()
-#     sell_price = models.PositiveIntegerField()
-#     quantity = models.PositiveIntegerField(default=1)
-#     shop = models.ForeignKey(to=Shop, on_delete=models.CASCADE)
-#
-#     creation_date = models.DateTimeField(
-#         primary_key=True
-#     )  # when product was taken into custody
-#     extended_deadline_date = models.DateTimeField(
-#         null=True
-#     )  # when mortgage contract was extend
-#     end_date = models.DateTimeField(null=True)  # last day of contract
-#
-#
-# class MortgageContract(models.Model):
-#     # TODO: father wants ID as incrementing number,
-#     #  but there could be a problem, so ID+FROM_DATE must create Primary Key:
-#     #  e.g.: 1 customer have contract from 2022 and another customer will come
-#     #  in 2023 and because all contracts start from 00001 as year begins so the ids can become same
-#     # Source: https://stackoverflow.com/a/71909815/14471542
-#
-#     @classmethod
-#     def next_number(self):
-#         return self._base_manager.filter(date__year=now().year).count() + 1
-#
-#     num_contract_in_year = models.PositiveIntegerField(
-#         default=next_number, editable=False
-#     )
-#     creation_date = models.DateTimeField()  # when product was taken into custody
-#
-#     extended_deadline_date = models.DateTimeField(
-#         null=True
-#     )  # when mortgage contract was extend
-#     end_date = models.DateTimeField()  # last day of contract
-#
-#     buy_price = models.PositiveIntegerField()
-#     rate = models.DecimalField(max_digits=3, decimal_places=1)
-#     product = models.ForeignKey(to=Product, on_delete=models.CASCADE)
-#     person = models.ForeignKey(to=Customer, on_delete=models.CASCADE)
-#
-#     # Source: https://stackoverflow.com/a/16800384/14471542
-#     class Meta:
-#         constraints = [
-#             models.UniqueConstraint(
-#                 fields=["id", "creation_date"],
-#                 name="unique_id_creation_date_combination",
-#             )
-#         ]

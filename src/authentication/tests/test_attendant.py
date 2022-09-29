@@ -1,14 +1,7 @@
 from rest_framework.test import APITestCase
 
-# from . import models  # TODO: Why does this not working?
-# from shop.models import Shop  # TODO: Must be like this
 
-
-class TestGroupAllPermision:
-    pass
-
-
-class TestAttendantCreate(APITestCase):
+class TestAttendant(APITestCase):
     def test_user_is_authenticated_ok(self):
         self.assert_(False, "Not Implemented")
 

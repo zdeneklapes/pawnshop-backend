@@ -1,10 +1,10 @@
-from rest_framework import generics, permissions, status, viewsets
+from rest_framework import status, viewsets
 from rest_framework.response import Response
 
 from . import models, serializers
 
 
-class UserView(generics.GenericAPIView):
+class UserViewSet(viewsets.ModelViewSet):
     queryset = models.User.objects.all()
     serializer_class = serializers.UserSerializer
 
@@ -13,7 +13,8 @@ class UserView(generics.GenericAPIView):
 class AttendantProfileCreateViewSet(viewsets.ModelViewSet):
     queryset = models.AttendantProfile.objects.all()
     serializer_class = serializers.AttendantProfileSerializer
-    permission_classes = [permissions.IsAuthenticated, permissions.IsAdminUser]
+
+    # permission_classes = [permissions.IsAuthenticated, permissions.IsAdminUser]
 
     def create(self, request, *args, **kwargs):
         data = request.data
@@ -25,6 +26,6 @@ class AttendantProfileCreateViewSet(viewsets.ModelViewSet):
             return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-class CustomerProfileView(generics.GenericAPIView):
+class CustomerProfileViewSet(viewsets.ModelViewSet):
     queryset = models.CustomerProfile.objects.all()
     serializer_class = serializers.CustomerProfileSerializer
