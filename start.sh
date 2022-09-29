@@ -119,6 +119,12 @@ function start_django() {
     cd .. || error_exit "cd"
 }
 
+function django_createsuperuser() {
+    cd src || error_exit "cd"
+    python3 manage.py createsuperuser
+    cd .. || error_exit "cd"
+}
+
 # Main arguments loop
 [[ "$#" -eq 0 ]] && usage && exit 0
 while [ "$#" -gt 0 ]; do
@@ -130,6 +136,7 @@ while [ "$#" -gt 0 ]; do
     '--docker-show-ipaddress') docker_show_ipaddress ;;
     '--envs-to-samples') envs_to_samples ;;
     '--samples-to-envs') samples_to_envs ;;
+    '--django-createsuperuser') django_createsuperuser ;;
     '--start-django') start_django ;;
     '--tags') tags ;;
     '-h' | '--help') usage ;;

@@ -23,7 +23,7 @@ class AttendantProfileSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
     def validate(self, attrs):
-        if User.objects.filter(email=attrs["email"]).exists():
+        if self.Meta.model.objects.filter(email=attrs["email"]).exists():
             raise serializers.ValidationError(detail="User with email exists")
 
         if len(attrs["password"]) < 8:
@@ -36,7 +36,7 @@ class AttendantProfileSerializer(serializers.ModelSerializer):
         return super().validate(attrs)
 
     def create(self, validated_data):
-        user = User.objects.create(
+        user = self.Meta.model.objects.create(
             email=validated_data["email"],
             phone_number=validated_data["phone_number"],
         )

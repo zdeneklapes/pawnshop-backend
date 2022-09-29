@@ -1,4 +1,4 @@
-from rest_framework import generics, status
+from rest_framework import generics, permissions, status, viewsets
 from rest_framework.response import Response
 
 from . import models, serializers
@@ -9,11 +9,13 @@ class UserView(generics.GenericAPIView):
     serializer_class = serializers.UserSerializer
 
 
-class AttendantProfileCreateView(generics.GenericAPIView):
-    # queryset = models.AttendantProfile.objects.all()
+# class AttendantProfileCreateView(generics.GenericAPIView):
+class AttendantProfileCreateViewSet(viewsets.ModelViewSet):
+    queryset = models.AttendantProfile.objects.all()
     serializer_class = serializers.AttendantProfileSerializer
+    permission_classes = [permissions.IsAuthenticated, permissions.IsAdminUser]
 
-    def post(self, request):
+    def create(self, request, *args, **kwargs):
         data = request.data
         serializer = self.serializer_class(data=data)
         if serializer.is_valid():

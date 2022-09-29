@@ -1,9 +1,11 @@
-from django.urls import path
+from rest_framework import routers
 
 from . import views
 
 # Automatically find all url based on ViewSet (all?)
-# router = DefaultRouter()
-# router.register(prefix=r"signup", viewset=views.AttendantProfileCreateView.as_view())
+router = routers.DefaultRouter()
+router.register(prefix=r"signup", viewset=views.AttendantProfileCreateViewSet)
 
-urlpatterns = [path("signup/", views.AttendantProfileCreateView.as_view())]
+urlpatterns = (
+    router.urls
+)  # [path("signup/", views.AttendantProfileCreateView.as_view())]

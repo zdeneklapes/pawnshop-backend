@@ -30,27 +30,53 @@ class CustomUserManager(BaseUserManager):
         if extra_fields.get("is_staff") is not True:
             raise ValueError("Superuser must have is_staff=True")
 
-        return self.create_user(email, password, **extra_fields)
+        # return self.create_user(email, password, **extra_fields)
+
+        user = self.model(email=self.normalize_email(email))
+        user.set_password(password)
+        user.admin = True
+        user.staff = True
+        user.active = True
+        user.save(using=self._db)
+        return user
 
 
 class User(AbstractUser):
-    username = models.CharField(max_length=255, null=True, blank=True)
+    class Role(models.TextChoices):
+        ADMIN = "ADMIN", "Admin"
+        ATTENDANT = "ATTENDANT", "Attendant"
+        # CUSTOMER = "CUSTOMER", "Customer"
+
+    objects = CustomUserManager()
+
+    base_role = Role.ADMIN
+    role = models.CharField(max_length=50, choices=Role.choices)
+
+    username = None  # username = models.CharField(max_length=255, unique=True)  # null=True, blank=True)
+    first_name = None
+    last_name = None
+
     email = models.EmailField(max_length=255, unique=True)
     phone_number = PhoneNumberField(max_length=20, unique=True)
 
-    creation_date = models.DateTimeField(auto_now_add=True)
-    updated_date = models.DateTimeField(auto_now=True)
-
     date_joined = models.DateTimeField(auto_now_add=True)
+    date_update = models.DateTimeField(auto_now=True)
 
     USERNAME_FIELD = "email"
     EMAIL_FIELD = "email"
-    REQUIRED_FIELDS = [
-        ""
-    ]  # Note: Must be here, because this inherits from parent class and produce error
+
+    # Note: Must be here, otherwise produce error
+    REQUIRED_FIELDS = []
+
+    def save(self, *args, **kwargs):
+        if not self.pk:
+            self.role = self.base_role
+            return super().save(*args, **kwargs)
 
 
 class AttendantProfile(User):
+    base_role = User.Role.ATTENDANT
+
     action_edit_custom_user = models.BooleanField(default=False)
     action_detailed_stats = models.BooleanField(default=False)
     action_day_stats = models.BooleanField(default=False)
@@ -67,11 +93,11 @@ class AttendantProfile(User):
     action_have_access_to_shop = models.ManyToManyField(Shop, blank=True)
 
 
-class CustomerProfile(User):
+class CustomerProfile(models.Model):
     GENDERS_CHOICES = (("M", "Male"), ("F", "Female"))
 
-    personal_identification_number = models.CharField(max_length=255, primary_key=True)
     full_name = models.CharField(max_length=255)
+    personal_identification_number = models.CharField(max_length=255, primary_key=True)
     id_card_number = models.CharField(max_length=255)
     id_card_number_expiration_date = models.DateField()
     residence = models.CharField(max_length=255)
