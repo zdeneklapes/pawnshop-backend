@@ -125,6 +125,10 @@ function django_createsuperuser() {
     cd .. || error_exit "cd"
 }
 
+function custom_cloc() {
+   cloc --not-match-d=migrations --include-lang=Python src/
+}
+
 # Main arguments loop
 [[ "$#" -eq 0 ]] && usage && exit 0
 while [ "$#" -gt 0 ]; do
@@ -139,6 +143,7 @@ while [ "$#" -gt 0 ]; do
     '--django-createsuperuser') django_createsuperuser ;;
     '--start-django') start_django ;;
     '--tags') tags ;;
+    '--cloc') custom_cloc ;;
     '-h' | '--help') usage ;;
     esac
     shift
