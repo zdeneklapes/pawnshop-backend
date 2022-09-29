@@ -18,20 +18,6 @@ function error_exit() {
     exit 1
 }
 
-function usage() {
-    echo "USAGE:
-    '-c' | '--clean') clean ;;
-    '--rm-docker-images-volumes') rm_docker_images_volumes ;;
-    '--clean-django-migrations') clean_django_migrations ;;
-    '--build-up-docker') build_up_docker ;;
-    '--docker-show-ipaddress') docker_show_ipaddress ;;
-    '--envs-to-samples') envs_to_samples ;;
-    '--samples-to-envs') samples_to_envs ;;
-    '--tags') tags ;;
-    '-h' | '--help') usage ;;
-"
-}
-
 # Project
 function clean() {
     ${RM} *.zip
@@ -52,11 +38,8 @@ function tags() {
     cscope -Rb
 }
 
-function clean_django_migrations() {
-    for path in $(find src -type d -iname "migrations"); do
-        find "${path}" -type f | grep --invert-match "__init__.py" | xargs ${RM}
-    done
-    rm src/db.sqlite3
+function custom_cloc() {
+    cloc --not-match-d=migrations --include-lang=Python src/
 }
 
 # Docker
@@ -113,7 +96,8 @@ function samples_to_envs() {
     cd .. || error_exit "cd"
 }
 
-function start_django() {
+# Django
+function django_runserver() {
     cd src || error_exit "cd"
     ./entrypoint.sh 'local'
     cd .. || error_exit "cd"
@@ -125,25 +109,74 @@ function django_createsuperuser() {
     cd .. || error_exit "cd"
 }
 
-function custom_cloc() {
-   cloc --not-match-d=migrations --include-lang=Python src/
+function django_clean_migrations() {
+    for path in $(find src -type d -iname "migrations"); do
+        find "${path}" -type f | grep --invert-match "__init__.py" | xargs ${RM}
+    done
+    rm src/db.sqlite3
+}
+
+function django_test() {
+    cd src || error_exit "cd"
+    if [ "$1" == "" ]; then
+        python3 manage.py test
+    else
+        python3 manage.py test "$1"
+    fi
+    cd .. || error_exit "cd"
+}
+
+# Others
+function usage() {
+    echo "USAGE:
+    # Project
+    '-c' | '--clean') clean ;;
+    '--tags') tags ;;
+    '--cloc') custom_cloc ;;
+        # Docker
+    '--rm-docker-images-volumes') rm_docker_images_volumes ;;
+    '--build-up-docker') build_up_docker ;;
+    '--docker-show-ipaddress') docker_show_ipaddress ;;
+        # Env
+    '--envs-to-samples') envs_to_samples ;;
+    '--samples-to-envs') samples_to_envs ;;
+        # Django
+    '--runserver') django_runserver ;;
+    '--createsuperuser') django_createsuperuser ;;
+    '--clean-migrations') django_clean_migrations ;;
+    '--test')
+        shift
+        django_test \$1
+        ;;
+        # Others
+    '-h' | '--help') usage ;;
+"
 }
 
 # Main arguments loop
 [[ "$#" -eq 0 ]] && usage && exit 0
 while [ "$#" -gt 0 ]; do
     case "$1" in
+    # Project
     '-c' | '--clean') clean ;;
-    '--rm-docker-images-volumes') rm_docker_images_volumes ;;
-    '--clean-django-migrations') clean_django_migrations ;;
-    '--build-up-docker') build_up_docker ;;
-    '--docker-show-ipaddress') docker_show_ipaddress ;;
-    '--envs-to-samples') envs_to_samples ;;
-    '--samples-to-envs') samples_to_envs ;;
-    '--django-createsuperuser') django_createsuperuser ;;
-    '--start-django') start_django ;;
     '--tags') tags ;;
     '--cloc') custom_cloc ;;
+        # Docker
+    '--rm-docker-images-volumes') rm_docker_images_volumes ;;
+    '--build-up-docker') build_up_docker ;;
+    '--docker-show-ipaddress') docker_show_ipaddress ;;
+        # Env
+    '--envs-to-samples') envs_to_samples ;;
+    '--samples-to-envs') samples_to_envs ;;
+        # Django
+    '--runserver') django_runserver ;;
+    '--createsuperuser') django_createsuperuser ;;
+    '--clean-migrations') django_clean_migrations ;;
+    '--test')
+        shift
+        django_test $1
+        ;;
+        # Others
     '-h' | '--help') usage ;;
     esac
     shift
