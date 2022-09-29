@@ -9,11 +9,20 @@ class TestGroupAllPermision:
 
 
 class TestAttendantCreate(APITestCase):
-    def test_user_is_authenticated(self):
+    def test_user_is_authenticated_ok(self):
         self.assert_(False, "Not Implemented")
 
-    def test_user_is_allowed_to_create_attendant(self):
+    def test_user_is_authenticated_error(self):
         self.assert_(False, "Not Implemented")
 
-    def test_user_is_not_allowed_to_create_attendant(self):
+    def test_user_is_allowed_to_create_attendant_ok(self):
+        self.assert_(False, "Not Implemented")
+
+    def test_user_is_allowed_to_create_attendant_error(self):
+        self.assert_(False, "Not Implemented")
+
+    def test_user_creation_ok(self):
+        self.assert_(False, "Not Implemented")
+
+    def test_user_creation_error(self):
         self.assert_(False, "Not Implemented")

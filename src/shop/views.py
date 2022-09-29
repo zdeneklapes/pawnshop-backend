@@ -1,4 +1,4 @@
-from rest_framework import viewsets
+from rest_framework import permissions, viewsets
 
 from . import models, serializers
 
@@ -6,3 +6,4 @@ from . import models, serializers
 class ShopViewSet(viewsets.ModelViewSet):
     queryset = models.Shop.objects.all()
     serializer_class = serializers.ShopSerializer
+    permission_classes = [permissions.IsAuthenticated]
