@@ -69,19 +69,19 @@ class User(AbstractUser):
 class AttendantProfile(User):
     base_role = User.Role.ATTENDANT
 
-    action_edit_custom_user = models.BooleanField(default=False)
-    action_detailed_stats = models.BooleanField(default=False)
-    action_day_stats = models.BooleanField(default=False)
-    action_edit_subject = models.BooleanField(default=False)
-    action_edit_all_item = models.BooleanField(default=False)
-    action_edit_date = models.BooleanField(default=False)
-    action_edit_sell_price = models.BooleanField(default=False)
-    action_edit_cash_register = models.BooleanField(default=False)
-    action_can_divide = models.BooleanField(default=False)
-    action_move_to_pawnshop_tab = models.BooleanField(default=False)
-    action_complete_win = models.BooleanField(default=False)
-    action_getout_without_eet = models.BooleanField(default=False)
-    action_price_in_stats = models.BooleanField(default=False)
+    perm_edit_custom_user = models.BooleanField(default=False)
+    perm_detailed_stats = models.BooleanField(default=False)
+    perm_day_stats = models.BooleanField(default=False)
+    perm_edit_subject = models.BooleanField(default=False)
+    perm_edit_all_item = models.BooleanField(default=False)
+    perm_edit_date = models.BooleanField(default=False)
+    perm_edit_sell_price = models.BooleanField(default=False)
+    perm_edit_cash_register = models.BooleanField(default=False)
+    perm_can_divide_product = models.BooleanField(default=False)
+    perm_move_to_pawnshop_tab = models.BooleanField(default=False)
+    perm_complete_win = models.BooleanField(default=False)
+    perm_getout_without_eet = models.BooleanField(default=False)
+    perm_price_in_stats = models.BooleanField(default=False)
     action_have_access_to_shop = models.ManyToManyField(Shop, blank=True)
 
 
