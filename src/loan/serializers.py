@@ -17,6 +17,7 @@ class LoanSerializer(serializers.ModelSerializer):
         fields = ["user", "shop", "rate", "is_active", "product", "customer"]
 
     def create(self, validated_data):
+        """Source: https://stackoverflow.com/a/31008488/14471542"""
         # Product
         product_serializer = ProductSerializer(data=validated_data.pop("product"))
         product_serializer.is_valid(raise_exception=True)
