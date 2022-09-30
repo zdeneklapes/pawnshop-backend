@@ -1,12 +1,20 @@
-from rest_framework import status, viewsets
+from rest_framework import mixins, status, viewsets
 from rest_framework.response import Response
 
 from . import models, serializers
 
 
-class LoanViewSet(viewsets.ModelViewSet):
+class LoanViewSet(
+    mixins.ListModelMixin,
+    mixins.CreateModelMixin,
+    mixins.RetrieveModelMixin,
+    viewsets.GenericViewSet,
+):
     queryset = models.Loan.objects.all()
     serializer_class = serializers.LoanSerializer
+
+    def list(self, request, *args, **kwargs):
+        pass
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
@@ -16,3 +24,7 @@ class LoanViewSet(viewsets.ModelViewSet):
         return Response(
             serializer.data, status=status.HTTP_201_CREATED, headers=headers
         )
+        # return Response(status=status.HTTP_201_CREATED)
+
+    def retrieve(self, request, *args, **kwargs):
+        pass

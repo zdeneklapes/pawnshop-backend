@@ -9,11 +9,9 @@ class UserViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.UserSerializer
 
 
-# class AttendantProfileCreateView(generics.GenericAPIView):
 class AttendantProfileCreateViewSet(viewsets.ModelViewSet):
     queryset = models.AttendantProfile.objects.all()
     serializer_class = serializers.AttendantProfileSerializer
-
     # permission_classes = [permissions.IsAuthenticated, permissions.IsAdminUser]
 
     def create(self, request, *args, **kwargs):

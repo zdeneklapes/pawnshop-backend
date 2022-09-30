@@ -1,0 +1,28 @@
+[
+  {
+    "model": "authentication.customerprofile",
+    "pk": "000000/0000",
+    "fields": {
+      "full_name": "a a",
+      "id_card_number": "0000000000",
+      "id_card_number_expiration_date": "2023-09-29",
+      "residence": "Cejl 2",
+      "citizenship": "Brno",
+      "place_of_birth": "Brno",
+      "gender": "M"
+    }
+  },
+  {
+    "model": "authentication.customerprofile",
+    "pk": "000000/0100",
+    "fields": {
+      "full_name": "a b",
+      "id_card_number": "0000000000",
+      "id_card_number_expiration_date": "2023-09-29",
+      "residence": "Cejl 2",
+      "citizenship": "Brno",
+      "place_of_birth": "Brno",
+      "gender": "M"
+    }
+  }
+]

@@ -126,6 +126,18 @@ function django_test() {
     cd .. || error_exit "cd"
 }
 
+function django_loaddata() {
+    django_clean_migrations
+    cd src || error_exit "cd"
+    python3 manage.py makemigrations
+    python3 manage.py migrate
+    python3 manage.py loaddata "authentication/fixtures/users.json"
+    for data in $(find $(find . -type d -iname "fixtures") -type f -iname "*.json");do
+        python3 manage.py loaddata ${data}
+    done
+    cd .. || error_exit "cd"
+}
+
 # Others
 function usage() {
     echo "USAGE:
@@ -172,6 +184,7 @@ while [ "$#" -gt 0 ]; do
     '--runserver') django_runserver ;;
     '--createsuperuser') django_createsuperuser ;;
     '--clean-migrations') django_clean_migrations ;;
+    '--loaddata') django_loaddata ;;
     '--test')
         shift
         django_test $1

@@ -54,6 +54,17 @@ class AttendantProfileSerializer(serializers.ModelSerializer):
 
 
 class CustomerProfileSerializer(serializers.ModelSerializer):
+    id_person_number = serializers.CharField(max_length=255, validators=[])
+
     class Meta:
         model = models.CustomerProfile
         fields = "__all__"
+        # extra_kwargs = {
+        #     "customer": {"validators": []}
+        # }
+
+    # def create(self, validated_data):
+    #     try:
+    #         return self.Meta.model.objects.get(id_person_number=validated_data['id_person_number'])
+    #     except ObjectDoesNotExist:
+    #         return super(CustomerProfileSerializer, self).create(validated_data)

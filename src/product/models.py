@@ -1,13 +1,8 @@
 from django.db import models
 
-from authentication.models import CustomerProfile
-from shop.models import Shop
-
 
 class Product(models.Model):
     #
-    person = models.OneToOneField(to=CustomerProfile, on_delete=models.CASCADE)
-    shop = models.OneToOneField(to=Shop, on_delete=models.CASCADE)
     is_active = models.BooleanField(default=True)
 
     #

@@ -88,13 +88,10 @@ class AttendantProfile(User):
 class CustomerProfile(models.Model):
     GENDERS_CHOICES = (("M", "Male"), ("F", "Female"))
 
-    # id
-    id_number_person = models.CharField(primary_key=True, max_length=255)
-
-    #
+    id_person_number = models.CharField(primary_key=True, max_length=255)
     full_name = models.CharField(max_length=255)
-    id_number_card = models.CharField(max_length=255)
-    id_number_card_expiration_date = models.DateField()
+    id_card_number = models.CharField(max_length=255)
+    id_card_number_expiration_date = models.DateField()
     residence = models.CharField(max_length=255)
     citizenship = models.CharField(max_length=255)
     place_of_birth = models.CharField(max_length=255)
