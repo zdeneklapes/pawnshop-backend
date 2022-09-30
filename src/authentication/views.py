@@ -1,29 +1,28 @@
-from rest_framework import status, viewsets
-from rest_framework.response import Response
+from rest_framework import mixins, viewsets
 
 from . import models, serializers
 
 
-class UserViewSet(viewsets.ModelViewSet):
+class UserViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
     queryset = models.User.objects.all()
     serializer_class = serializers.UserSerializer
 
 
-class AttendantProfileCreateViewSet(viewsets.ModelViewSet):
+class AttendantProfileCreateViewSet(
+    mixins.ListModelMixin,
+    mixins.CreateModelMixin,
+    mixins.RetrieveModelMixin,
+    mixins.UpdateModelMixin,
+    mixins.DestroyModelMixin,
+    viewsets.GenericViewSet,
+):
     queryset = models.AttendantProfile.objects.all()
     serializer_class = serializers.AttendantProfileSerializer
     # permission_classes = [permissions.IsAuthenticated, permissions.IsAdminUser]
 
-    def create(self, request, *args, **kwargs):
-        data = request.data
-        serializer = self.serializer_class(data=data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(data=serializer.data, status=status.HTTP_201_CREATED)
-        else:
-            return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-
-class CustomerProfileViewSet(viewsets.ModelViewSet):
+class CustomerProfileViewSet(
+    mixins.ListModelMixin, mixins.UpdateModelMixin, viewsets.GenericViewSet
+):
     queryset = models.CustomerProfile.objects.all()
     serializer_class = serializers.CustomerProfileSerializer

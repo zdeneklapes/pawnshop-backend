@@ -14,6 +14,26 @@ class LoanSerializer(WritableNestedModelSerializer):
         model = models.Loan
         fields = ["user", "shop", "rate", "is_active", "product", "customer"]
 
+    def update(self, instance, validated_data):
+        pass
+        # instance.nr = validated_data.get('', instance.nr)
+        # instance.title = validated_data.get('title', instance.title)
+        # instance.save()
+        #
+        # items = validated_data.get('items')
+        #
+        # for item in items:
+        #     item_id = item.get('id', None)
+        #     if item_id:
+        #         inv_item = InvoiceItem.objects.get(id=item_id, invoice=instance)
+        #         inv_item.name = item.get('name', inv_item.name)
+        #         inv_item.price = item.get('price', inv_item.price)
+        #         inv_item.save()
+        #     else:
+        #         InvoiceItem.objects.create(account=instance, **item)
+        #
+        # return instance
+
     # def create(self, validated_data):
     #     """Source: https://stackoverflow.com/a/31008488/14471542"""
     #     # Product

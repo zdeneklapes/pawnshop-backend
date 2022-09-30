@@ -8,7 +8,6 @@ from rest_framework.test import (
     APIClient,
     APIRequestFactory,
     APITestCase,
-    force_authenticate,
 )
 
 from config.settings import BASE_DIR
@@ -61,10 +60,8 @@ class TestLoan(APITestCase):
     #     self.assert_(False, "Not Implemented")
 
     def test_list(self):
-        request = self.factory.get("/loan/")
-        force_authenticate(request, user=self.user, token=self.user.auth_token)
-        response = self.view(request)
-        self.assertEqual(response.status, status.HTTP_200_OK)
+        response = self.client.get("/loans/")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_create(self):
         response: Response = self.client.post(
@@ -72,7 +69,7 @@ class TestLoan(APITestCase):
             data={
                 "user": 1,
                 "shop": 1,
-                "rate": "5",
+                "rate": "3",
                 "is_active": True,
                 "product": {
                     "is_active": True,
@@ -80,12 +77,19 @@ class TestLoan(APITestCase):
                     "buy_price": 0,
                     "sell_price": 0,
                     "quantity": 0,
-                    "date_create": "2022-09-29T23:44:23.686Z",
-                    "date_extended_deadline": "2022-09-29T23:44:23.686Z",
-                    "date_end": "2022-09-29T23:44:23.686Z",
+                    "date_create": "2022-09-30T12:19:50.724Z",
+                    "date_extended_deadline": "2022-09-30T12:19:50.724Z",
+                    "date_end": "2022-09-30T12:19:50.724Z",
                 },
                 "customer": {
-                    "id_person_number": "000000/0000",
+                    "id_person_number": "string",
+                    "full_name": "string",
+                    "id_card_number": "string",
+                    "id_card_number_expiration_date": "2022-09-30",
+                    "residence": "string",
+                    "citizenship": "string",
+                    "place_of_birth": "string",
+                    "gender": "M",
                 },
             },
             format="json",
@@ -93,4 +97,5 @@ class TestLoan(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
     def test_retrieve(self):
-        self.assert_(False, "Not Implemented")
+        response = self.client.get("/loans/1/")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)

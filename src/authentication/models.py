@@ -69,20 +69,33 @@ class User(AbstractUser):
 class AttendantProfile(User):
     base_role = User.Role.ATTENDANT
 
+    # Customer
     perm_edit_custom_user = models.BooleanField(default=False)
-    perm_detailed_stats = models.BooleanField(default=False)
-    perm_day_stats = models.BooleanField(default=False)
-    perm_edit_subject = models.BooleanField(default=False)
-    perm_edit_all_item = models.BooleanField(default=False)
-    perm_edit_date = models.BooleanField(default=False)
+
+    # Cashdesk
+    perm_edit_cash_desk = models.BooleanField(default=False)
+
+    # Loan
+    perm_move_loan_to_offer = models.BooleanField(default=False)
+    perm_sell_offer_without_eet = models.BooleanField(default=False)
+    perm_divide_product = models.BooleanField(default=False)  # TODO: Later
+
+    # Product
     perm_edit_sell_price = models.BooleanField(default=False)
-    perm_edit_cash_register = models.BooleanField(default=False)
-    perm_can_divide_product = models.BooleanField(default=False)
-    perm_move_to_pawnshop_tab = models.BooleanField(default=False)
-    perm_complete_win = models.BooleanField(default=False)
-    perm_getout_without_eet = models.BooleanField(default=False)
-    perm_price_in_stats = models.BooleanField(default=False)
-    action_have_access_to_shop = models.ManyToManyField(Shop, blank=True)
+    perm_edit_date = models.BooleanField(default=False)
+    perm_edit_subject = models.BooleanField(default=False)
+    perm_edit_all_item = models.BooleanField(default=False)  # TODO: For what?
+
+    # Statistic
+    perm_see_price_in_stats = models.BooleanField(default=False)
+    perm_daily_stats = models.BooleanField(default=False)
+    perm_yield_stats = models.BooleanField(default=False)
+
+    # Shop
+    perm_operate_on_shop = models.ManyToManyField(Shop, blank=True)
+
+    # Others
+    perm_complete_win = models.BooleanField(default=False)  # TODO: For what?
 
 
 class CustomerProfile(models.Model):
