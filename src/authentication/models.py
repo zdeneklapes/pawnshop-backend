@@ -37,20 +37,22 @@ class User(AbstractUser):
     class Role(models.TextChoices):
         ADMIN = "ADMIN", "Admin"
         ATTENDANT = "ATTENDANT", "Attendant"
-        # CUSTOMER = "CUSTOMER", "Customer"
 
     objects = CustomUserManager()
 
     base_role = Role.ADMIN
     role = models.CharField(max_length=50, choices=Role.choices)
 
-    username = None  # username = models.CharField(max_length=255, unique=True)  # null=True, blank=True)
+    # Login via email & password (Switch these off)
+    username = None
     first_name = None
     last_name = None
 
+    # Auth field
     email = models.EmailField(max_length=255, unique=True)
     phone_number = PhoneNumberField(max_length=20, unique=True)
 
+    # Date
     date_joined = models.DateTimeField(auto_now_add=True)
     date_update = models.DateTimeField(auto_now=True)
 

@@ -10,6 +10,7 @@ class CashDesk(models.Model):
     shop = models.OneToOneField(to=Shop, on_delete=models.CASCADE)
 
     #
+    actual_amount = models.IntegerField()
     change = models.IntegerField()
 
     #

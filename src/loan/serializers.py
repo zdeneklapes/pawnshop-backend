@@ -4,6 +4,8 @@ from authentication.serializers import CustomerProfileSerializer
 from product.serializers import ProductSerializer
 
 from . import models
+from authentication.models import CustomerProfile, User
+from product.models import Product
 
 
 class LoanSerializer(WritableNestedModelSerializer):
@@ -15,46 +17,28 @@ class LoanSerializer(WritableNestedModelSerializer):
         fields = ["user", "shop", "rate", "is_active", "product", "customer"]
 
     def update(self, instance, validated_data):
-        pass
-        # instance.nr = validated_data.get('', instance.nr)
-        # instance.title = validated_data.get('title', instance.title)
-        # instance.save()
-        #
-        # items = validated_data.get('items')
-        #
-        # for item in items:
-        #     item_id = item.get('id', None)
-        #     if item_id:
-        #         inv_item = InvoiceItem.objects.get(id=item_id, invoice=instance)
-        #         inv_item.name = item.get('name', inv_item.name)
-        #         inv_item.price = item.get('price', inv_item.price)
-        #         inv_item.save()
-        #     else:
-        #         InvoiceItem.objects.create(account=instance, **item)
-        #
-        # return instance
+        # User which created request
+        request_user = User.objects.get(email=self.context["request"].user)
 
-    # def create(self, validated_data):
-    #     """Source: https://stackoverflow.com/a/31008488/14471542"""
-    #     # Product
-    #     product_serializer = ProductSerializer(data=validated_data.pop("product"))
-    #     product_serializer.is_valid(raise_exception=True)
-    #     validated_data["product"] = product_serializer.save()
-    #
-    #     # Customer
-    #     customer = validated_data.pop("customer")
-    #     try:
-    #         customer = CustomerProfile.objects.get(
-    #             id_person_number=customer.get("id_person_number")
-    #         )
-    #     except (ObjectDoesNotExist, AttributeError):
-    #         customer_serializer = CustomerProfileSerializer(data=customer)
-    #         customer_serializer.is_valid(raise_exception=True)
-    #         customer = customer_serializer.save()
-    #     else:
-    #         validated_data["customer"] = customer
-    #
-    #     return super(LoanSerializer, self).create(validated_data)
-    #
-    # def update(self, instance, validated_data):
-    #     pass
+        # Customer
+        instance_customer, _ = CustomerProfile.objects.update_or_create(
+            id_person_number=instance.customer.id_person_number
+        )
+        instance.customer = instance_customer
+
+        # Product
+        validated_data_product = validated_data["product"]
+        instance_product = Product.objects.get(id=instance.product.id)
+        instance_product.is_active = validated_data_product["is_active"]
+
+        if request_user.is_staff:
+            instance_product.description = validated_data_product["description"]
+
+        instance_product.save()
+
+        # Loan
+        instance.shop = validated_data["shop"]
+        instance.rate = validated_data["rate"]
+        instance.save()
+
+        return instance
