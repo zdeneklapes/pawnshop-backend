@@ -35,8 +35,7 @@ class LoanSerializer(serializers.ModelSerializer):
         else:
             validated_data["customer"] = customer
 
-        # return super(LoanSerializer, self).create(validated_data)
-        return self.Meta.model.objects.create(**validated_data)
+        return super(LoanSerializer, self).create(validated_data)
 
     def update(self, instance, validated_data):
         pass
