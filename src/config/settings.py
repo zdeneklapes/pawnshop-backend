@@ -1,21 +1,18 @@
 import os
 from datetime import timedelta
-from os import path
 from pathlib import Path
-
-from dotenv import load_dotenv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 ROOT_DIR = Path(__file__).resolve().parent.parent.parent
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Env
-if load_dotenv(path.join(ROOT_DIR, "env", ".env.local")):
-    print("ENV: local")
-elif load_dotenv(path.join(ROOT_DIR, "env", ".env.heroku")):
-    print("ENV: heroku")
-else:  # Docker, because env folder nto available
-    print("ENV: docker")
+# if load_dotenv(path.join(ROOT_DIR, "env", ".env.local")):
+#     print("ENV: local")
+# elif load_dotenv(path.join(ROOT_DIR, "env", ".env.heroku")):
+#     print("ENV: heroku")
+# else:  # Docker, because env folder nto available
+#     print("ENV: docker")
 
 # Django Settings
 SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY", "development")

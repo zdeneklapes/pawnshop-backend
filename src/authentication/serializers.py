@@ -54,7 +54,7 @@ class AttendantProfileSerializer(serializers.ModelSerializer):
 
 
 class CustomerProfileSerializer(serializers.ModelSerializer):
-    id_person_number = serializers.CharField(max_length=255, validators=[])
+    id_person_number = serializers.CharField(max_length=255)
 
     class Meta:
         model = models.CustomerProfile
