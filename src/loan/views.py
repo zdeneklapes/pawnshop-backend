@@ -1,4 +1,4 @@
-from rest_framework import mixins, permissions, response, viewsets
+from rest_framework import mixins, permissions, response, viewsets, decorators
 
 from . import models, serializers
 from product.models import Product
@@ -11,14 +11,14 @@ class LoanViewSet(
     mixins.UpdateModelMixin,
     viewsets.GenericViewSet,
 ):
-    queryset = models.Loan.before_maturity.before_maturity()
+    queryset = models.Loan.objects.all()
     serializer_class = serializers.LoanSerializer
     permission_classes = [permissions.IsAuthenticated]
 
-    # def get_queryset(self):
-
     def list(self, request, *args, **kwargs):
-        queryset = self.filter_queryset(self.get_queryset())
+        queryset = (
+            models.Loan.before_maturity.before_maturity()
+        )  # self.filter_queryset(self.get_queryset())
         page = self.paginate_queryset(queryset)
         if page is not None:
             serializer = self.get_serializer(page, many=True)
@@ -36,18 +36,20 @@ class LoanViewSet(
         serializer = self.get_serializer(instance)
         return response.Response(serializer.data)
 
-    # @decorators.action("put", detail=True)
-    # def extend_date(self, request, pk=None):
-    #     pass
+    @decorators.action("put", detail=True)
+    def extend_date(self, request, pk=None):
+        pass
 
 
 class LoanAfterMaturityViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
-    queryset = models.Loan.after_maturity.after_maturity()
+    queryset = models.Loan.objects.all()  # after_maturity.after_maturity()
     serializer_class = serializers.LoanSerializer
     permission_classes = [permissions.IsAuthenticated]
 
     def list(self, request, *args, **kwargs):
-        queryset = self.filter_queryset(self.get_queryset())
+        queryset = (
+            models.Loan.after_maturity.after_maturity()
+        )  # self.filter_queryset(self.get_queryset())
         page = self.paginate_queryset(queryset)
         if page is not None:
             serializer = self.get_serializer(page, many=True)
