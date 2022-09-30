@@ -3,6 +3,7 @@
     "model": "loan.loan",
     "pk": 1,
     "fields": {
+      "date_created": null,
       "user": 1,
       "product": 1,
       "customer": "000000/0000",
@@ -16,6 +17,7 @@
     "model": "loan.loan",
     "pk": 2,
     "fields": {
+      "date_created": null,
       "user": 2,
       "product": 2,
       "customer": "000000/0000",

@@ -16,7 +16,8 @@ class LoanBeforeMaturityManager(models.Manager):
     def before_maturity(self):
         startdate = date.today() - timedelta(weeks=4)
 
-        qs_products = Product.objects.filter(date_create__gte=startdate)
+        qs_products = (Product.objects.filter(date_create__gte=startdate)
+                      | Product.objects.filter(date_extended_deadline__gte=startdate))
         qs_loans = (
             super(LoanBeforeMaturityManager, self)
             .get_queryset()
@@ -61,3 +62,14 @@ class Loan(models.Model):
     #
     id_for_year = models.PositiveIntegerField(default=next_number, editable=False)
     rate = models.DecimalField(max_digits=4, decimal_places=1)
+
+    date_created = models.DateTimeField(auto_now_add=True, null=True)
+
+
+
+
+
+
+
+
+

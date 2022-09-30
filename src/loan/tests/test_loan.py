@@ -10,9 +10,10 @@ from rest_framework.test import (
     APITestCase,
 )
 
-from config.settings import BASE_DIR
+from rest_framework_simplejwt.tokens import RefreshToken
 
-User = get_user_model()
+from config.settings import BASE_DIR
+from authentication.models import User
 
 APP_DIR = Path(__file__).parent.parent
 FIXTURES = [
@@ -28,58 +29,41 @@ FIXTURES = [
 ]
 
 
+def api_client():
+    user = User.objects.create_superuser(email='aaaa@a.com', password='a', phone_number="+420777666777")
+    client = APIClient()
+    refresh = RefreshToken.for_user(user)
+    client.credentials(HTTP_AUTHORIZATION=f'Bearer {refresh.access_token}')
+    return client
+
+
 class TestLoan(APITestCase):
     fixtures = FIXTURES
 
     def setUp(self) -> None:
-        self.factory = APIRequestFactory()
-        # self.user = User.objects.create_user()
-        # self.view = LoanViewSet.as_view()
-        self.client = APIClient()
-        self.client.force_authenticate(user=None)
+        self.client = api_client()
 
-    # def test_create_unauthenticated_loan(self):
-    #     self.assert_(False, "Not Implemented")
-    #
-    # def test_create_authenticated_loan(self):
-    #     self.assert_(False, "Not Implemented")
-    #
-    # def test_cancel_load_return_product(self):
-    #     self.assert_(False, "Not Implemented")
-    #
-    # def test_loan_one_day_after_date_end(self):
-    #     self.assert_(False, "Not Implemented")
-    #
-    # def test_loan_more_than_one_day_after_date_end(self):
-    #     self.assert_(False, "Not Implemented")
-    #
-    # def test_loan_extend_date(self):
-    #     self.assert_(False, "Not Implemented")
-    #
-    # def test_loan_sell_price_for_each_week(self):
-    #     self.assert_(False, "Not Implemented")
-
+    # GET: /loans/
     def test_list(self):
         response = self.client.get("/loans/")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
+    # POST: /loans/
     def test_create(self):
         response: Response = self.client.post(
             path="/loans/",
             data={
                 "user": 1,
                 "shop": 1,
-                "rate": "3",
+                "rate": "4",
                 "is_active": True,
                 "product": {
-                    "is_active": True,
                     "description": "string",
                     "buy_price": 0,
                     "sell_price": 0,
                     "quantity": 0,
-                    "date_create": "2022-09-30T12:19:50.724Z",
-                    "date_extended_deadline": "2022-09-30T12:19:50.724Z",
-                    "date_end": "2022-09-30T12:19:50.724Z",
+                    "date_extended_deadline": None,
+                    "date_end": None,
                 },
                 "customer": {
                     "id_person_number": "string",
@@ -89,13 +73,22 @@ class TestLoan(APITestCase):
                     "residence": "string",
                     "citizenship": "string",
                     "place_of_birth": "string",
-                    "gender": "M",
-                },
+                    "gender": "M"
+                }
             },
             format="json",
         )
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
+    # GET /loans/{id}
     def test_retrieve(self):
         response = self.client.get("/loans/1/")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    # GET /loans/after-maturity/
+    def test_update_customer(self):
+        self.assert_(False, "Not Implemented")
+
+    # GET /loans/extend-date/{id}/
+    def test_extend_date(self):
+        self.assert_(False, "Not Implemented")

@@ -21,7 +21,14 @@ class Product(models.Model):
     date_end = models.DateTimeField(null=True)  # return/sell
 
     def update_sell_price_based_on_week(self, rate) -> models.Model:
-        d1 = date(self.date_create.year, self.date_create.month, self.date_create.day)
+        if self.date_extended_deadline:
+            d1 = date(self.date_extended_deadline.year,
+                      self.date_extended_deadline.month,
+                      self.date_extended_deadline.day)
+        else:
+            d1 = date(self.date_create.year,
+                      self.date_create.month,
+                      self.date_create.day)
         d2 = date.today()
         weeks = (d2 - d1).days // 7 + 1
         sell_price = (float(rate) / 100) * weeks * self.buy_price + self.buy_price
