@@ -1,3 +1,4 @@
+from rest_framework import exceptions
 from drf_writable_nested import WritableNestedModelSerializer
 
 from authentication.serializers import CustomerProfileSerializer
@@ -16,29 +17,42 @@ class LoanSerializer(WritableNestedModelSerializer):
         model = models.Loan
         fields = ["user", "shop", "rate", "is_active", "product", "customer"]
 
-    def update(self, instance, validated_data):
-        # User which created request
-        request_user = User.objects.get(email=self.context["request"].user)
-
+    def update_helper_attendant(self, instance, validated_data):
         # Customer
         instance_customer, _ = CustomerProfile.objects.update_or_create(
-            id_person_number=instance.customer.id_person_number
+            **validated_data["customer"]
         )
         instance.customer = instance_customer
+        return instance
 
-        # Product
+    def update_helper_admin(self, instance, validated_data):
+        request_from_user = User.objects.get(email=self.context["request"].user)
         validated_data_product = validated_data["product"]
         instance_product = Product.objects.get(id=instance.product.id)
-        instance_product.is_active = validated_data_product["is_active"]
 
-        if request_user.is_staff:
+        # Product
+        if request_from_user.is_staff:
             instance_product.description = validated_data_product["description"]
+            instance_product.save()
 
-        instance_product.save()
+    def update_helper(self, instance, validated_data):
+        self.update_helper_admin(instance, validated_data)
+        return self.update_helper_attendant(instance, validated_data)
 
-        # Loan
-        instance.shop = validated_data["shop"]
-        instance.rate = validated_data["rate"]
+    def update(self, instance, validated_data):
+        # Already payed loan
+        if not instance.is_active:
+            raise exceptions.PermissionDenied("Non active loans can't be updated")
+
+        # Customer is paying loan now
+        if instance.is_active and validated_data["is_active"] == False:
+            instance.is_active = False
+            Product.objects.get(id=instance.product).update_sell_price_based_on_week(
+                rate=instance.rate
+            )
+            # Product.update_sell_price_based_on_week(product_id=instance.product, rate=instance.rate)
+
+        # Else Update loan
+        instance = self.update_helper(instance, validated_data)
         instance.save()
-
         return instance

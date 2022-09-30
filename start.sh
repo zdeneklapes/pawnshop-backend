@@ -131,13 +131,17 @@ function django_loaddata() {
     cd src || error_exit "cd"
     python3 manage.py makemigrations
     python3 manage.py migrate
-    python3 manage.py loaddata "./authentication/fixtures/users.json"
-    python3 manage.py loaddata "./authentication/fixtures/attendants.json"
-    python3 manage.py loaddata "./authentication/fixtures/customers.json"
-    python3 manage.py loaddata "./shop/fixtures/shops.json"
-    python3 manage.py loaddata "./product/fixtures/products.json"
-    python3 manage.py loaddata "./loan/fixtures/loans.json"
-    echo "$(find $(find . -type d -iname 'fixtures') -type f -iname '*.json')"
+
+    for fixture in "./authentication/fixtures/users.json" \
+                   "./authentication/fixtures/attendants.json" \
+                   "./authentication/fixtures/customers.json" \
+                   "./shop/fixtures/shops.json" \
+                   "./product/fixtures/products.json" \
+                   "./loan/fixtures/loans.json"; do
+        printf "${fixture}  ==  "
+        python3 manage.py loaddata ${fixture}
+    done
+#    echo "$(find $(find . -type d -iname 'fixtures') -type f -iname '*.json')"
     cd .. || error_exit "cd"
 }
 

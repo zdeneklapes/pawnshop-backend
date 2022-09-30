@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta, date
 
 from django.db import models
 
@@ -12,8 +12,44 @@ def next_number():
     return Loan.objects.filter(date_created__year=datetime.now().year).count() + 1
 
 
+class LoanBeforeMaturityManager(models.Manager):
+    def before_maturity(self):
+        startdate = date.today() - timedelta(weeks=4)
+
+        qs_products = Product.objects.filter(date_create__gte=startdate)
+        qs_loans = (
+            super(LoanBeforeMaturityManager, self)
+            .get_queryset()
+            .filter(product__in=qs_products.values("id"), is_active=True)
+        )
+        for loan in qs_loans:
+            Product.objects.get(id=loan.product.id).update_sell_price_based_on_week(
+                rate=loan.rate
+            )
+
+        return (
+            super(LoanBeforeMaturityManager, self)
+            .get_queryset()
+            .filter(product__in=qs_products.values("id"), is_active=True)
+        )
+
+
+class LoanAfterMaturityManager(models.Manager):
+    def after_maturity(self):
+        startdate = date.today() - timedelta(weeks=4)
+        qs_products = Product.objects.filter(date_create__lt=startdate)
+        return (
+            super(LoanAfterMaturityManager, self)
+            .get_queryset()
+            .filter(product__in=qs_products.values("id"), is_active=True)
+        )
+
+
 class Loan(models.Model):
-    date_created = models.DateTimeField(auto_now_add=True)
+    # Managers
+    objects = models.Manager()
+    before_maturity = LoanBeforeMaturityManager()
+    after_maturity = LoanAfterMaturityManager()
 
     #
     user = models.ForeignKey(to=User, on_delete=models.CASCADE)
