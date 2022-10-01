@@ -30,22 +30,21 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    # "whitenoise",
     #
     "drf_yasg",
     "rest_framework",
-    # "djoser",
     "rest_framework_simplejwt",
-    "django_cron",
     #
     "authentication",
-    "cashdesk",
-    # "product",
-    # "offer",
     "product",
     "shop",
     "statistic",
 ]
+# "rest_framework_swagger",
+# "djoser",
+# "django_cron",
+# "product",
+# "offer",
 
 REST_FRAMEWORK = {
     "NON_FIELD_ERRORS_KEY": "errors",
@@ -166,6 +165,9 @@ TIME_ZONE = "UTC"
 USE_I18N = True
 USE_TZ = True
 STATIC_URL = "static/"
+# STATICFILES_DIR = [
+#     os.path.join(BASE_DIR, 'static'),
+# ]
 # STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 # STATIC_ROOT = BASE_DIR
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
