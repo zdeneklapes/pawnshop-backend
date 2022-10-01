@@ -30,6 +30,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    # "whitenoise",
     #
     "rest_framework",
     "drf_yasg",
@@ -166,6 +167,8 @@ TIME_ZONE = "UTC"
 USE_I18N = True
 USE_TZ = True
 STATIC_URL = "static/"
+# STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+# STATIC_ROOT = BASE_DIR
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 # ADMINS = []

@@ -18,30 +18,6 @@ function error_exit() {
     exit 1
 }
 
-# Project
-function clean() {
-    ${RM} *.zip
-
-    # Folders
-    for folder in "venv" "__pycache__"; do
-        find . -type d -iname "${folder}" | xargs "${RM}"
-    done
-
-    # Files
-    for file in ".DS_Store" "*.log"; do
-        find . -type f -iname "${file}" | xargs "${RM}"
-    done
-}
-
-function tags() {
-    ctags -R .
-    cscope -Rb
-}
-
-function custom_cloc() {
-    cloc --not-match-d=migrations --include-lang=Python src/
-}
-
 # Docker
 function build_up_docker() {
     docker-compose -f docker-compose.yaml up --build
@@ -172,14 +148,36 @@ function usage() {
 "
 }
 
+# Project
+function clean() {
+    ${RM} *.zip
+
+    # Folders
+    for folder in "venv" "__pycache__"; do
+        find . -type d -iname "${folder}" | xargs "${RM}"
+    done
+
+    # Files
+    for file in ".DS_Store" "*.log"; do
+        find . -type f -iname "${file}" | xargs "${RM}"
+    done
+
+    django_clean_migrations
+}
+
+function tags() {
+    ctags -R .
+    cscope -Rb
+}
+
+function custom_cloc() {
+    cloc --not-match-d=migrations --include-lang=Python src/
+}
+
 # Main arguments loop
 [[ "$#" -eq 0 ]] && usage && exit 0
 while [ "$#" -gt 0 ]; do
     case "$1" in
-    # Project
-    '-c' | '--clean') clean ;;
-    '--tags') tags ;;
-    '--cloc') custom_cloc ;;
         # Docker
     '--rm-docker-images-volumes') rm_docker_images_volumes ;;
     '--build-up-docker') build_up_docker ;;
@@ -198,6 +196,10 @@ while [ "$#" -gt 0 ]; do
         ;;
         # Others
     '-h' | '--help') usage ;;
+    # Project
+    '-c' | '--clean') clean ;;
+    '--tags') tags ;;
+    '--cloc') custom_cloc ;;
     esac
     shift
 done
