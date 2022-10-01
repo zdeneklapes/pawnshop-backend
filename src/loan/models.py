@@ -19,17 +19,18 @@ class LoanManager(models.Manager):
         return startdate
 
     def before_maturity(self):
-        qs_products = (Product.objects.filter(date_create__gte=self.start_date)
-                       | Product.objects.filter(date_extended_deadline__gte=self.start_date))
-        qs_loans = (
-            super(LoanManager, self)
-            .get_queryset()
-            .filter(product__in=qs_products.values("id"), is_active=True)
-        )
-        for loan in qs_loans:
-            Product.objects.get(id=loan.product.id).update_sell_price_based_on_week(
-                rate=loan.rate
-            )
+        qs_products = Product.objects.filter(
+            date_create__gte=self.start_date
+        ) | Product.objects.filter(date_extended_deadline__gte=self.start_date)
+        # qs_loans = (
+        #     super(LoanManager, self)
+        #     .get_queryset()
+        #     .filter(product__in=qs_products.values("id"), is_active=True)
+        # )
+        # for loan in qs_loans:
+        #     Product.objects.get(id=loan.product.id).update_sell_price_based_on_week(
+        #         rate=loan.rate
+        #     )
 
         return (
             super(LoanManager, self)
@@ -38,17 +39,18 @@ class LoanManager(models.Manager):
         )
 
     def after_maturity(self):
-        qs_products = (Product.objects.filter(date_create__lt=self.start_date)
-                       | Product.objects.filter(date_extended_deadline__lt=self.start_date))
-        qs_loans = (
-            super(LoanManager, self)
-            .get_queryset()
-            .filter(product__in=qs_products.values("id"), is_active=True)
-        )
-        for loan in qs_loans:
-            Product.objects.get(id=loan.product.id).update_sell_price_based_on_week(
-                rate=loan.rate
-            )
+        qs_products = Product.objects.filter(
+            date_create__lt=self.start_date
+        ) | Product.objects.filter(date_extended_deadline__lt=self.start_date)
+        # qs_loans = (
+        #     super(LoanManager, self)
+        #     .get_queryset()
+        #     .filter(product__in=qs_products.values("id"), is_active=True)
+        # )
+        # for loan in qs_loans:
+        #     Product.objects.get(id=loan.product.id).update_sell_price_based_on_week(
+        #         rate=loan.rate
+        #     )
         return (
             super(LoanManager, self)
             .get_queryset()
