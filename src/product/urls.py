@@ -5,6 +5,7 @@ from .views import views_base
 # from .views import views_extend_date
 
 router = DefaultRouter()
+router.register(prefix=r"", viewset=views_base.CreateProduct)
 router.register(prefix=r"loans", viewset=views_base.LoanViewSet)
 router.register(prefix=r"offers", viewset=views_base.OfferViewSet)
 router.register(prefix=r"after-maturity", viewset=views_base.AfterMaturityViewSet)

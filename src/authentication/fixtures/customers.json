@@ -7,9 +7,9 @@
       "id_card_number": "0000000000",
       "id_card_number_expiration_date": "2023-09-29",
       "residence": "Cejl 2",
-      "citizenship": "Brno",
+      "nationality": "CZ",
       "place_of_birth": "Brno",
-      "gender": "M"
+      "sex": "M"
     }
   },
   {
@@ -20,9 +20,9 @@
       "id_card_number": "0000000000",
       "id_card_number_expiration_date": "2023-09-29",
       "residence": "Cejl 2",
-      "citizenship": "Brno",
+      "nationality": "CZ",
       "place_of_birth": "Brno",
-      "gender": "M"
+      "sex": "M"
     }
   }
 ]

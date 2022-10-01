@@ -1,0 +1,19 @@
+{
+  "user": "a@a.com",
+  "status": "LOAN",
+  "name": "a a",
+  "address": "a",
+  "sex": "M",
+  "nationality": "CZ",
+  "personal_id": "00",
+  "personal_id_date": "2020-10-10",
+  "birth_place": "Brno",
+  "birth_id": "00",
+  "interest_rate_or_amount": "2.2",
+  "start_date": "2022-10-10",
+  "end_date": "",
+  "product_id": "2",
+  "product_name": "tel",
+  "product_buy": "1000",
+  "product_sell": ""
+}

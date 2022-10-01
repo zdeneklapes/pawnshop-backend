@@ -102,6 +102,9 @@ function django_test() {
     cd .. || error_exit "cd"
 }
 
+#                   "./shop/fixtures/shops.json" \
+#                   "./product/fixtures/products.json" \
+#                   "./loan/fixtures/loans.json";
 function django_loaddata() {
     django_clean_migrations
     cd src || error_exit "cd"
@@ -109,15 +112,12 @@ function django_loaddata() {
     python3 manage.py migrate
 
     for fixture in "./authentication/fixtures/users.json" \
-                   "./authentication/fixtures/attendants.json" \
-                   "./authentication/fixtures/customers.json" \
-                   "./shop/fixtures/shops.json" \
-                   "./product/fixtures/products.json" \
-                   "./loan/fixtures/loans.json"; do
+        "./authentication/fixtures/attendants.json" \
+        "./authentication/fixtures/customers.json"; do
         printf "${fixture}  ==  "
         python3 manage.py loaddata ${fixture}
     done
-#    echo "$(find $(find . -type d -iname 'fixtures') -type f -iname '*.json')"
+    #    echo "$(find $(find . -type d -iname 'fixtures') -type f -iname '*.json')"
     cd .. || error_exit "cd"
 }
 
@@ -150,7 +150,7 @@ function usage() {
 
 # Project
 function clean() {
-#    ${RM} *.zip
+    #    ${RM} *.zip
 
     # Folders
     for folder in "venv" "__pycache__"; do
@@ -178,7 +178,7 @@ function custom_cloc() {
 [[ "$#" -eq 0 ]] && usage && exit 0
 while [ "$#" -gt 0 ]; do
     case "$1" in
-        # Docker
+    # Docker
     '--rm-docker-images-volumes') rm_docker_images_volumes ;;
     '--build-up-docker') build_up_docker ;;
     '--docker-show-ipaddress') docker_show_ipaddress ;;
@@ -196,7 +196,7 @@ while [ "$#" -gt 0 ]; do
         ;;
         # Others
     '-h' | '--help') usage ;;
-    # Project
+        # Project
     '-c' | '--clean') clean ;;
     '--tags') tags ;;
     '--cloc') custom_cloc ;;

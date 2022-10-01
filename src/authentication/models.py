@@ -108,9 +108,9 @@ class CustomerProfile(models.Model):
     id_card_number = models.CharField(max_length=255)
     id_card_number_expiration_date = models.DateField()
     residence = models.CharField(max_length=255)
-    citizenship = models.CharField(max_length=255)
+    nationality = models.CharField(max_length=255)
     place_of_birth = models.CharField(max_length=255)
-    gender = models.CharField(max_length=1, choices=GENDERS_CHOICES)
+    sex = models.CharField(max_length=1, choices=GENDERS_CHOICES)
 
 
 class UserLoginActivity(models.Model):
