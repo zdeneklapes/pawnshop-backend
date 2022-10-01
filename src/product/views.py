@@ -3,10 +3,9 @@ from django.utils import timezone
 import requests
 from rest_framework import mixins, viewsets
 
-from product import models, serializers
+from product import serializers
+from product.models import models, choices
 from common import utils
-from product.choices import ProductStatus
-from product.models import Product
 
 
 class CreateProductViewSet(
@@ -77,16 +76,16 @@ class ExtendDateViewSet(
 
     # permission_classes = [permissions.IsAuthenticated]
 
-    def create_data(self, loan: Product):
+    def create_data(self, loan: models.Product):
         return {
-            "status": ProductStatus.LOAN.name,
+            "status": models.ProductStatus.LOAN.name,
             "sell_price": utils.get_sell_price(rate=loan.rate, buy_price=loan.buy_price),
             "date_extend": timezone.now(),
         }
 
     def partial_update(self, request, *args, **kwargs):
         try:
-            loan = Product.objects.get(id=kwargs["pk"])
+            loan = models.Product.objects.get(id=kwargs["pk"])
             request.data.update(self.create_data(loan=loan))
             return super().partial_update(request)
         except Exception as e:
@@ -104,7 +103,7 @@ class ReturnLoanViewSet(
     # permission_classes = [permissions.IsAuthenticated]
 
     def create_data(self, request: requests.Request):
-        return {"status": ProductStatus.INACTIVE_LOAN.name, "date_end": timezone.now()}
+        return {"status": choices.ProductStatus.INACTIVE_LOAN.name, "date_end": timezone.now()}
 
     def partial_update(self, request, *args, **kwargs):
         # TODO: Return only LOAN and AFTER_MATURITY
@@ -123,7 +122,7 @@ class LoanToBazarViewSet(
     # permission_classes = [permissions.IsAuthenticated]
 
     def create_data(self, request: requests.Request):
-        return {"status": ProductStatus.OFFER.name, "sell_price": request.data["product_sell"]}
+        return {"status": choices.ProductStatus.OFFER.name, "sell_price": request.data["product_sell"]}
 
     def partial_update(self, request, *args, **kwargs):
         # TODO: Move only AFTER_MATURITY

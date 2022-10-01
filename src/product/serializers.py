@@ -3,7 +3,7 @@ from drf_writable_nested import WritableNestedModelSerializer
 
 from authentication.serializers import CustomerProfileSerializer
 
-from . import models
+from .models import models
 
 
 class ProductSerializer(WritableNestedModelSerializer):

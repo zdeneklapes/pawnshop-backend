@@ -1,6 +1,6 @@
 from django.core.management.base import BaseCommand
-from product.models import Product
-from product.choices import ProductStatus
+from product.models.models import Product
+from product.models.choices import ProductStatus
 from datetime import date
 from common import utils
 
