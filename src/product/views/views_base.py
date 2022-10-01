@@ -32,20 +32,20 @@ class CreateProduct(
     viewsets.GenericViewSet,
 ):
     queryset = models.Product.objects.all()
-    serializer_class = serializers.LoanSerializer
+    serializer_class = serializers.ProductSerializer
     permission_classes = [permissions.IsAuthenticated]
 
     def create(self, request: requests.Request, *args, **kwargs):
         request.data.update(create_data(request))
-        super().create(request)
+        return super().create(request)
 
 
 class LoanViewSet(
     mixins.ListModelMixin,
     viewsets.GenericViewSet,
 ):
-    queryset = models.Product.objects.all()
-    serializer_class = serializers.LoanSerializer
+    queryset = models.Product.objects.get_loans()
+    serializer_class = serializers.ProductSerializer
 
 
 class OfferViewSet(

@@ -113,7 +113,8 @@ function django_loaddata() {
 
     for fixture in "./authentication/fixtures/users.json" \
         "./authentication/fixtures/attendants.json" \
-        "./authentication/fixtures/customers.json"; do
+        "./authentication/fixtures/customers.json"\
+        "./product/fixtures/products.json"; do
         printf "${fixture}  ==  "
         python3 manage.py loaddata ${fixture}
     done

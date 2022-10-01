@@ -3,6 +3,7 @@ from datetime import datetime, timedelta, date
 from django.db import models
 
 from authentication.models import CustomerProfile, User
+from .choices import ProductStatus, RateFrequency
 from shop.models import Shop
 
 
@@ -11,54 +12,31 @@ from shop.models import Shop
 # return Loan.objects.filter(date_created__year=datetime.now().year).count() + 1
 
 
-class LoanManager(models.Manager):
-    @property
-    def start_date(self):
-        startdate = date.today() - timedelta(weeks=4)
-        return startdate
+class ProductManager(models.Manager):
+    # @property
+    # def start_date(self):
+    #     startdate = date.today() - timedelta(weeks=4)
+    #     return startdate
 
     def get_offers(self):
-        pass
+        qs = super(ProductManager, self).get_queryset().filter(status=ProductStatus.OFFER.name)
+        return qs
 
     def get_loans(self):
-        qs_products = Product.objects.filter(
-            date_create__gte=self.start_date
-        ) | Product.objects.filter(date_extended_deadline__gte=self.start_date)
-        return (
-            super(LoanManager, self)
-            .get_queryset()
-            .filter(product__in=qs_products.values("id"), is_active=True)
-        )
+        qs = super(ProductManager, self).get_queryset().all() #.filter(status=ProductStatus.LOAN.name)
+        return qs
+
 
     def after_maturity(self):
-        qs_products = Product.objects.filter(
-            date_create__lt=self.start_date
-        ) | Product.objects.filter(date_extended_deadline__lt=self.start_date)
-        return (
-            super(LoanManager, self)
-            .get_queryset()
-            .filter(product__in=qs_products.values("id"), is_active=True)
-        )
-
-
-class RateFrequency(models.TextChoices):
-    DAY = "DAY", "Day"
-    WEEK = "WEEK", "Week"
-    YEAR = "YEAR", "Year"
-
-
-class Status(models.TextChoices):
-    BUY = "OFFER", "Offer"
-    LOAN = "LOAN", "Loan"
-    AFTER_MATURITY = "AFTER_MATURITY" "After_maturity"
-    INACTIVE = "INACTIVE", "Inactive"
+        qs = super(ProductManager, self).get_queryset().filter(status=ProductStatus.AFTER_MATURITY.name)
+        return qs
 
 
 class Product(models.Model):
-    status = models.CharField(max_length=50, choices=Status.choices)
+    status = models.CharField(max_length=50, choices=ProductStatus.choices)
 
     # Managers
-    objects = LoanManager()
+    objects = ProductManager()
 
     # FK
     user = models.ForeignKey(to=User, on_delete=models.CASCADE)

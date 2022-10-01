@@ -8,14 +8,14 @@ from . import models
 from authentication.models import User
 
 
-class LoanSerializer(WritableNestedModelSerializer):
-    user = serializers.PrimaryKeyRelatedField(queryset=User.objects.all())
+class ProductSerializer(WritableNestedModelSerializer):
     customer = CustomerProfileSerializer()
     sell_price = serializers.IntegerField(required=False)
 
     class Meta:
         model = models.Product
         fields = "__all__"
+        # fields = ["user", "rate", "is_active", "product", "customer"]
 
 
 class AfterMaturitySerialzier(WritableNestedModelSerializer):

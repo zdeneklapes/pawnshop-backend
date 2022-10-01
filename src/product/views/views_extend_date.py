@@ -18,7 +18,7 @@ class LoanPartialUpdateExtendDateViewSet(
     viewsets.GenericViewSet,
 ):
     queryset = models.Loan.objects.all()
-    serializer_class = serializers.LoanSerializer
+    serializer_class = serializers.ProductSerializer
     permission_classes = [permissions.IsAuthenticated]
     http_method_names = ["patch"]
 
