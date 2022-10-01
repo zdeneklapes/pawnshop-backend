@@ -32,8 +32,8 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     # "whitenoise",
     #
-    "rest_framework",
     "drf_yasg",
+    "rest_framework",
     # "djoser",
     "rest_framework_simplejwt",
     "django_cron",

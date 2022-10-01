@@ -34,7 +34,9 @@ class CreateProductViewSet(
             "rate": request.data["interest_rate_or_amount"],
             "description": request.data["product_name"],
             "buy_price": request.data["product_buy"],
-            "sell_price": utils.get_sell_price(rate=request.data["rate"], buy_price=request.data["product_buy"]),
+            "sell_price": utils.get_sell_price(
+                rate=float(request.data["interest_rate_or_amount"]), buy_price=int(request.data["product_buy"])
+            ),
             "date_extend": timezone.now(),
             "quantity": request.data["quantity"] if "quantity" in request.data else 1,
         }
