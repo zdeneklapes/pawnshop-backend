@@ -24,8 +24,7 @@ django-nextjs==2.2.1
 django-phonenumber-field==7.0.0
 django-templated-mail==1.1.1
 djangorestframework==3.14.0
-djangorestframework-jwt==1.11.0
-djangorestframework-simplejwt==5.2.0
+djangorestframework-simplejwt==4.8.0
 djoser==2.1.0
 drf-writable-nested==0.7.0
 drf-yasg==1.21.4
@@ -66,7 +65,7 @@ ruamel.yaml==0.17.21
 ruamel.yaml.clib==0.2.6
 service-identity==21.1.0
 six==1.16.0
-social-auth-app-django==5.0.0
+social-auth-app-django==4.0.0
 social-auth-core==4.3.0
 sqlparse==0.4.3
 tomli==2.0.1

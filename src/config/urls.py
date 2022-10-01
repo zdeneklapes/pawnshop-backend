@@ -3,6 +3,7 @@ from django.urls import include, path, re_path
 from drf_yasg import openapi
 from drf_yasg.views import get_schema_view
 from rest_framework import permissions
+from rest_framework_simplejwt.views import TokenObtainSlidingView, TokenRefreshSlidingView
 
 schema_view = get_schema_view(
     openapi.Info(
@@ -36,6 +37,8 @@ urlpatterns += [
     #
     path("admin/", admin.site.urls),
     path("authentication/", include("djoser.urls.jwt")),
+    # path('api/token/', TokenObtainSlidingView.as_view(), name='token_obtain'),
+    # path('api/token/refresh/', TokenRefreshSlidingView.as_view(), name='token_refresh'),
     #
     path("authentication/", include("authentication.urls")),
     # path("cashdesk/", include("cashdesk.urls")), # Note: It doesn't need routing

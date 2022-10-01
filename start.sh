@@ -150,16 +150,16 @@ function usage() {
 
 # Project
 function clean() {
-    ${RM} *.zip
+#    ${RM} *.zip
 
     # Folders
     for folder in "venv" "__pycache__"; do
-        find . -type d -iname "${folder}" | xargs "${RM}"
+        find . -type d -iname "${folder}" | xargs ${RM}
     done
 
     # Files
     for file in ".DS_Store" "*.log"; do
-        find . -type f -iname "${file}" | xargs "${RM}"
+        find . -type f -iname "${file}" | xargs ${RM}
     done
 
     django_clean_migrations
