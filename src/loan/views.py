@@ -65,7 +65,7 @@ class QueryParams(typing.Generic[T]):
 
 
 class ExtendDateInterface(QueryParams[T]):
-    pass
+    date_end = datetime.now()
 
 
 class LoanExtendDateViewSet(
@@ -78,8 +78,9 @@ class LoanExtendDateViewSet(
     http_method_names = ["patch"]
 
     def partial_update(self, request: request.Request, *args, **kwargs):
-        # serializer_ ExtendDateInterface()
-        
+        update_data: ExtendDateInterface[T] = ExtendDateInterface(request)
+        ExtendDateInterface.pk = request.query_params
+
         instance = self.get_object()
         instance_product = Product.objects.get(id=instance.product.id)
         instance_product.date_extended_deadline = datetime.now()
