@@ -10,39 +10,23 @@ from common import utils
 
 class CreateProductViewSet(
     mixins.CreateModelMixin,
+    mixins.RetrieveModelMixin,
     viewsets.GenericViewSet,
 ):
     queryset = models.Product.objects.all()
     serializer_class = serializers.ProductSerializer
-
     # permission_classes = [permissions.IsAuthenticated]
 
-    def create_data(self, request: requests.Request):
-        return {
-            "customer": {
-                "id_person_number": request.data["birth_id"],
-                "full_name": request.data["name"],
-                "id_card_number": request.data["personal_id"],
-                "id_card_number_expiration_date": request.data["personal_id_date"],
-                "residence": request.data["address"],
-                "nationality": request.data["nationality"],
-                "place_of_birth": request.data["birth_place"],
-                "sex": request.data["sex"],
-            },
-            "status": request.data["status"],
-            "rate": request.data["interest_rate_or_amount"],
-            "description": request.data["product_name"],
-            "buy_price": request.data["product_buy"],
-            "sell_price": utils.get_sell_price(
-                rate=float(request.data["interest_rate_or_amount"]), buy_price=int(request.data["product_buy"])
-            ),
-            "date_extend": timezone.now(),
-            "quantity": request.data["quantity"] if "quantity" in request.data else 1,
-        }
-
     def create(self, request: requests.Request, *args, **kwargs):
-        request.data.update(self.create_data(request))
-        return super().create(request)
+        # Loan
+        # request.data.update(self.create_data(request))
+        response = super().create(request)  # to internal_repre -> to to_repre
+        # TODO: Save Statistics
+        return response
+
+    def retrieve(self, request, *args, **kwargs):
+        response = super(CreateProductViewSet, self).retrieve(request)
+        return response
 
 
 class LoanViewSet(

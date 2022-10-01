@@ -1,10 +1,11 @@
-from rest_framework import mixins, viewsets, request
+from rest_framework import mixins, viewsets
 from .models import models
 from . import serializers
 
 
 class StatisticAllViewSet(
     mixins.ListModelMixin,
+    mixins.CreateModelMixin,
     viewsets.GenericViewSet,
 ):
     queryset = models.Statistic.objects.all()
