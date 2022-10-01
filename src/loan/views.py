@@ -1,5 +1,6 @@
 from datetime import datetime, date, timedelta
 import typing
+import copy
 
 from rest_framework import mixins, permissions, response, viewsets, decorators, status, request
 from rest_framework.settings import api_settings
@@ -34,19 +35,19 @@ class LoanViewSet(
     CustomUpdateModelMixin,
     viewsets.GenericViewSet,
 ):
-    queryset = models.Loan.objects.all()
+    queryset = models.Loan.objects.before_maturity()
     serializer_class = serializers.LoanSerializer
     permission_classes = [permissions.IsAuthenticated]
 
-    def list(self, request, *args, **kwargs):
-        queryset = models.Loan.before_maturity.before_maturity()
-        page = self.paginate_queryset(queryset)
-        if page is not None:
-            serializer = self.get_serializer(page, many=True)
-            return self.get_paginated_response(serializer.data)
-
-        serializer = self.get_serializer(queryset, many=True)
-        return response.Response(serializer.data)
+    # def list(self, request, *args, **kwargs):
+    #     queryset = models.Loan.before_maturity.before_maturity()
+    #     page = self.paginate_queryset(queryset)
+    #     if page is not None:
+    #         serializer = self.get_serializer(page, many=True)
+    #         return self.get_paginated_response(serializer.data)
+    #
+    #     serializer = self.get_serializer(queryset, many=True)
+    #     return response.Response(serializer.data)
 
     def retrieve(self, request, *args, **kwargs):
         instance = self.get_object()
@@ -60,15 +61,19 @@ class LoanViewSet(
 
 T = typing.TypeVar('T')
 
-class QueryParams(typing.Generic[T]):
-    pk: T
+
+class RequestExtendDate(request.Request):
+    @classmethod
+    def new_data(cls, request: request.Request) -> request.Request:
+        return {
+            "product": {
+                "id": request.data['product']['id'],
+                "date_end": datetime.now()
+            }
+        }
 
 
-class ExtendDateInterface(QueryParams[T]):
-    date_end = datetime.now()
-
-
-class LoanExtendDateViewSet(
+class LoanPartialUpdateExtendDateViewSet(
     mixins.UpdateModelMixin,
     viewsets.GenericViewSet,
 ):
@@ -78,36 +83,14 @@ class LoanExtendDateViewSet(
     http_method_names = ["patch"]
 
     def partial_update(self, request: request.Request, *args, **kwargs):
-        update_data: ExtendDateInterface[T] = ExtendDateInterface(request)
-        ExtendDateInterface.pk = request.query_params
-
-        instance = self.get_object()
-        instance_product = Product.objects.get(id=instance.product.id)
-        instance_product.date_extended_deadline = datetime.now()
-        instance_product.date_end = date.today() + timedelta(weeks=4)
-        instance_product.update_sell_price_based_on_week(rate=instance.rate)
-        instance.product = instance_product
-
-        # Serialize
-        serializer = self.get_serializer(instance, data=request.data, partial=True)
-        serializer.is_valid()
-        serializer.save()
-        return response.Response(serializer.data)
+        request.data.update(RequestExtendDate.new_data(request))
+        return super().partial_update(request, *args, **kwargs)
 
 
-class LoanAfterMaturityViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
-    queryset = models.Loan.objects.all()  # after_maturity.after_maturity()
+class LoanListAfterMaturityViewSet(
+    mixins.ListModelMixin,
+    viewsets.GenericViewSet
+):
+    queryset = models.Loan.objects.after_maturity()
     serializer_class = serializers.LoanSerializer
     permission_classes = [permissions.IsAuthenticated]
-
-    def list(self, request, *args, **kwargs):
-        queryset = (
-            models.Loan.after_maturity.after_maturity()
-        )  # self.filter_queryset(self.get_queryset())
-        page = self.paginate_queryset(queryset)
-        if page is not None:
-            serializer = self.get_serializer(page, many=True)
-            return self.get_paginated_response(serializer.data)
-
-        serializer = self.get_serializer(queryset, many=True)
-        return response.Response(serializer.data)

@@ -12,14 +12,17 @@ def next_number():
     return Loan.objects.filter(date_created__year=datetime.now().year).count() + 1
 
 
-class LoanBeforeMaturityManager(models.Manager):
-    def before_maturity(self):
+class LoanManager(models.Manager):
+    @property
+    def start_date(self):
         startdate = date.today() - timedelta(weeks=4)
+        return startdate
 
-        qs_products = (Product.objects.filter(date_create__gte=startdate)
-                      | Product.objects.filter(date_extended_deadline__gte=startdate))
+    def before_maturity(self):
+        qs_products = (Product.objects.filter(date_create__gte=self.start_date)
+                       | Product.objects.filter(date_extended_deadline__gte=self.start_date))
         qs_loans = (
-            super(LoanBeforeMaturityManager, self)
+            super(LoanManager, self)
             .get_queryset()
             .filter(product__in=qs_products.values("id"), is_active=True)
         )
@@ -29,18 +32,25 @@ class LoanBeforeMaturityManager(models.Manager):
             )
 
         return (
-            super(LoanBeforeMaturityManager, self)
+            super(LoanManager, self)
             .get_queryset()
             .filter(product__in=qs_products.values("id"), is_active=True)
         )
 
-
-class LoanAfterMaturityManager(models.Manager):
     def after_maturity(self):
-        startdate = date.today() - timedelta(weeks=4)
-        qs_products = Product.objects.filter(date_create__lt=startdate)
+        qs_products = (Product.objects.filter(date_create__lt=self.start_date)
+                       | Product.objects.filter(date_extended_deadline__lt=self.start_date))
+        qs_loans = (
+            super(LoanManager, self)
+            .get_queryset()
+            .filter(product__in=qs_products.values("id"), is_active=True)
+        )
+        for loan in qs_loans:
+            Product.objects.get(id=loan.product.id).update_sell_price_based_on_week(
+                rate=loan.rate
+            )
         return (
-            super(LoanAfterMaturityManager, self)
+            super(LoanManager, self)
             .get_queryset()
             .filter(product__in=qs_products.values("id"), is_active=True)
         )
@@ -48,9 +58,7 @@ class LoanAfterMaturityManager(models.Manager):
 
 class Loan(models.Model):
     # Managers
-    objects = models.Manager()
-    before_maturity = LoanBeforeMaturityManager()
-    after_maturity = LoanAfterMaturityManager()
+    objects = LoanManager()
 
     #
     user = models.ForeignKey(to=User, on_delete=models.CASCADE)
@@ -64,12 +72,3 @@ class Loan(models.Model):
     rate = models.DecimalField(max_digits=4, decimal_places=1)
 
     date_created = models.DateTimeField(auto_now_add=True, null=True)
-
-
-
-
-
-
-
-
-
