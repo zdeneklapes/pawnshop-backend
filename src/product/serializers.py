@@ -1,11 +1,9 @@
-from rest_framework import exceptions, serializers
+from rest_framework import serializers
 from drf_writable_nested import WritableNestedModelSerializer
 
-from authentication.serializers import CustomerProfileSerializer, UserSerializer
-from shop.serializers import ShopSerializer
+from authentication.serializers import CustomerProfileSerializer
 
 from . import models
-from authentication.models import User
 
 
 class ProductSerializer(WritableNestedModelSerializer):
@@ -16,15 +14,3 @@ class ProductSerializer(WritableNestedModelSerializer):
         model = models.Product
         fields = "__all__"
         # fields = ["user", "rate", "is_active", "product", "customer"]
-
-
-class AfterMaturitySerialzier(WritableNestedModelSerializer):
-    class Meta:
-        model = models.Product
-        fields = "__all__"
-
-
-class OfferSerializer(WritableNestedModelSerializer):
-    class Meta:
-        model = models.Product
-        fields = "__all__"

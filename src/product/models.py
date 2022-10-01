@@ -1,22 +1,10 @@
-from datetime import date
-
 from django.db import models
 
 from authentication.models import CustomerProfile, User
 from .choices import ProductStatus, RateFrequency
 
 
-# def next_number():
-#     """Source: https://stackoverflow.com/a/71909815/14471542"""
-# return Loan.objects.filter(date_created__year=datetime.now().year).count() + 1
-
-
 class ProductManager(models.Manager):
-    # @property
-    # def start_date(self):
-    #     startdate = date.today() - timedelta(weeks=4)
-    #     return startdate
-
     def get_offers(self):
         qs = super(ProductManager, self).get_queryset().filter(status=ProductStatus.OFFER.name)  # pylint: disable=E1101
         return qs
@@ -58,29 +46,4 @@ class Product(models.Model):
     # Dates
     date_create = models.DateTimeField(auto_now_add=True)
     date_extend = models.DateTimeField(null=True)
-    date_end = models.DateTimeField(null=True)  # return/sell
-
-    def update_sell_price_based_on_week(self, rate) -> models.Model:
-        if self.date_extended_deadline:
-            d1 = date(
-                self.date_extended_deadline.year,
-                self.date_extended_deadline.month,
-                self.date_extended_deadline.day,
-            )
-        else:
-            d1 = date(self.date_create.year, self.date_create.month, self.date_create.day)
-        d2 = date.today()
-        weeks = (d2 - d1).days // 7 + 1
-        sell_price = (float(rate) / 100) * weeks * self.buy_price + self.buy_price
-
-        # Rounded to 5, e.g.: 1004 => 1005, 1006 => 1010
-        sell_price_rounded = sell_price if (sell_price % 5) == 0 else sell_price - ((sell_price % 5) - 5)
-
-        self.sell_price = sell_price_rounded
-        self.save()
-
-    # def save(self, *args, **kwargs):
-    #     if not self.pk:
-    #         self.rate_fequency = RateFrequency.WEEK
-    #         self.rate_times = 4
-    #         return super().save(*args, **kwargs)
+    date_end = models.DateTimeField(null=True)

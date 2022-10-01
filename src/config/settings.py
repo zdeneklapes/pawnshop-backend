@@ -34,7 +34,7 @@ INSTALLED_APPS = [
     #
     "rest_framework",
     "drf_yasg",
-    "djoser",
+    # "djoser",
     "rest_framework_simplejwt",
     "django_cron",
     #

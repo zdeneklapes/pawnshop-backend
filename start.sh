@@ -122,6 +122,12 @@ function django_loaddata() {
     cd .. || error_exit "cd"
 }
 
+function django_update_product_status() {
+    cd src || error_exit "cd"
+    python3 manage.py update_product_status
+    cd .. || error_exit "cd"
+}
+
 # Others
 function usage() {
     echo "USAGE:
@@ -191,6 +197,7 @@ while [ "$#" -gt 0 ]; do
     '--createsuperuser') django_createsuperuser ;;
     '--clean-migrations') django_clean_migrations ;;
     '--loaddata') django_loaddata ;;
+    '--update-product-status') django_update_product_status ;;
     '--test')
         shift
         django_test $1

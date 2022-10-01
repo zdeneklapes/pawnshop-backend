@@ -1,12 +1,19 @@
 from django.db import models
 
-from authentication.models import CustomerProfile
+from authentication.models import User
 from product.models import Product
-from shop.models import Shop
+
+
+class StatisticOperation(models.TextChoices):
+    VYBER = "VYBER", "Vyber"
+    ZASTAVA = "ZASTAVA", "Zastava"
+    PRODLOUZENI = "PRODLOUZENI", "Prodlouzeni"
 
 
 class Statistic(models.Model):
+    # FK
+    product = models.ForeignKey(to=Product, on_delete=models.CASCADE)
+    user = models.ForeignKey(to=User, on_delete=models.CASCADE)
+
     #
-    product = models.OneToOneField(to=Product, on_delete=models.CASCADE)
-    person = models.OneToOneField(to=CustomerProfile, on_delete=models.CASCADE)
-    shop = models.OneToOneField(to=Shop, on_delete=models.CASCADE)
+    description = models.CharField(max_length=255, choices=StatisticOperation.choices)
