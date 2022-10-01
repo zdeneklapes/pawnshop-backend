@@ -5,6 +5,13 @@ from product import models, serializers
 
 
 def create_data(request: requests.Request):
+    def nearest_multiple(number, base):
+        return base * round(number / base) + base
+
+    def calculate_sell_price(request: requests.Request):
+        sell = request.data["product_buy"] + request.data["product_buy"] * float(request.data["rate"]) / 100
+        return nearest_multiple(sell, 5)
+
     return {
         # "user": request.user.id,
         "customer": {
@@ -21,7 +28,7 @@ def create_data(request: requests.Request):
         "rate": request.data["interest_rate_or_amount"],
         "description": request.data["product_name"],
         "buy_price": request.data["product_buy"],
-        "sell_price": request.data["product_sell"],
+        "sell_price": calculate_sell_price(request),
         "quantity": request.data["quantity"] if "quantity" in request.data else 1,
     }
 
