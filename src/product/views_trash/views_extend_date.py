@@ -8,9 +8,7 @@ from product import models, serializers
 class RequestExtendDate:
     @staticmethod
     def new_data(request: request.Request) -> request.Request:
-        return {
-            "product": {"id": request.data["product"]["id"], "date_end": datetime.now()}
-        }
+        return {"product": {"id": request.data["product"]["id"], "date_end": datetime.now()}}
 
 
 class LoanPartialUpdateExtendDateViewSet(

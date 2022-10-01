@@ -5,7 +5,7 @@
     "fields": {
       "status": "LOAN",
       "user": 1,
-      "customer": "00",
+      "customer": "000000/0000",
       "rate_frequency": "WEEK",
       "rate_times": 4,
       "rate": "2.2",
@@ -24,7 +24,7 @@
     "fields": {
       "status": "LOAN",
       "user": 1,
-      "customer": "00",
+      "customer": "000000/0000",
       "rate_frequency": "WEEK",
       "rate_times": 4,
       "rate": "2.2",
@@ -33,6 +33,44 @@
       "sell_price": 1200,
       "quantity": 1,
       "date_create": "2022-10-01T14:31:47.080Z",
+      "date_extend": null,
+      "date_end": null
+    }
+  },
+  {
+    "model": "product.product",
+    "pk": 3,
+    "fields": {
+      "status": "AFTER_MATURITY",
+      "user": 1,
+      "customer": "000000/0000",
+      "rate_frequency": "WEEK",
+      "rate_times": 4,
+      "rate": "2.2",
+      "description": "tel",
+      "buy_price": 1000,
+      "sell_price": 1200,
+      "quantity": 1,
+      "date_create": "2022-09-01T14:31:47.080Z",
+      "date_extend": null,
+      "date_end": null
+    }
+  },
+  {
+    "model": "product.product",
+    "pk": 4,
+    "fields": {
+      "status": "OFFER",
+      "user": 1,
+      "customer": "000000/0000",
+      "rate_frequency": "WEEK",
+      "rate_times": 4,
+      "rate": "2.2",
+      "description": "tel",
+      "buy_price": 1000,
+      "sell_price": 1200,
+      "quantity": 1,
+      "date_create": "2022-09-01T14:31:47.080Z",
       "date_extend": null,
       "date_end": null
     }

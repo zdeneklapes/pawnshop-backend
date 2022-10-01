@@ -1,10 +1,9 @@
-from datetime import datetime, timedelta, date
+from datetime import date
 
 from django.db import models
 
 from authentication.models import CustomerProfile, User
 from .choices import ProductStatus, RateFrequency
-from shop.models import Shop
 
 
 # def next_number():
@@ -19,16 +18,19 @@ class ProductManager(models.Manager):
     #     return startdate
 
     def get_offers(self):
-        qs = super(ProductManager, self).get_queryset().filter(status=ProductStatus.OFFER.name)
+        qs = super(ProductManager, self).get_queryset().filter(status=ProductStatus.OFFER.name)  # pylint: disable=E1101
         return qs
 
     def get_loans(self):
-        qs = super(ProductManager, self).get_queryset().all() #.filter(status=ProductStatus.LOAN.name)
+        qs = super(ProductManager, self).get_queryset().filter(status=ProductStatus.LOAN.name)  # pylint: disable=E1101
         return qs
 
-
-    def after_maturity(self):
-        qs = super(ProductManager, self).get_queryset().filter(status=ProductStatus.AFTER_MATURITY.name)
+    def get_after_maturity(self):
+        qs = (
+            super(ProductManager, self)
+            .get_queryset()
+            .filter(status=ProductStatus.AFTER_MATURITY.name)  # pylint: disable=E1101
+        )
         return qs
 
 
@@ -60,19 +62,19 @@ class Product(models.Model):
 
     def update_sell_price_based_on_week(self, rate) -> models.Model:
         if self.date_extended_deadline:
-            d1 = date(self.date_extended_deadline.year,
-                      self.date_extended_deadline.month,
-                      self.date_extended_deadline.day)
+            d1 = date(
+                self.date_extended_deadline.year,
+                self.date_extended_deadline.month,
+                self.date_extended_deadline.day,
+            )
         else:
-            d1 = date(self.date_create.year,
-                      self.date_create.month,
-                      self.date_create.day)
+            d1 = date(self.date_create.year, self.date_create.month, self.date_create.day)
         d2 = date.today()
         weeks = (d2 - d1).days // 7 + 1
         sell_price = (float(rate) / 100) * weeks * self.buy_price + self.buy_price
 
         # Rounded to 5, e.g.: 1004 => 1005, 1006 => 1010
-        sell_price_rounded = (sell_price if (sell_price % 5) == 0 else sell_price - ((sell_price % 5) - 5))
+        sell_price_rounded = sell_price if (sell_price % 5) == 0 else sell_price - ((sell_price % 5) - 5)
 
         self.sell_price = sell_price_rounded
         self.save()

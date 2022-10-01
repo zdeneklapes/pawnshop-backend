@@ -4,6 +4,6 @@ from product import models, serializers
 
 
 class LoanListAfterMaturityViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
-    queryset = models.Loan.objects.after_maturity()
+    queryset = models.Loan.objects.get_after_maturity()
     serializer_class = serializers.ProductSerializer
     permission_classes = [permissions.IsAuthenticated]
