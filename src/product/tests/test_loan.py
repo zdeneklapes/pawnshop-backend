@@ -24,7 +24,7 @@ FIXTURES = [
         "./authentication/fixtures/customers.json",
         "./shop/fixtures/shops.json",
         "./product/fixtures/products.json",
-        "./loan/fixtures/loans.json",
+        "./product/fixtures/loans.json",
     ]
 ]
 

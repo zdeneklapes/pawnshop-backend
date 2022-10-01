@@ -41,9 +41,10 @@ urlpatterns += [
     # path('api/token/refresh/', TokenRefreshSlidingView.as_view(), name='token_refresh'),
     #
     path("authentication/", include("authentication.urls")),
+    path("product/", include("product.urls")),
     # path("cashdesk/", include("cashdesk.urls")), # Note: It doesn't need routing
-    path("loans/", include("loan.urls")),
-    path("offers/", include("offer.urls")),
+    # path("loans/", include("product.urls")),
+    # path("offers/", include("offer.urls")),
     # path("products/", include("products.urls")),  # Note: It doesn't need routing
     path("shop/", include("shop.urls")),
     path("statistics/", include("statistic.urls")),

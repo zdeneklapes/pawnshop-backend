@@ -39,8 +39,8 @@ INSTALLED_APPS = [
     #
     "authentication",
     "cashdesk",
-    "loan",
-    "offer",
+    # "product",
+    # "offer",
     "product",
     "shop",
     "statistic",

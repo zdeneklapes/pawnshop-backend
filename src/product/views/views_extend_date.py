@@ -2,7 +2,7 @@ from datetime import datetime
 
 from rest_framework import mixins, permissions, request, viewsets
 
-from loan import models, serializers
+from product import models, serializers
 
 
 class RequestExtendDate:
