@@ -14,7 +14,7 @@
       "sell_price": 111,
       "quantity": 1,
       "date_create": "2022-10-01T14:31:31.018Z",
-      "date_extend": null,
+      "date_extend": "2022-10-01T14:31:31.018Z",
       "date_end": null
     }
   },
@@ -33,7 +33,7 @@
       "sell_price": 1200,
       "quantity": 1,
       "date_create": "2022-10-01T14:31:47.080Z",
-      "date_extend": null,
+      "date_extend": "2022-10-01T14:31:47.080Z",
       "date_end": null
     }
   },
@@ -41,7 +41,7 @@
     "model": "product.product",
     "pk": 3,
     "fields": {
-      "status": "AFTER_MATURITY",
+      "status": "LOAN",
       "user": 1,
       "customer": "000000/0000",
       "rate_frequency": "WEEK",
@@ -52,7 +52,7 @@
       "sell_price": 1200,
       "quantity": 1,
       "date_create": "2022-09-01T14:31:47.080Z",
-      "date_extend": null,
+      "date_extend": "2022-09-01T14:31:47.080Z",
       "date_end": null
     }
   },
@@ -71,7 +71,7 @@
       "sell_price": 1200,
       "quantity": 1,
       "date_create": "2022-09-01T14:31:47.080Z",
-      "date_extend": null,
+      "date_extend": "2022-09-01T14:31:47.080Z",
       "date_end": null
     }
   }
