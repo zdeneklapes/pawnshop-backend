@@ -34,6 +34,9 @@ class ProductViewSet(viewsets.ModelViewSet):
     filter_backends = [DjangoFilterBackend]
     filterset_fields = ["status"]
 
+    # schema =
+    # def get_extra_action_url_map(self):
+
     def serializer_operation(self):
         operation = "operation"
         if operation not in self.request.query_params:
