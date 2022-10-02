@@ -33,6 +33,8 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     #
+    "corsheaders",
+    #
     "drf_yasg",
     "rest_framework",
     "rest_framework_simplejwt",
@@ -101,6 +103,8 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    #
+    "corsheaders.middleware.CorsMiddleware",
 ]
 
 ROOT_URLCONF = "config.urls"
@@ -221,4 +225,8 @@ DATE_INPUT_FORMATS = [
     "%B %d, %Y",  # 'October 25 2006', 'October 25, 2006'
     "%d %B %Y",
     "%d %B, %Y",  # '25 October 2006', '25 October, 2006'
+]
+
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000",
 ]
