@@ -28,9 +28,7 @@ class AttendantProfileSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError(detail="User with email exists")
 
         if len(attrs["password"]) < 8:
-            raise serializers.ValidationError(
-                detail="User password must have at least 8 characters"
-            )
+            raise serializers.ValidationError(detail="User password must have at least 8 characters")
 
         # TODO: Validate phone number
 
@@ -59,12 +57,3 @@ class CustomerProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.CustomerProfile
         fields = "__all__"
-        # extra_kwargs = {
-        #     "customer": {"validators": []}
-        # }
-
-    # def create(self, validated_data):
-    #     try:
-    #         return self.Meta.model.objects.get(id_person_number=validated_data['id_person_number'])
-    #     except ObjectDoesNotExist:
-    #         return super(CustomerProfileSerializer, self).create(validated_data)

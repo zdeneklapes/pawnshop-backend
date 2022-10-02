@@ -1,7 +1,7 @@
 from django.utils import timezone
 
 import requests
-from rest_framework import mixins, viewsets
+from rest_framework import mixins, viewsets, response, status, filters
 
 from product.serializers import product
 from product.models import models, choices
@@ -9,62 +9,75 @@ from statistic.serializers import StatisticSerializer
 from statistic.models.choices import StatisticOperation
 
 
-class CreateProductViewSet(
-    mixins.CreateModelMixin,
-    mixins.RetrieveModelMixin,
-    viewsets.GenericViewSet,
-):
+class SimpleFiltre(filters.BaseFilterBackend):
+    pass
+
+
+class ProductViewSet(viewsets.ModelViewSet):
     queryset = models.Product.objects.all()
     serializer_class = product.CreateProductSerializer
+    http_method_names = ["get", "post", "patch"]
+    # filter_backends = [DjangoFilterBackend]
+    filterset_fields = ["category", "in_stock"]
 
     # permission_classes = [permissions.IsAuthenticated] # TODO: Uncomment
+
+    def queryset_status(self):
+        status = "status"
+        if status not in self.request.query_params:
+            return None
+        elif self.request.query_params[status] == choices.ProductStatus.LOAN.name:
+            return models.Product.objects.get_loans()
+        elif self.request.query_params[status] == choices.ProductStatus.OFFER.name:
+            return models.Product.objects.get_offers()
+        elif self.request.query_params[status] == choices.ProductStatus.AFTER_MATURITY.name:
+            return models.Product.objects.get_after_maturity()
+        else:
+            return None
 
     def get_queryset(self):
-        return super(CreateProductViewSet, self).get_queryset()
+        qs = self.queryset_status()
+        return qs if qs else super(ProductViewSet, self).get_queryset()
+
+    def serializer_operation(self):
+        operation = "operation"
+        if operation not in self.request.query_params:
+            return None
+        elif self.request.query_params[operation] == StatisticOperation.LOAN_EXTEND.name:
+            return product.ExtendLoanSerializer
+        elif self.request.query_params[operation] == StatisticOperation.MOVE_LOAN_TO_BAZAR.name:
+            return models.Product.objects.get_offers()
+        elif self.request.query_params[operation] == StatisticOperation.LOAN_RETURN.name:
+            return models.Product.objects.get_after_maturity()
+        else:
+            return None
+
+    def get_serializer_class(self):
+        return super(ProductViewSet, self).get_serializer_class()
+
+    def list(self, request, *args, **kwargs):
+        """
+        param1 -- foo
+        """
+        return super(ProductViewSet, self).list(request)
 
     def create(self, request: requests.Request, *args, **kwargs):
-        response = super().create(request)  # to internal_repre -> to to_repre
+        response_ = super().create(request)  # to internal_repre -> to to_repre
         try:
             StatisticSerializer.save_statistics(
-                price=response.data["buy_price"],
+                price=response_.data["buy_price"],
                 operation=StatisticOperation.LOAN_CREATE.name,
-                user=response.data["user"],
-                product=response.data["id"],
+                user=response_.data["user"],
+                product=response_.data["id"],
             )
         except AssertionError as e:
-            print(f"Error {CreateProductViewSet.create.__qualname__}: {e}")
-        return response
+            return response.Response(
+                data={"error": f"{ProductViewSet.create.__qualname__}: {e}"}, status=status.HTTP_400_BAD_REQUEST
+            )
+        return response_
 
-    def retrieve(self, request, *args, **kwargs):
-        response = super().retrieve(request)
-        return response
-
-
-class LoanViewSet(
-    mixins.ListModelMixin,
-    viewsets.GenericViewSet,
-):
-    queryset = models.Product.objects.get_loans()
-    serializer_class = product.CreateProductSerializer
-    # permission_classes = [permissions.IsAuthenticated] # TODO: Uncomment
-
-    def list(self, request, *args, **kwargs):
-        return super().list(request)
-
-
-class OfferViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
-    queryset = models.Product.objects.get_offers()
-    serializer_class = product.CreateProductSerializer
-    # permission_classes = [permissions.IsAuthenticated] # TODO: Uncomment
-
-    def list(self, request, *args, **kwargs):
-        return super().list(request)
-
-
-class AfterMaturityViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
-    queryset = models.Product.objects.get_after_maturity()
-    serializer_class = product.CreateProductSerializer
-    # permission_classes = [permissions.IsAuthenticated] # TODO: Uncomment
+    def partial_update(self, request, *args, **kwargs):
+        return super().partial_update(request)
 
 
 class ExtendLoanViewSet(
@@ -74,8 +87,8 @@ class ExtendLoanViewSet(
     queryset = models.Product.objects.all()
     serializer_class = product.ExtendLoanSerializer
     http_method_names = ["patch"]
-    # permission_classes = [permissions.IsAuthenticated] # TODO: Uncomment
 
+    # permission_classes = [permissions.IsAuthenticated] # TODO: Uncomment
 
     # def create_data(self, loan: models.Product):
     #     return {
