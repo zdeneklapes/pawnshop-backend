@@ -19,3 +19,22 @@ class StatisticSerializer(WritableNestedModelSerializer):
         )
         serializer_stats.is_valid()
         serializer_stats.save()
+
+
+class StatisticResetSerializer(WritableNestedModelSerializer):
+    amount = serializers.IntegerField(required=False, read_only=True)
+
+    class Meta:
+        model = models.Statistic
+        fields = "__all__"
+
+    def to_internal_value(self, data):
+        # prev_statistic = models.Statistic.objects.last()
+        data.update(
+            {
+                # "status": models.ProductStatus.LOAN.name,
+                # "sell_price": utils.get_sell_price(rate=loan.rate, buy_price=loan.buy_price),
+                # "date_extend": timezone.now(),
+            }
+        )
+        return super().to_internal_value(data)

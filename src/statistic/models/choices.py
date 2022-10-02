@@ -2,7 +2,7 @@ from django.db import models
 from rest_framework.request import Request
 from typing import Tuple
 
-from product.exceptions import BadQueryParam
+from common.exceptions import BadQueryParam
 
 
 class StatisticOperations(models.TextChoices):

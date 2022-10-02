@@ -12,7 +12,7 @@ from product.serializers import product
 from product.models import models
 from statistic.serializers import StatisticSerializer
 from statistic.models.choices import StatisticOperations
-from product.exceptions import BadQueryParam
+from common.exceptions import BadQueryParam
 
 
 class ProductQueryParams(django_filters.FilterSet):
