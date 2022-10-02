@@ -17,7 +17,6 @@ class StatisticsGetRequest:
 class StatisticViewSet(mixins.ListModelMixin, mixins.CreateModelMixin, viewsets.GenericViewSet):
     queryset = models.Statistic.objects.all()
     serializer_class = serializers.StatisticSerializer
-
     # permission_classes = [permissions.IsAuthenticated] # TODO: Uncomment
 
     def list(self, request, *args, **kwargs):

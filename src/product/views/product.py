@@ -60,6 +60,7 @@ class ProductViewSet(viewsets.ModelViewSet):
     def create(self, request: Request, *args, **kwargs):
         try:
             response: Response = super().create(request)  # to internal_repre -> to to_repre
+            # TODO: Uncomment
             # StatisticSerializer.save_statistics(
             #     price=response.data["buy_price"],
             #     operation=StatisticOperations.LOAN_CREATE.name,
