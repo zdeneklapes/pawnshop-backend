@@ -1,60 +1,21 @@
-##### VENV
-FROM python:3 as base
+FROM python:3.9
 
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
+ENV PORT 8000
+EXPOSE 8000
 
 WORKDIR /app
-
-COPY requirements.txt /app/
-
+COPY requirements.txt start.sh /app/
 RUN set -ex && \
     pip install --upgrade pip && \
     pip install --no-cache-dir -r /app/requirements.txt
 #    apt-get update && apt-get -y install cron # TODO:
 
-ENV PORT 8000
-EXPOSE 8000
 
-WORKDIR /app/src
+COPY src/ /app/src
+RUN chmod +x /app/src/entrypoint.sh && \
+    chmod +x start.sh && \
+    /app/start.sh --loaddata
 
-COPY src/ .
-
-COPY src/ .
-RUN chmod +x entrypoint.sh
-
-WORKDIR /app
-COPY start.sh .
-RUN chmod +x start.sh
-
-ENTRYPOINT [ "/app/start.sh", "--loaddata", "--runserver"]
-
-
-
-
-
-##### PEOTRY
-#FROM python:3
-#
-######################################
-#
-#ENV PYTHONUNBUFFERED 1
-#
-#WORKDIR /app
-#
-#COPY poetry.lock pyproject.toml /app/
-#
-#RUN pip3 install poetry && \
-#    poetry install --no-root
-#
-#ENV PORT 8000
-#EXPOSE 8000
-#
-######################################
-#
-#WORKDIR /app/src
-#
-#COPY src/ .
-#
-#RUN chmod +x entrypoint.sh
-#ENTRYPOINT [ "/app/src/entrypoint.sh", "dev"]
+ENTRYPOINT [ "/app/start.sh", "--runserver"]

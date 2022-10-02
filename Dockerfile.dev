@@ -1,29 +1,21 @@
-##### VENV
 FROM python:3.9
 
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
+ENV PORT 8000
+EXPOSE 8000
 
 WORKDIR /app
-
-COPY requirements.txt /app/
-COPY start.sh /app/
-
-
+COPY requirements.txt start.sh /app/
 RUN set -ex && \
     pip install --upgrade pip && \
     pip install --no-cache-dir -r /app/requirements.txt
 #    apt-get update && apt-get -y install cron # TODO:
 
-ENV PORT 8000
-EXPOSE 8000
 
-WORKDIR /app/src
-
-COPY src/ .
-RUN chmod +x entrypoint.sh
-
-WORKDIR /app
-RUN chmod +x start.sh && /app/start.sh --loaddata
+COPY src/ /app/src
+RUN chmod +x /app/src/entrypoint.sh && \
+    chmod +x start.sh && \
+    /app/start.sh --loaddata
 
 ENTRYPOINT [ "/app/start.sh", "--runserver"]
