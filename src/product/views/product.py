@@ -2,7 +2,7 @@ from django.utils.decorators import method_decorator
 from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
 
-import requests
+from rest_framework.request import Request
 from rest_framework import response, viewsets
 from django_filters.rest_framework import DjangoFilterBackend
 import django_filters
@@ -52,12 +52,11 @@ class ProductViewSet(viewsets.ModelViewSet):
 
     # Request Handlers
     def list(self, request, *args, **kwargs):
-        # self.get_serializer()
         return super(ProductViewSet, self).list(request)
 
-    def create(self, request_: requests.Request, *args, **kwargs):
+    def create(self, request: Request, *args, **kwargs):
         try:
-            response_: response.Response = super().create(request_)  # to internal_repre -> to to_repre
+            response_: response.Response = super().create(request)  # to internal_repre -> to to_repre
             StatisticSerializer.save_statistics(
                 price=response_.data["buy_price"],
                 operation=StatisticOperation.LOAN_CREATE.name,
@@ -70,6 +69,8 @@ class ProductViewSet(viewsets.ModelViewSet):
             )
         return response_
 
-    def partial_update(self, request, *args, **kwargs):
+    def partial_update(self, request: Request, *args, **kwargs):
         # TODO: Statistics save, be carefully in writing description
+        if "operation" not in request.query_params:
+            pass
         return super().partial_update(request)
