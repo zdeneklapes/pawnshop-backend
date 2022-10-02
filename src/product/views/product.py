@@ -11,13 +11,16 @@ from statistic.models.choices import StatisticOperation
 
 class CreateProductViewSet(
     mixins.CreateModelMixin,
-    # mixins.RetrieveModelMixin,
+    mixins.RetrieveModelMixin,
     viewsets.GenericViewSet,
 ):
     queryset = models.Product.objects.all()
     serializer_class = product.CreateProductSerializer
 
     # permission_classes = [permissions.IsAuthenticated] # TODO: Uncomment
+
+    def get_queryset(self):
+        return super(CreateProductViewSet, self).get_queryset()
 
     def create(self, request: requests.Request, *args, **kwargs):
         response = super().create(request)  # to internal_repre -> to to_repre
@@ -32,9 +35,9 @@ class CreateProductViewSet(
             print(f"Error {CreateProductViewSet.create.__qualname__}: {e}")
         return response
 
-    # def retrieve(self, request, *args, **kwargs):
-    #     response = super(CreateProductViewSet, self).retrieve(request)
-    #     return response
+    def retrieve(self, request, *args, **kwargs):
+        response = super().retrieve(request)
+        return response
 
 
 class LoanViewSet(

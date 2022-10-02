@@ -6,7 +6,7 @@ from .models import models
 
 
 class StatisticSerializer(WritableNestedModelSerializer):
-    amount = serializers.IntegerField(required=False)
+    amount = serializers.IntegerField(required=False, read_only=True)
 
     class Meta:
         model = models.Statistic

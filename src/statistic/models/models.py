@@ -18,6 +18,6 @@ class Statistic(models.Model):
 
     def save(self, *args, **kwargs):
         prev_amount = Statistic.objects.last()
-        prev_amount = prev_amount if prev_amount else 0  # if first occurrence
-        self.amount = self.price + prev_amount
+        amount = prev_amount.amount if prev_amount else 0  # if first occurrence
+        self.amount = self.price + amount
         super().save(*args, **kwargs)
