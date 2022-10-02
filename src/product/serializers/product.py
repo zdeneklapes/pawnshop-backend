@@ -22,6 +22,7 @@ def get_interests(rate: float, buy_price: int, rate_times: int):
 
 
 class CreateProductSerializer(WritableNestedModelSerializer):
+    # user = serializers.PrimaryKeyRelatedField(U)
     customer = CustomerProfileSerializer()
     sell_price = serializers.IntegerField(required=False)
 
