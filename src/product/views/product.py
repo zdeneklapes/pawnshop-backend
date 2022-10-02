@@ -1,11 +1,9 @@
-import coreapi
 from django.utils import timezone
-from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 
 
 import requests
-from rest_framework import mixins, viewsets, response, status, filters
+from rest_framework import mixins, response, status, viewsets
 from django_filters.rest_framework import DjangoFilterBackend
 import django_filters
 
@@ -13,17 +11,18 @@ from product.serializers import product
 from product.models import models, choices
 from statistic.serializers import StatisticSerializer
 from statistic.models.choices import StatisticOperation
-from .filters import ProductFilters
 
 
 class ProductFilter(django_filters.FilterSet):
     class Meta:
         model = models.Product
-        fields = ['status']
+        fields = ["status"]
 
 
 class ProductParameters(django_filters.FilterSet):
-    operation_param = openapi.Parameter('operation', openapi.IN_QUERY, description="Operation Type", type=StatisticOperation)
+    operation_param = openapi.Parameter(
+        "operation", openapi.IN_QUERY, description="Operation Type", type=StatisticOperation
+    )
 
 
 class ProductViewSet(viewsets.ModelViewSet):
@@ -33,7 +32,7 @@ class ProductViewSet(viewsets.ModelViewSet):
 
     # Filters
     filter_backends = [DjangoFilterBackend]
-    filterset_fields = ['status']
+    filterset_fields = ["status"]
 
     def serializer_operation(self):
         operation = "operation"
@@ -73,7 +72,9 @@ class ProductViewSet(viewsets.ModelViewSet):
             )
         return response_
 
-    # @swagger_auto_schema("patch", operation_description="PATCH /articles/{id}?{StatisticOperation}", manual_parameters=[ProductParameters.operation_param])
+    # @swagger_auto_schema("patch",
+    # operation_description="PATCH /articles/{id}?{StatisticOperation}",
+    # manual_parameters=[ProductParameters.operation_param])
     def partial_update(self, request, *args, **kwargs):
         return super().partial_update(request)
 
