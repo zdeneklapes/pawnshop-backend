@@ -81,7 +81,7 @@ class ExtendLoanSerializer(WritableNestedModelSerializer):
         return dict_
 
     def to_internal_value(self, data):
-        loan = models.Product.objects.get(id=self.context['view'].kwargs['pk'])
+        loan = models.Product.objects.get(id=self.context["view"].kwargs["pk"])
         data.update(
             {
                 "status": models.ProductStatus.LOAN.name,
