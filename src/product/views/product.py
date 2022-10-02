@@ -11,7 +11,7 @@ import django_filters
 from product.serializers import product
 from product.models import models
 from statistic.serializers import StatisticSerializer
-from statistic.models.choices import StatisticOperation
+from statistic.models.choices import StatisticOperations
 from product.exceptions import BadQueryParam
 
 
@@ -44,11 +44,11 @@ class ProductViewSet(viewsets.ModelViewSet):
         operation = "operation"
         if operation not in self.request.query_params:
             return super().get_serializer_class()
-        elif self.request.query_params[operation] == StatisticOperation.LOAN_EXTEND.name:
+        elif self.request.query_params[operation] == StatisticOperations.LOAN_EXTEND.name:
             return product.LoanExtendSerializer
-        elif self.request.query_params[operation] == StatisticOperation.LOAN_RETURN.name:
+        elif self.request.query_params[operation] == StatisticOperations.LOAN_RETURN.name:
             return product.LoanReturnSerializer
-        elif self.request.query_params[operation] == StatisticOperation.LOAN_TO_OFFER.name:
+        elif self.request.query_params[operation] == StatisticOperations.LOAN_TO_OFFER.name:
             return product.LoanToOfferSerializer
         else:
             return super().get_serializer_class()
@@ -59,31 +59,20 @@ class ProductViewSet(viewsets.ModelViewSet):
 
     def create(self, request: Request, *args, **kwargs):
         try:
-            response_: Response = super().create(request)  # to internal_repre -> to to_repre
+            response: Response = super().create(request)  # to internal_repre -> to to_repre
             StatisticSerializer.save_statistics(
-                price=response_.data["buy_price"],
-                operation=StatisticOperation.LOAN_CREATE.name,
-                user=response_.data["user"],
-                product=response_.data["id"],
+                price=response.data["buy_price"],
+                operation=StatisticOperations.LOAN_CREATE.name,
+                user=response.data["user"],
+                product=response.data["id"],
             )
         except AssertionError as e:
-            return Response(data={"error": f"{ProductViewSet.create.__qualname__}: {e}"}, status=response_.status_code)
-        return response_
+            return Response(data={"error": f"{ProductViewSet.create.__qualname__}: {e}"}, status=response.status_code)
+        return response
 
     def patial_update_save_statistics(self, request: Request, buy_price_prev: int, sell_price_prev: int):
         # Validate
-        if "operation" not in request.query_params:
-            raise BadQueryParam()
-        else:
-            operation = request.query_params["operation"]
-            if operation == StatisticOperation.LOAN_EXTEND.name:
-                price = sell_price_prev - buy_price_prev
-            elif operation == StatisticOperation.LOAN_RETURN.name:
-                price = sell_price_prev
-            elif operation == StatisticOperation.LOAN_TO_OFFER.name:
-                price = 0
-            else:
-                raise BadQueryParam()
+        operation, price = StatisticOperations.validate_operation(request, buy_price_prev, sell_price_prev)
 
         # Save Statistics
         StatisticSerializer.save_statistics(
