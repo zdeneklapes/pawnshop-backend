@@ -6,7 +6,7 @@ from . import models, serializers
 class UserViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
     queryset = models.User.objects.all()
     serializer_class = serializers.UserSerializer
-    permission_classes = [permissions.IsAuthenticated, permissions.IsAdminUser]
+    permission_classes = [permissions.IsAuthenticated, permissions.IsAdminUser]  # TODO: Uncomment
 
 
 class AttendantProfileCreateViewSet(
@@ -19,4 +19,4 @@ class AttendantProfileCreateViewSet(
 ):
     queryset = models.AttendantProfile.objects.all()
     serializer_class = serializers.AttendantProfileSerializer
-    # permission_classes = [permissions.IsAuthenticated, permissions.IsAdminUser] # TODO: Uncomment
+    permission_classes = [permissions.IsAuthenticated, permissions.IsAdminUser]  # TODO: Uncomment
