@@ -14,39 +14,29 @@ from statistic.serializers import StatisticSerializer
 from statistic.models.choices import StatisticOperation
 
 
-class ProductFilter(django_filters.FilterSet):
-    class Meta:
-        model = models.Product
-        fields = ["status"]
-
-
-class ProductParameters(django_filters.FilterSet):
-    operation_param = openapi.Parameter(
-        "operation", openapi.IN_QUERY, description="Operation Type", type=StatisticOperation
+class ProductQueryParams(django_filters.FilterSet):
+    operation = openapi.Parameter(
+        name="operation", in_=openapi.IN_QUERY, description="Operation Type", type=openapi.TYPE_STRING
+    )
+    status = openapi.Parameter(
+        name="status", in_=openapi.IN_QUERY, description="Source reference", type=openapi.TYPE_STRING
     )
 
 
-params = [openapi.Parameter("source_id", openapi.IN_PATH, description="Source reference", type=openapi.TYPE_STRING)]
-
-# @method_decorator(name="list", decorator=swagger_auto_schema(manual_parameters=params))
-# @method_decorator(name="create", decorator=swagger_auto_schema(manual_parameters=params))
-# @method_decorator(name="retrieve", decorator=swagger_auto_schema(manual_parameters=params))
-# @method_decorator(name="update", decorator=swagger_auto_schema(manual_parameters=params))
-# @method_decorator(name="destroy", decorator=swagger_auto_schema(manual_parameters=params))
-
-
-@method_decorator(name="partial_update", decorator=swagger_auto_schema(manual_parameters=params))
+@method_decorator(name="list", decorator=swagger_auto_schema(manual_parameters=[ProductQueryParams.status]))
+@method_decorator(name="create", decorator=swagger_auto_schema(manual_parameters=[]))
+@method_decorator(name="retrieve", decorator=swagger_auto_schema(manual_parameters=[]))
+@method_decorator(
+    name="partial_update", decorator=swagger_auto_schema(manual_parameters=[ProductQueryParams.operation])
+)
 class ProductViewSet(viewsets.ModelViewSet):
     queryset = models.Product.objects.all()
     serializer_class = product.CreateProductSerializer
     http_method_names = ["get", "post", "patch"]
 
-    # Filters
+    # Filters for: "def list()"
     filter_backends = [DjangoFilterBackend]
     filterset_fields = ["status"]
-
-    # schema =
-    # def get_extra_action_url_map(self):
 
     def serializer_operation(self):
         operation = "operation"
@@ -66,9 +56,6 @@ class ProductViewSet(viewsets.ModelViewSet):
         return serializer if serializer else super(ProductViewSet, self).get_serializer_class()
 
     def list(self, request, *args, **kwargs):
-        """
-        param1 -- foo
-        """
         return super(ProductViewSet, self).list(request)
 
     def create(self, request: requests.Request, *args, **kwargs):
