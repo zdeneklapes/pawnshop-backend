@@ -3,7 +3,8 @@ from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
 
 from rest_framework.request import Request
-from rest_framework import response, viewsets
+from rest_framework.response import Response
+from rest_framework import permissions, viewsets
 from django_filters.rest_framework import DjangoFilterBackend
 import django_filters
 
@@ -11,6 +12,7 @@ from product.serializers import product
 from product.models import models
 from statistic.serializers import StatisticSerializer
 from statistic.models.choices import StatisticOperation
+from product.exceptions import BadQueryParam
 
 
 class ProductQueryParams(django_filters.FilterSet):
@@ -32,6 +34,7 @@ class ProductViewSet(viewsets.ModelViewSet):
     queryset = models.Product.objects.all()
     serializer_class = product.CreateProductSerializer
     http_method_names = ["get", "post", "patch"]
+    permission_classes = [permissions.IsAuthenticated]
 
     # Filters for: "def list()"
     filter_backends = [DjangoFilterBackend]
@@ -56,7 +59,7 @@ class ProductViewSet(viewsets.ModelViewSet):
 
     def create(self, request: Request, *args, **kwargs):
         try:
-            response_: response.Response = super().create(request)  # to internal_repre -> to to_repre
+            response_: Response = super().create(request)  # to internal_repre -> to to_repre
             StatisticSerializer.save_statistics(
                 price=response_.data["buy_price"],
                 operation=StatisticOperation.LOAN_CREATE.name,
@@ -64,13 +67,43 @@ class ProductViewSet(viewsets.ModelViewSet):
                 product=response_.data["id"],
             )
         except AssertionError as e:
-            return response.Response(
-                data={"error": f"{ProductViewSet.create.__qualname__}: {e}"}, status=response_.status_code
-            )
+            return Response(data={"error": f"{ProductViewSet.create.__qualname__}: {e}"}, status=response_.status_code)
         return response_
 
-    def partial_update(self, request: Request, *args, **kwargs):
-        # TODO: Statistics save, be carefully in writing description
+    def patial_update_save_statistics(self, request: Request, buy_price_prev: int, sell_price_prev: int):
+        # Validate
         if "operation" not in request.query_params:
-            pass
-        return super().partial_update(request)
+            raise BadQueryParam()
+        else:
+            operation = request.query_params["operation"]
+            if operation == StatisticOperation.LOAN_EXTEND.name:
+                price = sell_price_prev - buy_price_prev
+            elif operation == StatisticOperation.LOAN_RETURN.name:
+                price = sell_price_prev
+            elif operation == StatisticOperation.LOAN_TO_OFFER.name:
+                price = 0
+            else:
+                raise BadQueryParam()
+
+        # Save Statistics
+        StatisticSerializer.save_statistics(
+            price=price,
+            operation=operation,
+            user=request.user.id,
+            product=request.parser_context["kwargs"]["pk"],
+        )
+
+    def partial_update(self, request: Request, *args, **kwargs):
+        # Store previous price
+        loan = models.Product.objects.get(pk=request.parser_context["kwargs"]["pk"])
+        sell_price_prev = loan.sell_price
+        buy_price_prev = loan.buy_price
+
+        try:
+            response = super().partial_update(request)
+            self.patial_update_save_statistics(request, buy_price_prev, sell_price_prev)
+        except BadQueryParam as e:
+            return Response(
+                data={"details": f"Bad query params - {e}"}, status=BadQueryParam.status_code, exception=True
+            )
+        return response

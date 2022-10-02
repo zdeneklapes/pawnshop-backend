@@ -1,4 +1,4 @@
-from rest_framework import mixins, viewsets
+from rest_framework import mixins, viewsets, permissions
 
 from . import models, serializers
 
@@ -6,7 +6,7 @@ from . import models, serializers
 class UserViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
     queryset = models.User.objects.all()
     serializer_class = serializers.UserSerializer
-    # permission_classes = [permissions.IsAuthenticated, permissions.IsAdminUser] # TODO: Uncomment
+    permission_classes = [permissions.IsAuthenticated, permissions.IsAdminUser]
 
 
 class AttendantProfileCreateViewSet(
@@ -19,4 +19,4 @@ class AttendantProfileCreateViewSet(
 ):
     queryset = models.AttendantProfile.objects.all()
     serializer_class = serializers.AttendantProfileSerializer
-    # permission_classes = [permissions.IsAuthenticated, permissions.IsAdminUser] # TODO: Uncomment
+    permission_classes = [permissions.IsAuthenticated, permissions.IsAdminUser]
