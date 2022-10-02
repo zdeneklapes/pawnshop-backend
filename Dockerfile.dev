@@ -7,6 +7,7 @@ ENV PYTHONUNBUFFERED=1
 WORKDIR /app
 
 COPY requirements.txt /app/
+COPY start.sh /app/
 
 
 RUN set -ex && \
@@ -21,5 +22,5 @@ WORKDIR /app/src
 
 COPY src/ .
 
-RUN chmod +x entrypoint.sh
-ENTRYPOINT [ "/app/src/entrypoint.sh", "dev"]
+#RUN chmod +x entrypoint.sh
+#ENTRYPOINT [ "/app/src/entrypoint.sh", "dev"]
