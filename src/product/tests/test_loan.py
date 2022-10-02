@@ -1,12 +1,10 @@
 import os
 from pathlib import Path
 
-from django.contrib.auth import get_user_model
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.test import (
     APIClient,
-    APIRequestFactory,
     APITestCase,
 )
 
@@ -30,10 +28,10 @@ FIXTURES = [
 
 
 def api_client():
-    user = User.objects.create_superuser(email='aaaa@a.com', password='a', phone_number="+420777666777")
+    user = User.objects.create_superuser(email="aaaa@a.com", password="a", phone_number="+420777666777")  # nosec
     client = APIClient()
     refresh = RefreshToken.for_user(user)
-    client.credentials(HTTP_AUTHORIZATION=f'Bearer {refresh.access_token}')
+    client.credentials(HTTP_AUTHORIZATION=f"Bearer {refresh.access_token}")
     return client
 
 
@@ -73,8 +71,8 @@ class TestLoan(APITestCase):
                     "residence": "string",
                     "citizenship": "string",
                     "place_of_birth": "string",
-                    "gender": "M"
-                }
+                    "gender": "M",
+                },
             },
             format="json",
         )
