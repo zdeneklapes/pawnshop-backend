@@ -1,15 +1,14 @@
-from django.utils import timezone
 from django.utils.decorators import method_decorator
 from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
 
 import requests
-from rest_framework import mixins, response, status, viewsets
+from rest_framework import response, viewsets
 from django_filters.rest_framework import DjangoFilterBackend
 import django_filters
 
 from product.serializers import product
-from product.models import models, choices
+from product.models import models
 from statistic.serializers import StatisticSerializer
 from statistic.models.choices import StatisticOperation
 
@@ -38,29 +37,27 @@ class ProductViewSet(viewsets.ModelViewSet):
     filter_backends = [DjangoFilterBackend]
     filterset_fields = ["status"]
 
-    def serializer_operation(self):
+    def get_serializer_class(self):
         operation = "operation"
         if operation not in self.request.query_params:
-            return None
+            return super().get_serializer_class()
         elif self.request.query_params[operation] == StatisticOperation.LOAN_EXTEND.name:
-            return product.ExtendLoanSerializer
-        elif self.request.query_params[operation] == StatisticOperation.MOVE_LOAN_TO_BAZAR.name:
-            return None
+            return product.LoanExtendSerializer
         elif self.request.query_params[operation] == StatisticOperation.LOAN_RETURN.name:
-            return None
+            return product.LoanReturnSerializer
+        elif self.request.query_params[operation] == StatisticOperation.LOAN_TO_OFFER.name:
+            return product.LoanToOfferSerializer
         else:
-            return None
+            return super().get_serializer_class()
 
-    def get_serializer_class(self):
-        serializer = self.serializer_operation()
-        return serializer if serializer else super(ProductViewSet, self).get_serializer_class()
-
+    # Request Handlers
     def list(self, request, *args, **kwargs):
+        # self.get_serializer()
         return super(ProductViewSet, self).list(request)
 
-    def create(self, request: requests.Request, *args, **kwargs):
-        response_ = super().create(request)  # to internal_repre -> to to_repre
+    def create(self, request_: requests.Request, *args, **kwargs):
         try:
+            response_: response.Response = super().create(request_)  # to internal_repre -> to to_repre
             StatisticSerializer.save_statistics(
                 price=response_.data["buy_price"],
                 operation=StatisticOperation.LOAN_CREATE.name,
@@ -69,68 +66,10 @@ class ProductViewSet(viewsets.ModelViewSet):
             )
         except AssertionError as e:
             return response.Response(
-                data={"error": f"{ProductViewSet.create.__qualname__}: {e}"}, status=status.HTTP_400_BAD_REQUEST
+                data={"error": f"{ProductViewSet.create.__qualname__}: {e}"}, status=response_.status_code
             )
         return response_
 
     def partial_update(self, request, *args, **kwargs):
-        return super().partial_update(request)
-
-
-class ExtendLoanViewSet(
-    mixins.UpdateModelMixin,
-    viewsets.GenericViewSet,
-):
-    queryset = models.Product.objects.all()
-    serializer_class = product.ExtendLoanSerializer
-    http_method_names = ["patch"]
-
-    # permission_classes = [permissions.IsAuthenticated] # TODO: Uncomment
-
-    # def create_data(self, loan: models.Product):
-    #     return {
-    #         "status": models.ProductStatus.LOAN.name,
-    #         "sell_price": utils.get_sell_price(rate=loan.rate, buy_price=loan.buy_price),
-    #         "date_extend": timezone.now(),
-    #     }
-
-    def partial_update(self, request, *args, **kwargs):
-        return super().partial_update(request)
-
-
-class ReturnLoanViewSet(
-    mixins.UpdateModelMixin,
-    viewsets.GenericViewSet,
-):
-    queryset = models.Product.objects.all()
-    serializer_class = product.CreateProductSerializer
-    http_method_names = ["patch"]
-
-    # permission_classes = [permissions.IsAuthenticated]
-
-    def create_data(self):
-        return {"status": choices.ProductStatus.INACTIVE_LOAN.name, "date_end": timezone.now()}
-
-    def partial_update(self, request, *args, **kwargs):
-        # TODO: Return only LOAN and AFTER_MATURITY
-        request.data.update(self.create_data())
-        return super().partial_update(request)
-
-
-class LoanToBazarViewSet(
-    mixins.UpdateModelMixin,
-    viewsets.GenericViewSet,
-):
-    queryset = models.Product.objects.all()
-    serializer_class = product.CreateProductSerializer
-    http_method_names = ["patch"]
-
-    # permission_classes = [permissions.IsAuthenticated]
-
-    def create_data(self, request: requests.Request):
-        return {"status": choices.ProductStatus.OFFER.name, "sell_price": request.data["product_sell"]}
-
-    def partial_update(self, request, *args, **kwargs):
-        # TODO: Move only AFTER_MATURITY
-        request.data.update(self.create_data(request))
+        # TODO: Statistics save, be carefully in writing description
         return super().partial_update(request)

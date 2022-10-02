@@ -54,20 +54,22 @@ class CreateProductSerializer(WritableNestedModelSerializer):
                 },
                 "status": data["status"],
                 "inventory_id": data["inventory_id"],
-                "rate": data["interest_rate_or_amount"] if data["status"] == choices.ProductStatus.LOAN.name else "",
+                "rate": data["interest_rate_or_amount"] if data["status"] == choices.ProductStatus.LOAN.name else None,
                 "product_name": data["product_name"],
-                "buy_price": data["product_buy"],
+                "buy_price": data["buy_price"],
                 "sell_price": utils.get_sell_price(
-                    rate=float(data["interest_rate_or_amount"]), buy_price=int(data["product_buy"])
+                    rate=float(data["interest_rate_or_quantity"]), buy_price=int(data["buy_price"])
                 ),
                 "date_extend": timezone.now(),
-                "quantity": data["quantity"] if "quantity" in data else 1,
+                "quantity": data["interest_rate_or_amount"]
+                if data["status"] == choices.ProductStatus.OFFER.name
+                else 1,
             }
         )
         return super().to_internal_value(data)
 
 
-class ExtendLoanSerializer(WritableNestedModelSerializer):
+class LoanExtendSerializer(WritableNestedModelSerializer):
     customer = CustomerProfileSerializer()
     sell_price = serializers.IntegerField(required=False)
 
@@ -91,4 +93,36 @@ class ExtendLoanSerializer(WritableNestedModelSerializer):
                 "date_extend": timezone.now(),
             }
         )
+        return super().to_internal_value(data)
+
+
+class LoanReturnSerializer(WritableNestedModelSerializer):
+    customer = CustomerProfileSerializer()
+    sell_price = serializers.IntegerField(required=False)
+
+    class Meta:
+        model = models.Product
+        fields = "__all__"
+
+    def to_internal_value(self, data):
+        data.update(
+            {
+                "status": choices.ProductStatus.INACTIVE_LOAN.name,
+                "date_end": timezone.now()
+                # "sell_price": "" # Note: Is already set from command
+            }
+        )
+        return super().to_internal_value(data)
+
+
+class LoanToOfferSerializer(WritableNestedModelSerializer):
+    customer = CustomerProfileSerializer()
+    sell_price = serializers.IntegerField(required=False)
+
+    class Meta:
+        model = models.Product
+        fields = "__all__"
+
+    def to_internal_value(self, data):
+        data.update({"status": choices.ProductStatus.OFFER.name, "sell_price": data["sell_price"]})
         return super().to_internal_value(data)

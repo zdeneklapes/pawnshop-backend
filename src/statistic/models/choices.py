@@ -11,7 +11,7 @@ class StatisticOperation(models.TextChoices):
     OFFER_CREATE = "OFFER_CREATE", "Vykup"
     OFFER_SELL = "OFFER_SELL", "Prodej"
     # Move
-    MOVE_LOAN_TO_BAZAR = "MOVE_LOAN_TO_BAZAR", "Presunuti do bazaru"
+    LOAN_TO_OFFER = "LOAN_TO_OFFER", "Presunuti do bazaru"
     # Logins
     LOGIN = "LOGIN", "Prihlaseni"
     LOGOUT = "LOGOUT", "Odhlaseni"
