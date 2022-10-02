@@ -22,7 +22,7 @@ DEBUG = os.environ.get("DJANGO_DEBUG") == "True"
 try:
     ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOWED_HOSTS").split(",")
 except AttributeError:
-    ALLOWED_HOSTS = ["localhost", "127.0.0.1", "0.0.0.0"]
+    ALLOWED_HOSTS = ["localhost", "127.0.0.1", "0.0.0.0"]  # nosec
 
 # Application definition
 INSTALLED_APPS = [
@@ -36,7 +36,7 @@ INSTALLED_APPS = [
     "drf_yasg",
     "rest_framework",
     "rest_framework_simplejwt",
-    'django_filters',
+    "django_filters",
     #
     "authentication",
     "product",
@@ -52,7 +52,7 @@ INSTALLED_APPS = [
 REST_FRAMEWORK = {
     "NON_FIELD_ERRORS_KEY": "errors",
     "DEFAULT_AUTHENTICATION_CLASSES": ("rest_framework_simplejwt.authentication.JWTAuthentication",),
-    'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend']
+    "DEFAULT_FILTER_BACKENDS": ["django_filters.rest_framework.DjangoFilterBackend"]
     # 'TEST_REQUEST_DEFAULT_FORMAT': 'json',
     # 'DEFAULT_PARSER_CLASSES': [
     #     'rest_framework.parsers.JSONParser',
