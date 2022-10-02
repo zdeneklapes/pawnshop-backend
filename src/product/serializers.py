@@ -30,30 +30,33 @@ class ProductSerializer(WritableNestedModelSerializer):
         return data
 
     def to_representation(self, instance):
-        dict = super().to_representation(instance)
-        return self.add_interests(data=dict)
+        dict_ = super().to_representation(instance)
+        return self.add_interests(data=dict_)
 
     def to_internal_value(self, data):
-        data = {
-            "user": data["user"],
-            "customer": {
-                "id_person_number": data["birth_id"],
-                "full_name": data["name"],
-                "id_card_number": data["personal_id"],
-                "id_card_number_expiration_date": data["personal_id_date"],
-                "residence": data["address"],
-                "nationality": data["nationality"],
-                "place_of_birth": data["birth_place"],
-                "sex": data["sex"],
-            },
-            "status": data["status"],
-            "rate": data["interest_rate_or_amount"],
-            "description": data["product_name"],
-            "buy_price": data["product_buy"],
-            "sell_price": utils.get_sell_price(
-                rate=float(data["interest_rate_or_amount"]), buy_price=int(data["product_buy"])
-            ),
-            "date_extend": timezone.now(),
-            "quantity": data["quantity"] if "quantity" in data else 1,
-        }
+        # Note: this just update provided data, not override all
+        data.update(
+            {
+                "user": data["user"],
+                "customer": {
+                    "id_person_number": data["birth_id"],
+                    "full_name": data["name"],
+                    "id_card_number": data["personal_id"],
+                    "id_card_number_expiration_date": data["personal_id_date"],
+                    "residence": data["address"],
+                    "nationality": data["nationality"],
+                    "place_of_birth": data["birth_place"],
+                    "sex": data["sex"],
+                },
+                "status": data["status"],
+                "rate": data["interest_rate_or_amount"],
+                "description": data["product_name"],
+                "buy_price": data["product_buy"],
+                "sell_price": utils.get_sell_price(
+                    rate=float(data["interest_rate_or_amount"]), buy_price=int(data["product_buy"])
+                ),
+                "date_extend": timezone.now(),
+                "quantity": data["quantity"] if "quantity" in data else 1,
+            }
+        )
         return super(ProductSerializer, self).to_internal_value(data)

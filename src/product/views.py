@@ -6,6 +6,8 @@ from rest_framework import mixins, viewsets
 from product import serializers
 from product.models import models, choices
 from common import utils
+from statistic.serializers import StatisticSerializer
+from statistic.models.choices import StatisticOperation
 
 
 class CreateProductViewSet(
@@ -15,13 +17,24 @@ class CreateProductViewSet(
 ):
     queryset = models.Product.objects.all()
     serializer_class = serializers.ProductSerializer
+
     # permission_classes = [permissions.IsAuthenticated]
 
+    def save_statistics(self, price: int, operation: str, user: int, product: int = None):
+        serializer_stats = StatisticSerializer(
+            data={"description": operation, "price": price, "product": product, "user": user}
+        )
+        serializer_stats.is_valid()
+        serializer_stats.save()
+
     def create(self, request: requests.Request, *args, **kwargs):
-        # Loan
-        # request.data.update(self.create_data(request))
         response = super().create(request)  # to internal_repre -> to to_repre
-        # TODO: Save Statistics
+        self.save_statistics(
+            price=response.data["buy_price"],
+            operation=StatisticOperation.LOAN_CREATE.name,
+            user=response.data["user"],
+            product=response.data["id"],
+        )
         return response
 
     def retrieve(self, request, *args, **kwargs):
