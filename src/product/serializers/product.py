@@ -21,7 +21,7 @@ def get_interests(rate: float, buy_price: int, rate_times: int):
     ]
 
 
-class ProductSerializer(WritableNestedModelSerializer):
+class CreateProductSerializer(WritableNestedModelSerializer):
     customer = CustomerProfileSerializer()
     sell_price = serializers.IntegerField(required=False)
 
@@ -37,7 +37,6 @@ class ProductSerializer(WritableNestedModelSerializer):
         return dict_
 
     def to_internal_value(self, data):
-        # Note: this just update provided data, not override all
         data.update(
             {
                 "user": data["user"],
@@ -62,10 +61,10 @@ class ProductSerializer(WritableNestedModelSerializer):
                 "quantity": data["quantity"] if "quantity" in data else 1,
             }
         )
-        return super(ProductSerializer, self).to_internal_value(data)
+        return super().to_internal_value(data)
 
 
-class ExtendDateSerializer(WritableNestedModelSerializer):
+class ExtendLoanSerializer(WritableNestedModelSerializer):
     customer = CustomerProfileSerializer()
     sell_price = serializers.IntegerField(required=False)
 
@@ -75,11 +74,13 @@ class ExtendDateSerializer(WritableNestedModelSerializer):
 
     def to_representation(self, instance):
         dict_ = super().to_representation(instance)
-        return self.add_interests(data=dict_)
+        dict_["interest"] = get_interests(
+            rate=float(instance.rate), buy_price=instance.buy_price, rate_times=instance.rate_times
+        )
+        return dict_
 
     def to_internal_value(self, data):
-        loan = models.Product.objects.get(id=data["id"])
-        # Note: this just update provided data, not override all
+        loan = models.Product.objects.get(id=self.context['view'].kwargs['pk'])
         data.update(
             {
                 "status": models.ProductStatus.LOAN.name,

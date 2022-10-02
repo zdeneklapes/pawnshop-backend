@@ -3,7 +3,7 @@ from django.utils import timezone
 import requests
 from rest_framework import mixins, viewsets
 
-from product.serializers.product import ProductSerializer
+from product.serializers import product
 from product.models import models, choices
 from statistic.serializers import StatisticSerializer
 from statistic.models.choices import StatisticOperation
@@ -15,7 +15,7 @@ class CreateProductViewSet(
     viewsets.GenericViewSet,
 ):
     queryset = models.Product.objects.all()
-    serializer_class = ProductSerializer
+    serializer_class = product.CreateProductSerializer
 
     # permission_classes = [permissions.IsAuthenticated] # TODO: Uncomment
 
@@ -42,7 +42,7 @@ class LoanViewSet(
     viewsets.GenericViewSet,
 ):
     queryset = models.Product.objects.get_loans()
-    serializer_class = ProductSerializer
+    serializer_class = product.CreateProductSerializer
     # permission_classes = [permissions.IsAuthenticated] # TODO: Uncomment
 
     def list(self, request, *args, **kwargs):
@@ -51,7 +51,7 @@ class LoanViewSet(
 
 class OfferViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
     queryset = models.Product.objects.get_offers()
-    serializer_class = ProductSerializer
+    serializer_class = product.CreateProductSerializer
     # permission_classes = [permissions.IsAuthenticated] # TODO: Uncomment
 
     def list(self, request, *args, **kwargs):
@@ -60,7 +60,7 @@ class OfferViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
 
 class AfterMaturityViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
     queryset = models.Product.objects.get_after_maturity()
-    serializer_class = ProductSerializer
+    serializer_class = product.CreateProductSerializer
     # permission_classes = [permissions.IsAuthenticated] # TODO: Uncomment
 
 
@@ -69,7 +69,7 @@ class ExtendLoanViewSet(
     viewsets.GenericViewSet,
 ):
     queryset = models.Product.objects.all()
-    serializer_class = ProductSerializer
+    serializer_class = product.ExtendLoanSerializer
     http_method_names = ["patch"]
     # permission_classes = [permissions.IsAuthenticated] # TODO: Uncomment
 
@@ -90,7 +90,7 @@ class ReturnLoanViewSet(
     viewsets.GenericViewSet,
 ):
     queryset = models.Product.objects.all()
-    serializer_class = ProductSerializer
+    serializer_class = product.CreateProductSerializer
     http_method_names = ["patch"]
 
     # permission_classes = [permissions.IsAuthenticated]
@@ -109,7 +109,7 @@ class LoanToBazarViewSet(
     viewsets.GenericViewSet,
 ):
     queryset = models.Product.objects.all()
-    serializer_class = ProductSerializer
+    serializer_class = product.CreateProductSerializer
     http_method_names = ["patch"]
 
     # permission_classes = [permissions.IsAuthenticated]
