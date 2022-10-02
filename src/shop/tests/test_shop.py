@@ -74,9 +74,7 @@ class TestShop(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_partial_update(self):
-        response = self.client.patch(
-            f"{TestShop.shop_url}/1/", data={"name": "Krenova"}
-        )
+        response = self.client.patch(f"{TestShop.shop_url}/1/", data={"name": "Krenova"})
         self.assertEqual(
             response.data,
             {
