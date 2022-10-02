@@ -21,6 +21,9 @@ EXPOSE 8000
 WORKDIR /app/src
 
 COPY src/ .
+RUN chmod +x entrypoint.sh
 
-#RUN chmod +x entrypoint.sh
+WORKDIR /app
+RUN chmod +x start.sh
+
 #ENTRYPOINT [ "/app/src/entrypoint.sh", "dev"]
