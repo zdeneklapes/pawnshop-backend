@@ -14,7 +14,7 @@ class StatisticsGetRequest:
     RESET = "RESET", "Reset profit"
 
 
-class StatisticAllViewSet(mixins.ListModelMixin, mixins.CreateModelMixin, viewsets.GenericViewSet):
+class StatisticViewSet(mixins.ListModelMixin, mixins.CreateModelMixin, viewsets.GenericViewSet):
     queryset = models.Statistic.objects.all()
     serializer_class = serializers.StatisticSerializer
 
@@ -27,10 +27,10 @@ class StatisticAllViewSet(mixins.ListModelMixin, mixins.CreateModelMixin, viewse
         # Validate
         if "operation" in request.query_params:
             if request.query_params["operation"] == StatisticsGetRequest.RESET:
-                return super(StatisticAllViewSet, self).create(request)
+                return super(StatisticViewSet, self).create(request)
 
         # Error
         return Response(
-            data={"error": f"{StatisticAllViewSet.create.__qualname__} - {BadQueryParam.default_detail}"},
+            data={"error": f"{StatisticViewSet.create.__qualname__} - {BadQueryParam.default_detail}"},
             status=status.HTTP_400_BAD_REQUEST,
         )
