@@ -17,7 +17,7 @@ class CreateProductViewSet(
     queryset = models.Product.objects.all()
     serializer_class = ProductSerializer
 
-    # permission_classes = [permissions.IsAuthenticated]
+    # permission_classes = [permissions.IsAuthenticated] # TODO: Uncomment
 
     def create(self, request: requests.Request, *args, **kwargs):
         response = super().create(request)  # to internal_repre -> to to_repre
@@ -43,19 +43,25 @@ class LoanViewSet(
 ):
     queryset = models.Product.objects.get_loans()
     serializer_class = ProductSerializer
-    # permission_classes = [permissions.IsAuthenticated]
+    # permission_classes = [permissions.IsAuthenticated] # TODO: Uncomment
+
+    def list(self, request, *args, **kwargs):
+        return super().list(request)
 
 
 class OfferViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
     queryset = models.Product.objects.get_offers()
     serializer_class = ProductSerializer
-    # permission_classes = [permissions.IsAuthenticated]
+    # permission_classes = [permissions.IsAuthenticated] # TODO: Uncomment
+
+    def list(self, request, *args, **kwargs):
+        return super().list(request)
 
 
 class AfterMaturityViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
     queryset = models.Product.objects.get_after_maturity()
     serializer_class = ProductSerializer
-    # permission_classes = [permissions.IsAuthenticated]
+    # permission_classes = [permissions.IsAuthenticated] # TODO: Uncomment
 
 
 class ExtendDateViewSet(
@@ -65,8 +71,8 @@ class ExtendDateViewSet(
     queryset = models.Product.objects.all()
     serializer_class = ProductSerializer
     http_method_names = ["patch"]
+    # permission_classes = [permissions.IsAuthenticated] # TODO: Uncomment
 
-    # permission_classes = [permissions.IsAuthenticated]
 
     # def create_data(self, loan: models.Product):
     #     return {
