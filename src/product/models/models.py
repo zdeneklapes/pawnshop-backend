@@ -1,6 +1,7 @@
 from django.db import models
 
-from authentication.models import CustomerProfile, User
+from authentication.models import User
+from customer.models import CustomerProfile
 from .choices import ProductStatus, RateFrequency
 from .managers import ProductManager
 
@@ -21,10 +22,11 @@ class Product(models.Model):
     rate = models.DecimalField(max_digits=4, decimal_places=1, null=True)
 
     # Product
-    description = models.TextField()
+    product_name = models.TextField()
     buy_price = models.PositiveIntegerField()
     sell_price = models.PositiveIntegerField(null=True)  # Cron
     quantity = models.PositiveIntegerField(default=1)
+    inventory_id = models.PositiveIntegerField()
 
     # Dates
     date_create = models.DateTimeField(auto_now_add=True)

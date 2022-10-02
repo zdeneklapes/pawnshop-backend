@@ -4,10 +4,11 @@ from django.utils import timezone
 from rest_framework import serializers
 from drf_writable_nested import WritableNestedModelSerializer
 
-from authentication.serializers import CustomerProfileSerializer
+from customer.serializers import CustomerProfileSerializer
 
 from product.models import models
 from common import utils
+from product.models import choices
 
 
 def get_interests(rate: float, buy_price: int, rate_times: int):
@@ -42,18 +43,19 @@ class CreateProductSerializer(WritableNestedModelSerializer):
             {
                 "user": data["user"],
                 "customer": {
-                    "id_person_number": data["birth_id"],
-                    "full_name": data["name"],
-                    "id_card_number": data["personal_id"],
-                    "id_card_number_expiration_date": data["personal_id_date"],
+                    "id_birth": data["id_birth"],
+                    "full_name": data["full_name"],
+                    "personal_id": data["personal_id"],
+                    "personal_id_expiration_date": data["personal_id_date"],
                     "residence": data["address"],
                     "nationality": data["nationality"],
-                    "place_of_birth": data["birth_place"],
+                    "birthplace": data["birthplace"],
                     "sex": data["sex"],
                 },
                 "status": data["status"],
-                "rate": data["interest_rate_or_amount"],
-                "description": data["product_name"],
+                "inventory_id": data["inventory_id"],
+                "rate": data["interest_rate_or_amount"] if data["status"] == choices.ProductStatus.LOAN.name else "",
+                "product_name": data["product_name"],
                 "buy_price": data["product_buy"],
                 "sell_price": utils.get_sell_price(
                     rate=float(data["interest_rate_or_amount"]), buy_price=int(data["product_buy"])

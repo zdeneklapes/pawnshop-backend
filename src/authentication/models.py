@@ -98,32 +98,3 @@ class AttendantProfile(User):
 
     # Others
     perm_complete_win = models.BooleanField(default=False)  # TODO: For what?
-
-
-class CustomerProfile(models.Model):
-    GENDERS_CHOICES = (("M", "Male"), ("F", "Female"))
-
-    id_person_number = models.CharField(primary_key=True, max_length=255)
-    full_name = models.CharField(max_length=255)
-    id_card_number = models.CharField(max_length=255)
-    id_card_number_expiration_date = models.DateField()
-    residence = models.CharField(max_length=255)
-    nationality = models.CharField(max_length=255)
-    place_of_birth = models.CharField(max_length=255)
-    sex = models.CharField(max_length=1, choices=GENDERS_CHOICES)
-
-
-class UserLoginActivity(models.Model):
-    """TODO"""
-
-    LOGIN_STATUS = (("S", "Success"), ("F", "Failed"))
-
-    login_IP = models.GenericIPAddressField(null=True, blank=True)
-    login_datetime = models.DateTimeField(auto_now=True)
-    login_username = models.CharField(max_length=40, null=True, blank=True)
-    status = models.CharField(max_length=1, default="S", choices=LOGIN_STATUS, null=True, blank=True)
-    user_agent_info = models.CharField(max_length=255)
-
-    class Meta:
-        verbose_name = "user_login_activity"
-        verbose_name_plural = "user_login_activities"

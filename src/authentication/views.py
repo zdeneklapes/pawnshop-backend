@@ -20,9 +20,3 @@ class AttendantProfileCreateViewSet(
     queryset = models.AttendantProfile.objects.all()
     serializer_class = serializers.AttendantProfileSerializer
     # permission_classes = [permissions.IsAuthenticated, permissions.IsAdminUser] # TODO: Uncomment
-
-
-class CustomerProfileViewSet(mixins.ListModelMixin, mixins.UpdateModelMixin, viewsets.GenericViewSet):
-    queryset = models.CustomerProfile.objects.all()
-    serializer_class = serializers.CustomerProfileSerializer
-    # permission_classes = [permissions.IsAuthenticated] # TODO: Uncomment

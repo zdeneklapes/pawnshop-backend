@@ -49,11 +49,3 @@ class AttendantProfileSerializer(serializers.ModelSerializer):
             user.set_password(validated_data["password"])
             user.save()
         return user
-
-
-class CustomerProfileSerializer(serializers.ModelSerializer):
-    id_person_number = serializers.CharField(max_length=255)
-
-    class Meta:
-        model = models.CustomerProfile
-        fields = "__all__"

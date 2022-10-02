@@ -1,6 +1,7 @@
 from django.utils import timezone
+from django.utils.decorators import method_decorator
 from drf_yasg import openapi
-
+from drf_yasg.utils import swagger_auto_schema
 
 import requests
 from rest_framework import mixins, response, status, viewsets
@@ -25,6 +26,16 @@ class ProductParameters(django_filters.FilterSet):
     )
 
 
+params = [openapi.Parameter("source_id", openapi.IN_PATH, description="Source reference", type=openapi.TYPE_STRING)]
+
+# @method_decorator(name="list", decorator=swagger_auto_schema(manual_parameters=params))
+# @method_decorator(name="create", decorator=swagger_auto_schema(manual_parameters=params))
+# @method_decorator(name="retrieve", decorator=swagger_auto_schema(manual_parameters=params))
+# @method_decorator(name="update", decorator=swagger_auto_schema(manual_parameters=params))
+# @method_decorator(name="destroy", decorator=swagger_auto_schema(manual_parameters=params))
+
+
+@method_decorator(name="partial_update", decorator=swagger_auto_schema(manual_parameters=params))
 class ProductViewSet(viewsets.ModelViewSet):
     queryset = models.Product.objects.all()
     serializer_class = product.CreateProductSerializer
@@ -75,9 +86,6 @@ class ProductViewSet(viewsets.ModelViewSet):
             )
         return response_
 
-    # @swagger_auto_schema("patch",
-    # operation_description="PATCH /articles/{id}?{StatisticOperation}",
-    # manual_parameters=[ProductParameters.operation_param])
     def partial_update(self, request, *args, **kwargs):
         return super().partial_update(request)
 
@@ -113,12 +121,12 @@ class ReturnLoanViewSet(
 
     # permission_classes = [permissions.IsAuthenticated]
 
-    def create_data(self, request: requests.Request):
+    def create_data(self):
         return {"status": choices.ProductStatus.INACTIVE_LOAN.name, "date_end": timezone.now()}
 
     def partial_update(self, request, *args, **kwargs):
         # TODO: Return only LOAN and AFTER_MATURITY
-        request.data.update(self.create_data(request))
+        request.data.update(self.create_data())
         return super().partial_update(request)
 
 

@@ -8,7 +8,6 @@ from . import views
 router = routers.DefaultRouter()
 router.register(prefix=r"users", viewset=views.UserViewSet)
 router.register(prefix=r"attendants", viewset=views.AttendantProfileCreateViewSet)
-router.register(prefix=r"customers", viewset=views.CustomerProfileViewSet)
 
 urlpatterns = [
     # Authentication
