@@ -75,7 +75,8 @@ function samples_to_envs() {
 # Django
 function django_runserver() {
     cd src || error_exit "cd"
-    ./entrypoint.sh 'local'
+    export PORT=8000
+    ./entrypoint.sh 'dev'
     cd .. || error_exit "cd"
 }
 

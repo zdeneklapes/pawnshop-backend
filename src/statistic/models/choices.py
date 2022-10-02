@@ -3,12 +3,15 @@ from django.db import models
 
 class StatisticOperation(models.TextChoices):
     # Loans
-    CREATE_LOAN = "ZASTAVA", "Zastava"
-    EXTEND_DATE = "PRODLOUZENI", "Prodlouzeni"
-    RETURN_LOAN = "VYBER", "Vyber"
+    LOAN_CREATE = "LOAN_CREATE", "Zastava"
+    LOAN_EXTEND = "LOAN_EXTEND", "Prodlouzeni"
+    LOAN_EXTEND_AFTER_MATURITY = "LOAN_EXTEND_AFTER_MATURITY", "Prodlouzeni po splatnosti"
+    LOAN_RETURN = "LOAN_RETURN", "Vyber"
     # Offers
-    CREATE_OFFER = "ZASTAVA", "Zastava"
-    SELL_OFFER = "ZASTAVA", "Zastava"
+    OFFER_CREATE = "OFFER_CREATE", "Vykup"
+    OFFER_SELL = "OFFER_SELL", "Prodej"
+    # Move
+    MOVE_LOAN_TO_BAZAR = "MOVE_LOAN_TO_BAZAR", "Presunuti do bazaru"
     # Logins
-    LOGIN = "PRIHLASENI", "Prihlaseni"
-    LOGOUT = "ODHLASENI", "Odhlaseni"
+    LOGIN = "LOGIN", "Prihlaseni"
+    LOGOUT = "LOGOUT", "Odhlaseni"

@@ -58,8 +58,8 @@ REST_FRAMEWORK = {
 }
 
 SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(hours=10),
-    "REFRESH_TOKEN_LIFETIME": timedelta(hours=10),
+    "ACCESS_TOKEN_LIFETIME": timedelta(days=10),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=10),
     # 'ROTATE_REFRESH_TOKENS': False,
     "BLACKLIST_AFTER_ROTATION": False,
     # 'UPDATE_LAST_LOGIN': False,
@@ -166,15 +166,18 @@ LANGUAGE_CODE = "en-us"
 TIME_ZONE = "UTC"
 USE_I18N = True
 USE_TZ = True
-STATIC_URL = "static/"
-# STATICFILES_DIR = [
-#     os.path.join(BASE_DIR, 'static'),
-# ]
-# STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
-# STATIC_ROOT = BASE_DIR
-DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-# ADMINS = []
+# Static
+STATIC_URL = "/static/"
+STATICFILES_DIR = [
+    os.path.join(BASE_DIR, "static"),
+]
+STATIC_ROOT = path.join(BASE_DIR, "staticfiles")
+# STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+
+
+# DB
+DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 SWAGGER_SETTINGS = {
     "SECURITY_DEFINITIONS": {
