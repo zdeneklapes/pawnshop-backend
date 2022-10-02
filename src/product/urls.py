@@ -1,15 +1,22 @@
 from rest_framework.routers import DefaultRouter
 
-
-from . import views
+from .views.product import (
+    CreateProductViewSet,
+    LoanViewSet,
+    OfferViewSet,
+    AfterMaturityViewSet,
+    ExtendDateViewSet,
+    ReturnLoanViewSet,
+    LoanToBazarViewSet,
+)
 
 router = DefaultRouter()
-router.register(prefix=r"", viewset=views.CreateProductViewSet)
-router.register(prefix=r"loans", viewset=views.LoanViewSet)
-router.register(prefix=r"offers", viewset=views.OfferViewSet)
-router.register(prefix=r"after-maturity", viewset=views.AfterMaturityViewSet)
-router.register(prefix=r"extend-loan", viewset=views.ExtendDateViewSet)
-router.register(prefix=r"return-loan", viewset=views.ReturnLoanViewSet)
-router.register(prefix=r"loan-to-bazar", viewset=views.LoanToBazarViewSet)
+router.register(prefix=r"", viewset=CreateProductViewSet)
+router.register(prefix=r"loans", viewset=LoanViewSet)
+router.register(prefix=r"offers", viewset=OfferViewSet)
+router.register(prefix=r"after-maturity", viewset=AfterMaturityViewSet)
+router.register(prefix=r"extend-loan", viewset=ExtendDateViewSet)
+router.register(prefix=r"return-loan", viewset=ReturnLoanViewSet)
+router.register(prefix=r"loan-to-bazar", viewset=LoanToBazarViewSet)
 
 urlpatterns = router.urls

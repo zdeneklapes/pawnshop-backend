@@ -6,8 +6,19 @@ from drf_writable_nested import WritableNestedModelSerializer
 
 from authentication.serializers import CustomerProfileSerializer
 
-from .models import models
+from product.models import models
 from common import utils
+
+
+def get_interests(rate: float, buy_price: int, rate_times: int):
+    return [
+        {
+            "from": datetime.date.today() + datetime.timedelta(weeks=i),
+            "to": datetime.date.today() + datetime.timedelta(weeks=i + 1),
+            "price": utils.get_sell_price(rate, buy_price, i + 1),
+        }
+        for i in range(rate_times)
+    ]
 
 
 class ProductSerializer(WritableNestedModelSerializer):
@@ -18,20 +29,12 @@ class ProductSerializer(WritableNestedModelSerializer):
         model = models.Product
         fields = "__all__"
 
-    def add_interests(self, data):
-        data["interest"] = [
-            {
-                "from": datetime.date.today() + datetime.timedelta(weeks=i),
-                "to": datetime.date.today() + datetime.timedelta(weeks=i + 1),
-                "price": utils.get_sell_price(float(data["rate"]), data["buy_price"], i + 1),
-            }
-            for i in range(data["rate_times"])
-        ]
-        return data
-
     def to_representation(self, instance):
         dict_ = super().to_representation(instance)
-        return self.add_interests(data=dict_)
+        dict_["interest"] = get_interests(
+            rate=float(instance.rate), buy_price=instance.buy_price, rate_times=instance.rate_times
+        )
+        return dict_
 
     def to_internal_value(self, data):
         # Note: this just update provided data, not override all
@@ -60,3 +63,28 @@ class ProductSerializer(WritableNestedModelSerializer):
             }
         )
         return super(ProductSerializer, self).to_internal_value(data)
+
+
+class ExtendDateSerializer(WritableNestedModelSerializer):
+    customer = CustomerProfileSerializer()
+    sell_price = serializers.IntegerField(required=False)
+
+    class Meta:
+        model = models.Product
+        fields = "__all__"
+
+    def to_representation(self, instance):
+        dict_ = super().to_representation(instance)
+        return self.add_interests(data=dict_)
+
+    def to_internal_value(self, data):
+        loan = models.Product.objects.get(id=data["id"])
+        # Note: this just update provided data, not override all
+        data.update(
+            {
+                "status": models.ProductStatus.LOAN.name,
+                "sell_price": utils.get_sell_price(rate=loan.rate, buy_price=loan.buy_price),
+                "date_extend": timezone.now(),
+            }
+        )
+        return super().to_internal_value(data)

@@ -3,9 +3,8 @@ from django.utils import timezone
 import requests
 from rest_framework import mixins, viewsets
 
-from product import serializers
+from product.serializers.product import ProductSerializer
 from product.models import models, choices
-from common import utils
 from statistic.serializers import StatisticSerializer
 from statistic.models.choices import StatisticOperation
 
@@ -16,25 +15,21 @@ class CreateProductViewSet(
     viewsets.GenericViewSet,
 ):
     queryset = models.Product.objects.all()
-    serializer_class = serializers.ProductSerializer
+    serializer_class = ProductSerializer
 
     # permission_classes = [permissions.IsAuthenticated]
 
-    def save_statistics(self, price: int, operation: str, user: int, product: int = None):
-        serializer_stats = StatisticSerializer(
-            data={"description": operation, "price": price, "product": product, "user": user}
-        )
-        serializer_stats.is_valid()
-        serializer_stats.save()
-
     def create(self, request: requests.Request, *args, **kwargs):
         response = super().create(request)  # to internal_repre -> to to_repre
-        self.save_statistics(
-            price=response.data["buy_price"],
-            operation=StatisticOperation.LOAN_CREATE.name,
-            user=response.data["user"],
-            product=response.data["id"],
-        )
+        try:
+            StatisticSerializer.save_statistics(
+                price=response.data["buy_price"],
+                operation=StatisticOperation.LOAN_CREATE.name,
+                user=response.data["user"],
+                product=response.data["id"],
+            )
+        except AssertionError as e:
+            print(f"Error {CreateProductViewSet.create.__qualname__}: {e}")
         return response
 
     def retrieve(self, request, *args, **kwargs):
@@ -47,19 +42,19 @@ class LoanViewSet(
     viewsets.GenericViewSet,
 ):
     queryset = models.Product.objects.get_loans()
-    serializer_class = serializers.ProductSerializer
+    serializer_class = ProductSerializer
     # permission_classes = [permissions.IsAuthenticated]
 
 
 class OfferViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
     queryset = models.Product.objects.get_offers()
-    serializer_class = serializers.ProductSerializer
+    serializer_class = ProductSerializer
     # permission_classes = [permissions.IsAuthenticated]
 
 
 class AfterMaturityViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
     queryset = models.Product.objects.get_after_maturity()
-    serializer_class = serializers.ProductSerializer
+    serializer_class = ProductSerializer
     # permission_classes = [permissions.IsAuthenticated]
 
 
@@ -68,25 +63,20 @@ class ExtendDateViewSet(
     viewsets.GenericViewSet,
 ):
     queryset = models.Product.objects.all()
-    serializer_class = serializers.ProductSerializer
+    serializer_class = ProductSerializer
     http_method_names = ["patch"]
 
     # permission_classes = [permissions.IsAuthenticated]
 
-    def create_data(self, loan: models.Product):
-        return {
-            "status": models.ProductStatus.LOAN.name,
-            "sell_price": utils.get_sell_price(rate=loan.rate, buy_price=loan.buy_price),
-            "date_extend": timezone.now(),
-        }
+    # def create_data(self, loan: models.Product):
+    #     return {
+    #         "status": models.ProductStatus.LOAN.name,
+    #         "sell_price": utils.get_sell_price(rate=loan.rate, buy_price=loan.buy_price),
+    #         "date_extend": timezone.now(),
+    #     }
 
     def partial_update(self, request, *args, **kwargs):
-        try:
-            loan = models.Product.objects.get(id=kwargs["pk"])
-            request.data.update(self.create_data(loan=loan))
-            return super().partial_update(request)
-        except Exception as e:
-            print(e)
+        return super().partial_update(request)
 
 
 class ReturnLoanViewSet(
@@ -94,7 +84,7 @@ class ReturnLoanViewSet(
     viewsets.GenericViewSet,
 ):
     queryset = models.Product.objects.all()
-    serializer_class = serializers.ProductSerializer
+    serializer_class = ProductSerializer
     http_method_names = ["patch"]
 
     # permission_classes = [permissions.IsAuthenticated]
@@ -113,7 +103,7 @@ class LoanToBazarViewSet(
     viewsets.GenericViewSet,
 ):
     queryset = models.Product.objects.all()
-    serializer_class = serializers.ProductSerializer
+    serializer_class = ProductSerializer
     http_method_names = ["patch"]
 
     # permission_classes = [permissions.IsAuthenticated]
