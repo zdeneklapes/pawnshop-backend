@@ -79,9 +79,9 @@ workflows:
   push:
     jobs:
       - lint
-      - run-tests:
-          requires:
-            - lint
+#      - run-tests:
+#          requires:
+#            - lint
       - deploy-dev:
           requires:
             - lint
