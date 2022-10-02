@@ -5,8 +5,8 @@
     "fields": {
       "full_name": "a a",
       "personal_id": "0000000000",
-      "personal_id_expiration_date": "2023-09-29",
-      "residence": "Cejl 2",
+      "personal_id_expiration_date": "2023-01-01",
+      "residence": "Cejl 111",
       "nationality": "CZ",
       "birthplace": "Brno",
       "sex": "M"
@@ -14,15 +14,15 @@
   },
   {
     "model": "customer.customerprofile",
-    "pk": "000000/0100",
+    "pk": "000000/0001",
     "fields": {
       "full_name": "a b",
       "personal_id": "0000000000",
-      "personal_id_expiration_date": "2023-09-29",
-      "residence": "Cejl 2",
-      "nationality": "CZ",
-      "birthplace": "Brno",
-      "sex": "M"
+      "personal_id_expiration_date": "2023-02-02",
+      "residence": "Cejl 222",
+      "nationality": "SK",
+      "birthplace": "Prha",
+      "sex": "F"
     }
   }
 ]
