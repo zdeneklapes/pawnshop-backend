@@ -1,43 +1,39 @@
+import coreapi
 from django.utils import timezone
+from drf_yasg.utils import swagger_auto_schema
+from drf_yasg import openapi
+
 
 import requests
 from rest_framework import mixins, viewsets, response, status, filters
+from django_filters.rest_framework import DjangoFilterBackend
+import django_filters
 
 from product.serializers import product
 from product.models import models, choices
 from statistic.serializers import StatisticSerializer
 from statistic.models.choices import StatisticOperation
+from .filters import ProductFilters
 
 
-class SimpleFiltre(filters.BaseFilterBackend):
-    pass
+class ProductFilter(django_filters.FilterSet):
+    class Meta:
+        model = models.Product
+        fields = ['status']
+
+
+class ProductParameters(django_filters.FilterSet):
+    operation_param = openapi.Parameter('operation', openapi.IN_QUERY, description="Operation Type", type=StatisticOperation)
 
 
 class ProductViewSet(viewsets.ModelViewSet):
     queryset = models.Product.objects.all()
     serializer_class = product.CreateProductSerializer
     http_method_names = ["get", "post", "patch"]
-    # filter_backends = [DjangoFilterBackend]
-    filterset_fields = ["category", "in_stock"]
 
-    # permission_classes = [permissions.IsAuthenticated] # TODO: Uncomment
-
-    def queryset_status(self):
-        status = "status"
-        if status not in self.request.query_params:
-            return None
-        elif self.request.query_params[status] == choices.ProductStatus.LOAN.name:
-            return models.Product.objects.get_loans()
-        elif self.request.query_params[status] == choices.ProductStatus.OFFER.name:
-            return models.Product.objects.get_offers()
-        elif self.request.query_params[status] == choices.ProductStatus.AFTER_MATURITY.name:
-            return models.Product.objects.get_after_maturity()
-        else:
-            return None
-
-    def get_queryset(self):
-        qs = self.queryset_status()
-        return qs if qs else super(ProductViewSet, self).get_queryset()
+    # Filters
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ['status']
 
     def serializer_operation(self):
         operation = "operation"
@@ -46,14 +42,15 @@ class ProductViewSet(viewsets.ModelViewSet):
         elif self.request.query_params[operation] == StatisticOperation.LOAN_EXTEND.name:
             return product.ExtendLoanSerializer
         elif self.request.query_params[operation] == StatisticOperation.MOVE_LOAN_TO_BAZAR.name:
-            return models.Product.objects.get_offers()
+            return None
         elif self.request.query_params[operation] == StatisticOperation.LOAN_RETURN.name:
-            return models.Product.objects.get_after_maturity()
+            return None
         else:
             return None
 
     def get_serializer_class(self):
-        return super(ProductViewSet, self).get_serializer_class()
+        serializer = self.serializer_operation()
+        return serializer if serializer else super(ProductViewSet, self).get_serializer_class()
 
     def list(self, request, *args, **kwargs):
         """
@@ -76,6 +73,7 @@ class ProductViewSet(viewsets.ModelViewSet):
             )
         return response_
 
+    # @swagger_auto_schema("patch", operation_description="PATCH /articles/{id}?{StatisticOperation}", manual_parameters=[ProductParameters.operation_param])
     def partial_update(self, request, *args, **kwargs):
         return super().partial_update(request)
 
