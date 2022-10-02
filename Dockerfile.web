@@ -20,8 +20,13 @@ WORKDIR /app/src
 
 COPY src/ .
 
+COPY src/ .
 RUN chmod +x entrypoint.sh
-ENTRYPOINT [ "/app/src/entrypoint.sh", "web"]
+
+WORKDIR /app
+RUN chmod +x start.sh
+
+ENTRYPOINT [ "/app/start.sh", "--loaddata", "--runserver"]
 
 
 

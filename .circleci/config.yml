@@ -85,7 +85,7 @@ workflows:
       - deploy-dev:
           requires:
             - lint
-            - run-tests
+#            - run-tests
           filters:
             branches:
               only:
@@ -93,7 +93,7 @@ workflows:
       - deploy-main:
           requires:
             - lint
-            - run-tests
+#            - run-tests
           filters:
             branches:
               only:
