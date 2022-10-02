@@ -11,7 +11,7 @@ from statistic.models.choices import StatisticOperation
 
 class CreateProductViewSet(
     mixins.CreateModelMixin,
-    mixins.RetrieveModelMixin,
+    # mixins.RetrieveModelMixin,
     viewsets.GenericViewSet,
 ):
     queryset = models.Product.objects.all()
@@ -32,9 +32,9 @@ class CreateProductViewSet(
             print(f"Error {CreateProductViewSet.create.__qualname__}: {e}")
         return response
 
-    def retrieve(self, request, *args, **kwargs):
-        response = super(CreateProductViewSet, self).retrieve(request)
-        return response
+    # def retrieve(self, request, *args, **kwargs):
+    #     response = super(CreateProductViewSet, self).retrieve(request)
+    #     return response
 
 
 class LoanViewSet(
@@ -64,7 +64,7 @@ class AfterMaturityViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
     # permission_classes = [permissions.IsAuthenticated] # TODO: Uncomment
 
 
-class ExtendDateViewSet(
+class ExtendLoanViewSet(
     mixins.UpdateModelMixin,
     viewsets.GenericViewSet,
 ):

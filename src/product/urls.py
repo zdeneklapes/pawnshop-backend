@@ -5,7 +5,7 @@ from .views.product import (
     LoanViewSet,
     OfferViewSet,
     AfterMaturityViewSet,
-    ExtendDateViewSet,
+    ExtendLoanViewSet,
     ReturnLoanViewSet,
     LoanToBazarViewSet,
 )
@@ -15,7 +15,7 @@ router.register(prefix=r"", viewset=CreateProductViewSet)
 router.register(prefix=r"loans", viewset=LoanViewSet)
 router.register(prefix=r"offers", viewset=OfferViewSet)
 router.register(prefix=r"after-maturity", viewset=AfterMaturityViewSet)
-router.register(prefix=r"extend-loan", viewset=ExtendDateViewSet)
+router.register(prefix=r"extend-loan", viewset=ExtendLoanViewSet)
 router.register(prefix=r"return-loan", viewset=ReturnLoanViewSet)
 router.register(prefix=r"loan-to-bazar", viewset=LoanToBazarViewSet)
 
