@@ -4,7 +4,7 @@ from drf_yasg.utils import swagger_auto_schema
 
 from rest_framework.request import Request
 from rest_framework.response import Response
-from rest_framework import permissions, viewsets
+from rest_framework import viewsets
 from django_filters.rest_framework import DjangoFilterBackend
 import django_filters
 
@@ -34,7 +34,7 @@ class ProductViewSet(viewsets.ModelViewSet):
     queryset = models.Product.objects.all()
     serializer_class = product.CreateProductSerializer
     http_method_names = ["get", "post", "patch"]
-    permission_classes = [permissions.IsAuthenticated]
+    # permission_classes = [permissions.IsAuthenticated] # TODO: Uncomment
 
     # Filters for: "def list()"
     filter_backends = [DjangoFilterBackend]
@@ -60,12 +60,12 @@ class ProductViewSet(viewsets.ModelViewSet):
     def create(self, request: Request, *args, **kwargs):
         try:
             response: Response = super().create(request)  # to internal_repre -> to to_repre
-            StatisticSerializer.save_statistics(
-                price=response.data["buy_price"],
-                operation=StatisticOperations.LOAN_CREATE.name,
-                user=response.data["user"],
-                product=response.data["id"],
-            )
+            # StatisticSerializer.save_statistics(
+            #     price=response.data["buy_price"],
+            #     operation=StatisticOperations.LOAN_CREATE.name,
+            #     user=request.data["user"], # TODO: change to user: response.user.id
+            #     product=response.data["id"],
+            # )
         except AssertionError as e:
             return Response(data={"error": f"{ProductViewSet.create.__qualname__}: {e}"}, status=response.status_code)
         return response

@@ -1,4 +1,5 @@
-from rest_framework import permissions, viewsets, mixins
+from rest_framework import mixins, viewsets
+from rest_framework.request import Request
 from .models import models
 from . import serializers
 
@@ -19,10 +20,11 @@ class StatisticsGetRequest:
 class StatisticAllViewSet(mixins.ListModelMixin, mixins.CreateModelMixin, viewsets.GenericViewSet):
     queryset = models.Statistic.objects.all()
     serializer_class = serializers.StatisticSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    # permission_classes = [permissions.IsAuthenticated] # TODO: Uncomment
 
     def list(self, request, *args, **kwargs):
         pass
 
-    def create(self, request, *args, **kwargs):
-        pass
+    def create(self, request: Request, *args, **kwargs):
+        if "operation" in request.query_params:
+            pass

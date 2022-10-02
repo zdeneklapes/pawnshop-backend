@@ -46,22 +46,24 @@ class CreateProductSerializer(WritableNestedModelSerializer):
                     "id_birth": data["id_birth"],
                     "full_name": data["full_name"],
                     "personal_id": data["personal_id"],
-                    "personal_id_expiration_date": data["personal_id_date"],
-                    "residence": data["address"],
+                    "personal_id_expiration_date": data["personal_id_expiration_date"],
+                    "residence": data["residence"],
                     "nationality": data["nationality"],
                     "birthplace": data["birthplace"],
                     "sex": data["sex"],
                 },
                 "status": data["status"],
                 "inventory_id": data["inventory_id"],
-                "rate": data["interest_rate_or_amount"] if data["status"] == choices.ProductStatus.LOAN.name else None,
+                "rate": data["interest_rate_or_quantity"]
+                if data["status"] == choices.ProductStatus.LOAN.name
+                else None,
                 "product_name": data["product_name"],
                 "buy_price": data["buy_price"],
                 "sell_price": utils.get_sell_price(
                     rate=float(data["interest_rate_or_quantity"]), buy_price=int(data["buy_price"])
                 ),
                 "date_extend": timezone.now(),
-                "quantity": data["interest_rate_or_amount"]
+                "quantity": data["interest_rate_or_quantity"]
                 if data["status"] == choices.ProductStatus.OFFER.name
                 else 1,
             }
