@@ -24,6 +24,6 @@ COPY src/ .
 RUN chmod +x entrypoint.sh
 
 WORKDIR /app
-RUN chmod +x start.sh
+RUN chmod +x start.sh && /app/start.sh --loaddata
 
-ENTRYPOINT [ "/app/start.sh", "--loaddata", "--runserver"]
+ENTRYPOINT [ "/app/start.sh", "--runserver"]

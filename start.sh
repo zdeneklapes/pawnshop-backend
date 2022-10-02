@@ -107,7 +107,7 @@ function django_test() {
 #                   "./product/fixtures/products.json" \
 #                   "./loan/fixtures/loans.json";
 function django_loaddata() {
-    django_clean_migrations
+#    django_clean_migrations
     cd src || error_exit "cd"
     python3 manage.py makemigrations
     python3 manage.py migrate
@@ -170,7 +170,7 @@ function clean() {
         find . -type f -iname "${file}" | xargs ${RM}
     done
 
-    django_clean_migrations
+#    django_clean_migrations
 }
 
 function tags() {
