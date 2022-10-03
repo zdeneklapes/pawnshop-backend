@@ -107,14 +107,14 @@ function django_test() {
 #                   "./product/fixtures/products.json" \
 #                   "./loan/fixtures/loans.json";
 function django_loaddata() {
-#    django_clean_migrations
+    #    django_clean_migrations
     cd src || error_exit "cd"
     python3 manage.py makemigrations
     python3 manage.py migrate
 
     for fixture in "./authentication/fixtures/users.json" \
         "./authentication/fixtures/attendants.json" \
-        "./customer/fixtures/customers.json"\
+        "./customer/fixtures/customers.json" \
         "./product/fixtures/products.json"; do
         printf "${fixture}  ==  "
         python3 manage.py loaddata ${fixture}
@@ -130,6 +130,14 @@ function django_update_product_status() {
 }
 
 # Others
+function create_venv() {
+    python3 -m venv venv
+    deactivate
+    source venv/bin/activate.fish
+    pip3 install -r requirements.txt
+    deactivate
+}
+
 function usage() {
     echo "USAGE:
     # Project
@@ -170,7 +178,7 @@ function clean() {
         find . -type f -iname "${file}" | xargs ${RM}
     done
 
-#    django_clean_migrations
+    #    django_clean_migrations
 }
 
 function tags() {
@@ -204,6 +212,7 @@ while [ "$#" -gt 0 ]; do
         django_test $1
         ;;
         # Others
+    '--venv') create_venv ;;
     '-h' | '--help') usage ;;
         # Project
     '-c' | '--clean') clean ;;
