@@ -3,9 +3,7 @@ django-cors-headers==3.13.0
 django-cron==0.6.0
 django-environ==0.9.0
 django-filter==22.1
-django-nextjs==2.2.1
 django-phonenumber-field==7.0.0
-djoser==2.1.0
 drf-writable-nested==0.7.0
 drf-yasg==1.21.4
 gunicorn==20.1.0
@@ -20,4 +18,3 @@ pylint-venv==2.3.0
 pyopenssl==22.1.0
 python-dotenv==0.21.0
 service-identity==21.1.0
-whitenoise==6.2.0
