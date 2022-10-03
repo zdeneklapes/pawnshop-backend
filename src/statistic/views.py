@@ -56,8 +56,7 @@ class StatisticViewSet(mixins.ListModelMixin, mixins.CreateModelMixin, viewsets.
         if data == StatisticsQueryParamsChoices.ALL.name:  # pylint: disable=E1101
             return super(StatisticViewSet, self).get_queryset()
         elif data == StatisticsQueryParamsChoices.CASH_AMOUNT.name:  # pylint: disable=E1101
-            pass
-            # return Statistic.objects.get_cash_amount()
+            return Statistic.objects.get_cash_amount()  # pylint: disable=E1120
         else:  # TODO: Create some Response that tell user the request was with bad params
             return super(StatisticViewSet, self).get_queryset()
 
