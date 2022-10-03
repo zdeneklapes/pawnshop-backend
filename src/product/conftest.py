@@ -1,13 +1,14 @@
 import pytest
 from rest_framework.test import APIClient
+from authentication.models import User
+
+
+@pytest.fixture(scope="function")
+def user():
+    user = User.objects.create_superuser(email="a@a.com", password="a")
+    return user
 
 
 @pytest.fixture()
 def client():
     return APIClient()
-
-
-# @pytest.fixture(scope='session')
-# def django_db_setup(django_db_setup, django_db_blocker):
-#     with django_db_blocker.unblock():
-#         call_command('loaddata', 'products.json')
