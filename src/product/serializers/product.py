@@ -32,11 +32,14 @@ class CreateProductSerializer(WritableNestedModelSerializer):
         fields = "__all__"
 
     def to_representation(self, instance):
-        dict_ = super().to_representation(instance)
-        dict_["interest"] = get_interests(
-            rate=float(instance.rate), buy_price=instance.buy_price, rate_times=instance.rate_times
-        )
-        return dict_
+        if instance.status == choices.ProductStatus.LOAN.name:
+            dict_ = super().to_representation(instance)
+            dict_["interest"] = get_interests(
+                rate=float(instance.rate), buy_price=instance.buy_price, rate_times=instance.rate_times
+            )
+            return dict_
+        else:
+            return super(CreateProductSerializer, self).to_representation(instance)
 
     def to_internal_value(self, data):
         data.update(

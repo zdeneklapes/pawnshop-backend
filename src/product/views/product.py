@@ -10,6 +10,7 @@ import django_filters
 
 from product.serializers import product
 from product.models import models
+from product.models.choices import ProductStatus
 from statistic.serializers import StatisticSerializer
 from statistic.models.choices import StatisticOperations
 from common.exceptions import BadQueryParam
@@ -17,10 +18,22 @@ from common.exceptions import BadQueryParam
 
 class ProductQueryParams(django_filters.FilterSet):
     operation = openapi.Parameter(
-        name="operation", in_=openapi.IN_QUERY, description="Operation Type", type=openapi.TYPE_STRING
+        name="operation",
+        in_=openapi.IN_QUERY,
+        description=f"Operation Type: "
+        f"{StatisticOperations.LOAN_EXTEND.name}, "  # pylint: disable=E1101
+        f"{StatisticOperations.LOAN_RETURN.name}, "  # pylint: disable=E1101
+        f"{StatisticOperations.LOAN_TO_OFFER.name}",  # pylint: disable=E1101
+        type=openapi.TYPE_STRING,
     )
     status = openapi.Parameter(
-        name="status", in_=openapi.IN_QUERY, description="Source reference", type=openapi.TYPE_STRING
+        name="status",
+        in_=openapi.IN_QUERY,
+        description=f"Product status: "
+        f"{ProductStatus.LOAN.name}, "  # pylint: disable=E1101
+        f"{ProductStatus.OFFER.name}, "  # pylint: disable=E1101
+        f"{ProductStatus.AFTER_MATURITY.name}",  # pylint: disable=E1101
+        type=openapi.TYPE_STRING,
     )
 
 
