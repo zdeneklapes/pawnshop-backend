@@ -41,6 +41,7 @@ class Statistic(models.Model):
     user = models.ForeignKey(to=User, on_delete=models.CASCADE)
 
     #
+    datetime = models.DateTimeField(auto_now_add=True)
     description = models.CharField(max_length=255, choices=StatisticOperations.choices)
     price = models.IntegerField()
     amount = models.IntegerField()
