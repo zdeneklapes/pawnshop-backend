@@ -50,5 +50,5 @@ class Statistic(models.Model):
         prev_stat = Statistic.objects.last()
         amount = prev_stat.amount if prev_stat else 0  # if first occurrence
         self.amount = self.price + amount
-        self.profit = prev_stat.profit + self.price
+        self.profit = prev_stat.profit + self.price if prev_stat else self.price
         super().save(*args, **kwargs)

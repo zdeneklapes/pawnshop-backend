@@ -56,7 +56,7 @@ REST_FRAMEWORK = {
     "NON_FIELD_ERRORS_KEY": "errors",
     "DEFAULT_AUTHENTICATION_CLASSES": ("rest_framework_simplejwt.authentication.JWTAuthentication",),
     "DEFAULT_FILTER_BACKENDS": ["django_filters.rest_framework.DjangoFilterBackend"],
-    "DATE_INPUT_FORMATS": ["%d/%m/%Y"],
+    # "DATE_INPUT_FORMATS": ["%d/%m/%Y"],
     # 'TEST_REQUEST_DEFAULT_FORMAT': 'json',
     # 'DEFAULT_PARSER_CLASSES': [
     #     'rest_framework.parsers.JSONParser',
