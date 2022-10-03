@@ -58,17 +58,18 @@ class ProductViewSet(viewsets.ModelViewSet):
         return super(ProductViewSet, self).list(request)
 
     def create(self, request: Request, *args, **kwargs):
+        response: Response = super().create(request)  # to internal_repre -> to to_repre
         try:
-            response: Response = super().create(request)  # to internal_repre -> to to_repre
-            # TODO: Uncomment
-            # StatisticSerializer.save_statistics(
-            #     price=response.data["buy_price"],
-            #     operation=StatisticOperations.LOAN_CREATE.name,
-            #     user=request.data["user"], # TODO: change to user: response.user.id
-            #     product=response.data["id"],
-            # )
+            StatisticSerializer.save_statistics(
+                price=-response.data["buy_price"],
+                operation=StatisticOperations.LOAN_CREATE.name,
+                user=request.data["user"],  # TODO: change to user: response.user.id
+                product=response.data["id"],
+            )
         except AssertionError as e:
-            return Response(data={"error": f"{ProductViewSet.create.__qualname__}: {e}"}, status=response.status_code)
+            return Response(
+                data={"error": f"{ProductViewSet.create.__qualname__} - {e} - statistics"}, status=response.status_code
+            )
         return response
 
     def patial_update_save_statistics(self, request: Request, buy_price_prev: int, sell_price_prev: int):

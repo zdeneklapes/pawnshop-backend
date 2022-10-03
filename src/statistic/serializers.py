@@ -1,19 +1,19 @@
 from rest_framework import serializers
 from drf_writable_nested import WritableNestedModelSerializer
 
-
 from .models import models
 
 
 class StatisticSerializer(WritableNestedModelSerializer):
     amount = serializers.IntegerField(required=False, read_only=True)
+    profit = serializers.IntegerField(required=False, read_only=True)
 
     class Meta:
         model = models.Statistic
         fields = "__all__"
 
     @classmethod
-    def save_statistics(self, price: int, operation: str, user: int, product: int = None):
+    def save_statistics(self, price: int, operation: str, user: int, product: int = None) -> None:
         serializer_stats = StatisticSerializer(
             data={"description": operation, "price": price, "product": product, "user": user}
         )
@@ -38,3 +38,7 @@ class StatisticResetSerializer(WritableNestedModelSerializer):
             }
         )
         return super().to_internal_value(data)
+
+
+class StatisticCashAmountSerializer(serializers.Serializer):
+    amount = serializers.IntegerField()
