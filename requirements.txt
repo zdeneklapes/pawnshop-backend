@@ -4,6 +4,7 @@ django-cron==0.6.0
 django-environ==0.9.0
 django-filter==22.1
 django-phonenumber-field==7.0.0
+djangorestframework-simplejwt==5.2.1
 drf-writable-nested==0.7.0
 drf-yasg==1.21.4
 gunicorn==20.1.0
