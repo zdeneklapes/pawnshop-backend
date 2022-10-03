@@ -1,10 +1,11 @@
 from rest_framework import serializers
 from drf_writable_nested import WritableNestedModelSerializer
 
-from .models import models
+from statistic.models import models
+from statistic.utils.choices import StatisticQueryParamsChoices
 
 
-class StatisticSerializer(WritableNestedModelSerializer):
+class StatisticDefaultSerializer(WritableNestedModelSerializer):
     amount = serializers.IntegerField(required=False, read_only=True)
     profit = serializers.IntegerField(required=False, read_only=True)
 
@@ -14,31 +15,37 @@ class StatisticSerializer(WritableNestedModelSerializer):
 
     @classmethod
     def save_statistics(self, price: int, operation: str, user: int, product: int = None) -> None:
-        serializer_stats = StatisticSerializer(
+        serializer_stats = StatisticDefaultSerializer(
             data={"description": operation, "price": price, "product": product, "user": user}
         )
         serializer_stats.is_valid()
         serializer_stats.save()
 
 
-class StatisticResetSerializer(WritableNestedModelSerializer):
-    amount = serializers.IntegerField(required=False, read_only=True)
+class StatisticDailyStatsSerializer(serializers.Serializer):
+    pass
 
+
+class StatisticCashAmountSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Statistic
-        fields = "__all__"
+        fields = ["amount"]
+
+
+class StatisticShopStateSerializer(serializers.Serializer):
+    pass
+
+
+class StatisticResetSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.Statistic
+        fields = ["user", "description"]
 
     def to_internal_value(self, data):
-        # prev_statistic = models.Statistic.objects.last()
         data.update(
             {
-                # "status": models.ProductStatus.LOAN.name,
-                # "sell_price": utils.get_sell_price(rate=loan.rate, buy_price=loan.buy_price),
-                # "date_extend": timezone.now(),
+                "user": 1,  # TODO: Change to - self.request.user.id
+                "description": StatisticQueryParamsChoices.RESET.name,
             }
         )
         return super().to_internal_value(data)
-
-
-class StatisticCashAmountSerializer(serializers.Serializer):
-    amount = serializers.IntegerField()

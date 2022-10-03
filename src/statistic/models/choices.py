@@ -19,6 +19,8 @@ class StatisticOperations(models.TextChoices):
     # Logins
     LOGIN = "LOGIN", "Prihlaseni"
     LOGOUT = "LOGOUT", "Odhlaseni"
+    #
+    RESET = "RESET", "Reset profit"
 
     @staticmethod
     def validate_operation(request: Request, buy_price_prev: int, sell_price_prev: int) -> Tuple[str, int]:

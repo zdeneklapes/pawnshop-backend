@@ -11,7 +11,7 @@ import django_filters
 from product.serializers import product
 from product.models import models
 from product.models.choices import ProductStatus
-from statistic.serializers import StatisticSerializer
+from statistic.serializers.statistic import StatisticDefaultSerializer
 from statistic.models.choices import StatisticOperations
 from common.exceptions import BadQueryParam
 
@@ -73,7 +73,7 @@ class ProductViewSet(viewsets.ModelViewSet):
     def create(self, request: Request, *args, **kwargs):
         response: Response = super().create(request)  # to internal_repre -> to to_repre
         try:
-            StatisticSerializer.save_statistics(
+            StatisticDefaultSerializer.save_statistics(
                 price=-response.data["buy_price"],
                 operation=StatisticOperations.LOAN_CREATE.name,
                 user=request.data["user"],  # TODO: change to user: response.user.id
@@ -90,7 +90,7 @@ class ProductViewSet(viewsets.ModelViewSet):
         operation, price = StatisticOperations.validate_operation(request, buy_price_prev, sell_price_prev)
 
         # Save Statistics
-        StatisticSerializer.save_statistics(
+        StatisticDefaultSerializer.save_statistics(
             price=price,
             operation=operation,
             user=request.user.id,

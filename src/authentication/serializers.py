@@ -1,6 +1,7 @@
 from django.contrib.auth import get_user_model
 from phonenumber_field.serializerfields import PhoneNumberField
 from rest_framework import serializers
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
 from . import models
 
@@ -49,3 +50,17 @@ class AttendantProfileSerializer(serializers.ModelSerializer):
             user.set_password(validated_data["password"])
             user.save()
         return user
+
+
+class TokenUser:
+    @staticmethod
+    def add_user_to_data(data, user):
+        data["user"] = {"id": user.id, "email": user.email, "role": user.role, "phone_number": str(user.phone_number)}
+        return data
+
+
+class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
+    def validate(self, attrs):
+        data = super().validate(attrs)
+        data = TokenUser.add_user_to_data(data, self.user)
+        return data
