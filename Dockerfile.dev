@@ -1,21 +1,25 @@
-FROM python:3.9
-
-ENV PYTHONDONTWRITEBYTECODE=1
-ENV PYTHONUNBUFFERED=1
-ENV PORT 8000
-EXPOSE 8000
-
-WORKDIR /app
-COPY requirements.txt start.sh /app/
-RUN set -ex && \
-    pip install --upgrade pip && \
-    pip install --no-cache-dir -r /app/requirements.txt
-#    apt-get update && apt-get -y install cron # TODO:
-
-
-COPY src/ /app/src
-RUN chmod +x /app/src/entrypoint.sh && \
-    chmod +x start.sh && \
-    /app/start.sh --loaddata
-
-ENTRYPOINT [ "/app/start.sh", "--runserver"]
+#FROM ubuntu:latest
+#
+#ENV PYTHONDONTWRITEBYTECODE=1
+#ENV PYTHONUNBUFFERED=1
+#ENV PORT 8000
+#ENV EDITOR vim
+#EXPOSE 8000
+#
+#WORKDIR /app
+#COPY requirements.txt start.sh /app/
+#
+##RUN set -ex && \
+##    apt-get update && apt-get -y install cron vim python3 python-pip
+##    pip3 install --upgrade pip && \
+##    pip3 install --no-cache-dir -r /app/requirements.txt
+#RUN set -ex && \
+#    apt-get update && apt-get -y install cron vim python3 python3-pip && \
+#    pip install --upgrade pip && \
+#    pip install --no-cache-dir -r /app/requirements.txt
+#
+#
+#COPY src/ /app/src
+#RUN chmod +x /app/src/entrypoint.sh && chmod +x /app/start.sh
+#CMD [ "/app/start.sh", "--set-cron"]
+#ENTRYPOINT [ "/app/start.sh", "--loaddata", "--runserver"]

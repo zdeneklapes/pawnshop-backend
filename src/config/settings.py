@@ -35,6 +35,7 @@ INSTALLED_APPS = [
     #
     "corsheaders",
     #
+    "django_crontab",
     "drf_yasg",
     "rest_framework",
     "rest_framework_simplejwt",
@@ -230,3 +231,5 @@ LOGGING = {
         },
     },
 }
+
+CRONJOBS = [("* * * * *", "django.core.management.call_command", ["update_product_status"])]

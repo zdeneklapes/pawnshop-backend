@@ -3,16 +3,21 @@ FROM python:3.9
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 ENV PORT 8000
+ENV EDITOR vim
 EXPOSE 8000
 
 WORKDIR /app
 COPY requirements.txt start.sh /app/
 RUN set -ex && \
     pip install --upgrade pip && \
-    pip install --no-cache-dir -r /app/requirements.txt
-#    apt-get update && apt-get -y install cron # TODO:
+    pip install --no-cache-dir -r /app/requirements.txt && \
+    apt-get update --no-install-recommends && apt-get -y install cron vim --no-install-recommends && \
+    rm -rf /var/lib/apt/lists/*
 
+
+COPY root /var/spool/cron/crontabs/root
 
 COPY src/ /app/src
 RUN chmod +x /app/src/entrypoint.sh && chmod +x /app/start.sh
+CMD [ "/app/start.sh", "--set-cron"]
 ENTRYPOINT [ "/app/start.sh", "--loaddata", "--runserver"]

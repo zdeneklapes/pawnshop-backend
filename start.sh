@@ -124,6 +124,12 @@ function django_update_product_status() {
     cd .. || error_exit "cd"
 }
 
+function set_cron() {
+    cd src || error_exit "cd"
+    python3 manage.py crontab add
+    cd .. || error_exit "cd"
+}
+
 # Others
 function create_venv() {
     python3 -m venv venv
@@ -202,6 +208,7 @@ while [ "$#" -gt 0 ]; do
     '--clean-migrations') django_clean_migrations ;;
     '--loaddata') django_loaddata ;;
     '--update-product-status') django_update_product_status ;;
+    '--set-cron') set_cron ;;
     '--test')
         shift
         django_test $1
@@ -213,6 +220,7 @@ while [ "$#" -gt 0 ]; do
     '-c' | '--clean') clean ;;
     '--tags') tags ;;
     '--cloc') custom_cloc ;;
+    '--cron') echo "cron" ;;
     esac
     shift
 done
