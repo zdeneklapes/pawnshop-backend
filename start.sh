@@ -75,14 +75,12 @@ function samples_to_envs() {
 # Django
 function django_runserver() {
     cd src || error_exit "cd"
-    export PORT=8000
-    ./entrypoint.sh 'dev'
+    python3 manage.py runserver 0.0.0.0:"$PORT"
     cd .. || error_exit "cd"
 }
 function django_runserver_web() {
     cd src || error_exit "cd"
-    export PORT=8000
-    ./entrypoint.sh 'web'
+    gunicorn --timeout 1000 --workers=3 --bind=0.0.0.0:"$PORT" --log-level debug config.wsgi:application --reload
     cd .. || error_exit "cd"
 }
 

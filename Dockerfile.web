@@ -14,5 +14,5 @@ RUN set -ex && \
 
 
 COPY src/ /app/src
-RUN chmod +x /app/src/entrypoint.sh && chmod +x /app/start.sh && /app/start.sh --set-cron
+RUN chmod +x /app/start.sh && /app/start.sh --set-cron
 ENTRYPOINT [ "/app/start.sh", "--loaddata", "--runserver-web"]
