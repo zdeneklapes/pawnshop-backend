@@ -79,7 +79,7 @@ function django_runserver() {
     ./entrypoint.sh 'dev'
     cd .. || error_exit "cd"
 }
-function django_runserver() {
+function django_runserver_web() {
     cd src || error_exit "cd"
     export PORT=8000
     ./entrypoint.sh 'web'
