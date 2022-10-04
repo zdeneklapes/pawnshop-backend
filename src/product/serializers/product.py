@@ -131,3 +131,8 @@ class LoanToOfferSerializer(WritableNestedModelSerializer):
     def to_internal_value(self, data):
         data.update({"status": choices.ProductStatus.OFFER.name, "sell_price": data["sell_price"]})
         return super().to_internal_value(data)
+
+
+class ShopStateSerializer(serializers.Serializer):
+    status = serializers.CharField()
+    count = serializers.IntegerField()

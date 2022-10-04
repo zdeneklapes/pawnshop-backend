@@ -2,7 +2,7 @@ from rest_framework import serializers
 from drf_writable_nested import WritableNestedModelSerializer
 
 from statistic.models import models
-from statistic.utils.choices import StatisticQueryParamsChoices
+from statistic.models.choices import StatisticQPData
 
 
 class StatisticDefaultSerializer(WritableNestedModelSerializer):
@@ -48,10 +48,6 @@ class StatisticCashAmountSerializer(serializers.ModelSerializer):
         fields = ["amount"]
 
 
-class StatisticShopStateSerializer(serializers.Serializer):
-    pass
-
-
 class StatisticResetSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Statistic
@@ -61,7 +57,7 @@ class StatisticResetSerializer(serializers.ModelSerializer):
         data.update(
             {
                 "user": 1,  # TODO: Change to - self.request.user.id
-                "description": StatisticQueryParamsChoices.RESET.name,
+                "description": StatisticQPData.RESET.name,
             }
         )
         return super().to_internal_value(data)

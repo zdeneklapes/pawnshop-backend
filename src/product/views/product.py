@@ -1,3 +1,6 @@
+# pylint: disable=E1101
+from typing import Optional
+
 from django.utils.decorators import method_decorator
 from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
@@ -5,66 +8,113 @@ from drf_yasg.utils import swagger_auto_schema
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework import viewsets
-from django_filters.rest_framework import DjangoFilterBackend
 import django_filters
 
-from product.serializers import product
+from product.serializers import product as product_serializers
 from product.models import models
-from product.models.choices import ProductStatus
+from product.models.choices import ProductStatus, ProductQPData
 from statistic.serializers.statistic import StatisticDefaultSerializer
-from statistic.models.choices import StatisticOperations
+from statistic.models.choices import StatisticDescription
 from common.exceptions import BadQueryParam
+from statistic.models.choices import StatisticQPData
 
 
-class ProductQueryParams(django_filters.FilterSet):
+class ProductQPSwagger(django_filters.FilterSet):
+    data = openapi.Parameter(
+        name="data",
+        in_=openapi.IN_QUERY,
+        description=f"Operation Type: " f"{ProductQPData.SHOP_STATS.name}",
+        type=openapi.TYPE_STRING,
+    )
     operation = openapi.Parameter(
         name="operation",
         in_=openapi.IN_QUERY,
         description=f"Operation Type: "
-        f"{StatisticOperations.LOAN_EXTEND.name}, "  # pylint: disable=E1101
-        f"{StatisticOperations.LOAN_RETURN.name}, "  # pylint: disable=E1101
-        f"{StatisticOperations.LOAN_TO_OFFER.name}",  # pylint: disable=E1101
+        f"{StatisticDescription.LOAN_EXTEND.name}, "
+        f"{StatisticDescription.LOAN_RETURN.name}, "
+        f"{StatisticDescription.LOAN_TO_OFFER.name}",
         type=openapi.TYPE_STRING,
     )
     status = openapi.Parameter(
         name="status",
         in_=openapi.IN_QUERY,
         description=f"Product status: "
-        f"{ProductStatus.LOAN.name}, "  # pylint: disable=E1101
-        f"{ProductStatus.OFFER.name}, "  # pylint: disable=E1101
-        f"{ProductStatus.AFTER_MATURITY.name}",  # pylint: disable=E1101
+        f"{ProductStatus.LOAN.name}, "
+        f"{ProductStatus.OFFER.name}, "
+        f"{ProductStatus.AFTER_MATURITY.name}",
         type=openapi.TYPE_STRING,
     )
 
 
-@method_decorator(name="list", decorator=swagger_auto_schema(manual_parameters=[ProductQueryParams.status]))
+@method_decorator(
+    name="list", decorator=swagger_auto_schema(manual_parameters=[ProductQPSwagger.status, ProductQPSwagger.data])
+)
 @method_decorator(name="create", decorator=swagger_auto_schema(manual_parameters=[]))
 @method_decorator(name="retrieve", decorator=swagger_auto_schema(manual_parameters=[]))
-@method_decorator(
-    name="partial_update", decorator=swagger_auto_schema(manual_parameters=[ProductQueryParams.operation])
-)
+@method_decorator(name="partial_update", decorator=swagger_auto_schema(manual_parameters=[ProductQPSwagger.operation]))
 class ProductViewSet(viewsets.ModelViewSet):
     queryset = models.Product.objects.all()
-    serializer_class = product.CreateProductSerializer
+    serializer_class = product_serializers.CreateProductSerializer
     http_method_names = ["get", "post", "patch"]
+
     # permission_classes = [permissions.IsAuthenticated] # TODO: Uncomment
 
-    # Filters for: "def list()"
-    filter_backends = [DjangoFilterBackend]
-    filterset_fields = ["status"]
+    def parse_status_request(self):
+        if "status" not in self.request.query_params:
+            return None
+
+        if self.request.query_params["status"] in ProductStatus.values:  # pylint: disable=E1101:
+            return self.request.query_params["status"]
+
+        return None
+
+    def parse_data_request(self) -> Optional[str]:
+        if "data" not in self.request.query_params:
+            return None
+
+        if self.request.query_params["data"] == ProductQPData.SHOP_STATS.name:  # pylint: disable=E1101:
+            return self.request.query_params["data"]
+
+        return None
+
+    def parse_operation_request(self) -> Optional[str]:
+        if "operation" not in self.request.query_params:
+            return None
+
+        if self.request.query_params["operation"] not in StatisticQPData.values:  # pylint: disable=E1101:
+            return None
+
+        return self.request.query_params["operation"]
+
+    def get_queryset(self):
+        status_choice = self.parse_status_request()
+        data_choice = self.parse_data_request()
+
+        if status_choice:
+            return models.Product.objects.get_product_by_status(status_choice)
+
+        if data_choice == ProductQPData.SHOP_STATS.name:
+            return models.Product.objects.get_shop_state()
+
+        return super().get_queryset()
 
     def get_serializer_class(self):
-        operation = "operation"
-        if operation not in self.request.query_params:
-            return super().get_serializer_class()
-        elif self.request.query_params[operation] == StatisticOperations.LOAN_EXTEND.name:
-            return product.LoanExtendSerializer
-        elif self.request.query_params[operation] == StatisticOperations.LOAN_RETURN.name:
-            return product.LoanReturnSerializer
-        elif self.request.query_params[operation] == StatisticOperations.LOAN_TO_OFFER.name:
-            return product.LoanToOfferSerializer
-        else:
-            return super().get_serializer_class()
+        operation = self.parse_operation_request()
+        data_choice = self.parse_data_request()
+
+        if data_choice == ProductQPData.SHOP_STATS.name:
+            return product_serializers.ShopStateSerializer
+
+        if operation == StatisticDescription.LOAN_EXTEND.name:
+            return product_serializers.LoanExtendSerializer
+
+        if operation == StatisticDescription.LOAN_RETURN.name:
+            return product_serializers.LoanReturnSerializer
+
+        if operation == StatisticDescription.LOAN_TO_OFFER.name:
+            return product_serializers.LoanToOfferSerializer
+
+        return super().get_serializer_class()
 
     # Request Handlers
     def list(self, request, *args, **kwargs):
@@ -75,7 +125,7 @@ class ProductViewSet(viewsets.ModelViewSet):
         try:
             StatisticDefaultSerializer.save_statistics(
                 price=-response.data["buy_price"],
-                operation=StatisticOperations.LOAN_CREATE.name,
+                operation=StatisticDescription.LOAN_CREATE.name,
                 user=request.data["user"],  # TODO: change to user: response.user.id
                 product=response.data["id"],
             )
@@ -87,7 +137,7 @@ class ProductViewSet(viewsets.ModelViewSet):
 
     def patial_update_save_statistics(self, request: Request, buy_price_prev: int, sell_price_prev: int):
         # Validate
-        operation, price = StatisticOperations.validate_operation(request, buy_price_prev, sell_price_prev)
+        operation, price = StatisticDescription.validate_operation(request, buy_price_prev, sell_price_prev)
 
         # Save Statistics
         StatisticDefaultSerializer.save_statistics(

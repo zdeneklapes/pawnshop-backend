@@ -1,0 +1,22 @@
+[
+  {
+    "model": "product.Product",
+    "pk": 1,
+    "fields": {
+      "status": "LOAN",
+      "user": 1,
+      "customer": "000000/0000",
+      "rate_frequency": "WEEK",
+      "rate_times": 4,
+      "rate": "2.2",
+      "product_name": "tel",
+      "buy_price": 1000,
+      "sell_price": 111,
+      "quantity": 1,
+      "inventory_id": 0,
+      "date_create": "2022-10-01T14:31:31.018Z",
+      "date_extend": "2022-10-01T14:31:31.018Z",
+      "date_end": null
+    }
+  }
+]

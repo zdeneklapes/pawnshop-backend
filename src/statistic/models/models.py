@@ -4,7 +4,7 @@ from django.db import models
 from authentication.models import User
 from product.models.models import Product
 
-from .choices import StatisticOperations
+from .choices import StatisticDescription
 
 
 class StatisticManager(models.Manager):
@@ -21,57 +21,57 @@ class StatisticManager(models.Manager):
             .values("date")
             .annotate(
                 loan_create_count=models.Count(
-                    "price", filter=models.Q(description=StatisticOperations.LOAN_CREATE.name)
+                    "price", filter=models.Q(description=StatisticDescription.LOAN_CREATE.name)
                 ),
                 loan_extend_count=models.Count(
-                    "price", filter=models.Q(description=StatisticOperations.LOAN_EXTEND.name)
+                    "price", filter=models.Q(description=StatisticDescription.LOAN_EXTEND.name)
                 ),
                 loan_return_count=models.Count(
-                    "price", filter=models.Q(description=StatisticOperations.LOAN_RETURN.name)
+                    "price", filter=models.Q(description=StatisticDescription.LOAN_RETURN.name)
                 ),
                 loan_income=models.Sum(
                     "price",
-                    filter=models.Q(description=StatisticOperations.LOAN_EXTEND.name)
-                    | models.Q(description=StatisticOperations.LOAN_RETURN.name),
+                    filter=models.Q(description=StatisticDescription.LOAN_EXTEND.name)
+                    | models.Q(description=StatisticDescription.LOAN_RETURN.name),
                 ),
-                loan_outcome=models.Sum("price", filter=models.Q(description=StatisticOperations.LOAN_CREATE.name)),
+                loan_outcome=models.Sum("price", filter=models.Q(description=StatisticDescription.LOAN_CREATE.name)),
                 loan_profit=models.Sum(
                     "price",
-                    filter=models.Q(description=StatisticOperations.LOAN_CREATE.name)
-                    | models.Q(description=StatisticOperations.LOAN_EXTEND.name)
-                    | models.Q(description=StatisticOperations.LOAN_RETURN.name),
+                    filter=models.Q(description=StatisticDescription.LOAN_CREATE.name)
+                    | models.Q(description=StatisticDescription.LOAN_EXTEND.name)
+                    | models.Q(description=StatisticDescription.LOAN_RETURN.name),
                 ),
                 offer_create_count=models.Count(
-                    "price", filter=models.Q(description=StatisticOperations.OFFER_CREATE.name)
+                    "price", filter=models.Q(description=StatisticDescription.OFFER_CREATE.name)
                 ),
                 offer_sell_count=models.Count(
-                    "price", filter=models.Q(description=StatisticOperations.OFFER_SELL.name)
+                    "price", filter=models.Q(description=StatisticDescription.OFFER_SELL.name)
                 ),
-                offer_income=models.Sum("price", filter=models.Q(description=StatisticOperations.OFFER_CREATE.name)),
-                offer_outcome=models.Sum("price", filter=models.Q(description=StatisticOperations.OFFER_SELL.name)),
+                offer_income=models.Sum("price", filter=models.Q(description=StatisticDescription.OFFER_CREATE.name)),
+                offer_outcome=models.Sum("price", filter=models.Q(description=StatisticDescription.OFFER_SELL.name)),
                 offer_profit=models.Sum(
                     "price",
-                    filter=models.Q(description=StatisticOperations.OFFER_CREATE.name)
-                    | models.Q(description=StatisticOperations.OFFER_SELL.name),
+                    filter=models.Q(description=StatisticDescription.OFFER_CREATE.name)
+                    | models.Q(description=StatisticDescription.OFFER_SELL.name),
                 ),
                 all_income=models.Sum(
                     "price",
-                    filter=models.Q(description=StatisticOperations.LOAN_RETURN.name)
-                    | models.Q(description=StatisticOperations.LOAN_EXTEND.name)
-                    | models.Q(description=StatisticOperations.OFFER_SELL.name),
+                    filter=models.Q(description=StatisticDescription.LOAN_RETURN.name)
+                    | models.Q(description=StatisticDescription.LOAN_EXTEND.name)
+                    | models.Q(description=StatisticDescription.OFFER_SELL.name),
                 ),
                 all_outcome=models.Sum(
                     "price",
-                    filter=models.Q(description=StatisticOperations.OFFER_SELL.name)
-                    | models.Q(description=StatisticOperations.OFFER_CREATE.name),
+                    filter=models.Q(description=StatisticDescription.OFFER_SELL.name)
+                    | models.Q(description=StatisticDescription.OFFER_CREATE.name),
                 ),
                 all_profit=models.Sum(
                     "price",
-                    filter=models.Q(description=StatisticOperations.LOAN_CREATE.name)
-                    | models.Q(description=StatisticOperations.LOAN_EXTEND.name)
-                    | models.Q(description=StatisticOperations.LOAN_RETURN.name)
-                    | models.Q(description=StatisticOperations.OFFER_CREATE.name)
-                    | models.Q(description=StatisticOperations.OFFER_SELL.name),
+                    filter=models.Q(description=StatisticDescription.LOAN_CREATE.name)
+                    | models.Q(description=StatisticDescription.LOAN_EXTEND.name)
+                    | models.Q(description=StatisticDescription.LOAN_RETURN.name)
+                    | models.Q(description=StatisticDescription.OFFER_CREATE.name)
+                    | models.Q(description=StatisticDescription.OFFER_SELL.name),
                 ),
             )
             .values(
@@ -94,9 +94,6 @@ class StatisticManager(models.Manager):
         )
         return qs
 
-    def get_shop_state(self):
-        pass
-
 
 class Statistic(models.Model):
     objects = StatisticManager()
@@ -107,7 +104,7 @@ class Statistic(models.Model):
 
     #
     datetime = models.DateTimeField(auto_now_add=True)
-    description = models.CharField(max_length=255, choices=StatisticOperations.choices)
+    description = models.CharField(max_length=255, choices=StatisticDescription.choices)
     price = models.IntegerField(default=0)
     amount = models.IntegerField()
     profit = models.IntegerField()
@@ -119,7 +116,7 @@ class Statistic(models.Model):
         self.amount = self.price + amount
 
         # Profit
-        if self.description == StatisticOperations.RESET.name:  # pylint: disable=E1101
+        if self.description == StatisticDescription.RESET.name:  # pylint: disable=E1101
             self.profit = 0
         else:
             self.profit = prev_stat.profit + self.price if prev_stat else self.price

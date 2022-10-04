@@ -1,6 +1,10 @@
 from django.db import models
 
 
+class ProductQPData(models.TextChoices):
+    SHOP_STATS = "SHOP_STATS", "Shop state"
+
+
 class RateFrequency(models.TextChoices):
     DAY = "DAY", "Day"
     WEEK = "WEEK", "Week"

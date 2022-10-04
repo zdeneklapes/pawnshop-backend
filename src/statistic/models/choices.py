@@ -5,7 +5,15 @@ from typing import Tuple
 from common.exceptions import BadQueryParam
 
 
-class StatisticOperations(models.TextChoices):
+class StatisticQPData(models.TextChoices):
+    DEFAULT = "ALL", "Vsechny zaznamy"
+    DAILY_STATS = "DAILY_STATS", "Denni statistiky"
+    CASH_AMOUNT = "CASH_AMOUNT", "Stav pokladny"
+    SHOP_STATS = "SHOP_STATS", "Stav obchodu"
+    RESET = "RESET", "Reset profit"
+
+
+class StatisticDescription(models.TextChoices):
     # Loans
     LOAN_CREATE = "LOAN_CREATE", "Zastava"
     LOAN_EXTEND = "LOAN_EXTEND", "Prodlouzeni"
@@ -28,11 +36,11 @@ class StatisticOperations(models.TextChoices):
             raise BadQueryParam()
         else:
             operation = request.query_params["operation"]
-            if operation == StatisticOperations.LOAN_EXTEND.name:  # pylint: disable=E1101
+            if operation == StatisticDescription.LOAN_EXTEND.name:  # pylint: disable=E1101
                 price = sell_price_prev - buy_price_prev
-            elif operation == StatisticOperations.LOAN_RETURN.name:  # pylint: disable=E1101
+            elif operation == StatisticDescription.LOAN_RETURN.name:  # pylint: disable=E1101
                 price = sell_price_prev
-            elif operation == StatisticOperations.LOAN_TO_OFFER.name:  # pylint: disable=E1101
+            elif operation == StatisticDescription.LOAN_TO_OFFER.name:  # pylint: disable=E1101
                 price = 0
             else:
                 raise BadQueryParam()
