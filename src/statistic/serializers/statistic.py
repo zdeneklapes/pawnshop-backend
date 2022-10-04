@@ -23,7 +23,23 @@ class StatisticDefaultSerializer(WritableNestedModelSerializer):
 
 
 class StatisticDailyStatsSerializer(serializers.Serializer):
-    pass
+    date = serializers.DateField()
+    loan_create_count = serializers.IntegerField()
+    loan_extend_count = serializers.IntegerField()
+    loan_return_count = serializers.IntegerField()
+    loan_income = serializers.IntegerField()
+    loan_outcome = serializers.IntegerField()
+    loan_profit = serializers.IntegerField()
+    #
+    offer_create_count = serializers.IntegerField()
+    offer_sell_count = serializers.IntegerField()
+    offer_income = serializers.IntegerField()
+    offer_outcome = serializers.IntegerField()
+    offer_profit = serializers.IntegerField()
+    #
+    all_income = serializers.IntegerField()
+    all_outcome = serializers.IntegerField()
+    all_profit = serializers.IntegerField()
 
 
 class StatisticCashAmountSerializer(serializers.ModelSerializer):

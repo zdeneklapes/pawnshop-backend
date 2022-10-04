@@ -107,19 +107,14 @@ function django_test() {
 #                   "./product/fixtures/products.json" \
 #                   "./loan/fixtures/loans.json";
 function django_loaddata() {
-    #    django_clean_migrations
     cd src || error_exit "cd"
     python3 manage.py makemigrations
     python3 manage.py migrate
-
-    for fixture in "./authentication/fixtures/users.json" \
+    python3 manage.py loaddata "./authentication/fixtures/users.json" \
         "./authentication/fixtures/attendants.json" \
         "./customer/fixtures/customers.json" \
-        "./product/fixtures/products.json"; do
-        printf "${fixture}  ==  "
-        python3 manage.py loaddata ${fixture}
-    done
-    #    echo "$(find $(find . -type d -iname 'fixtures') -type f -iname '*.json')"
+        "./product/fixtures/products.json" \
+        "./statistic/fixtures/statistics.json"
     cd .. || error_exit "cd"
 }
 
