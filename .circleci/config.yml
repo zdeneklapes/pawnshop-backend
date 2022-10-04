@@ -67,10 +67,7 @@ jobs:
           name: Running tests
           command: |
             . venv/bin/activate
-            cd src
-            python3 manage.py makemigrations
-            python3 manage.py migrate
-            python3 manage.py test
+            pytest
       - store_artifacts:
           path: test-reports/
           destination: python_app
@@ -79,13 +76,13 @@ workflows:
   push:
     jobs:
       - lint
-#      - run-tests:
-#          requires:
-#            - lint
+      - run-tests:
+          requires:
+            - lint
       - deploy-dev:
           requires:
             - lint
-#            - run-tests
+            - run-tests
           filters:
             branches:
               only:
@@ -93,7 +90,7 @@ workflows:
       - deploy-main:
           requires:
             - lint
-#            - run-tests
+            - run-tests
           filters:
             branches:
               only:
