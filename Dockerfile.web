@@ -15,9 +15,6 @@ RUN set -ex && \
     rm -rf /var/lib/apt/lists/*
 
 
-COPY root /var/spool/cron/crontabs/root
-
 COPY src/ /app/src
-RUN chmod +x /app/src/entrypoint.sh && chmod +x /app/start.sh
-CMD [ "/app/start.sh", "--set-cron"]
-ENTRYPOINT [ "/app/start.sh", "--loaddata", "--runserver"]
+RUN chmod +x /app/src/entrypoint.sh && chmod +x /app/start.sh && /app/start.sh --set-cron
+ENTRYPOINT [ "/app/start.sh", "--loaddata", "--runserver-web"]

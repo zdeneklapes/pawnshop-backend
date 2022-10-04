@@ -79,6 +79,12 @@ function django_runserver() {
     ./entrypoint.sh 'dev'
     cd .. || error_exit "cd"
 }
+function django_runserver() {
+    cd src || error_exit "cd"
+    export PORT=8000
+    ./entrypoint.sh 'web'
+    cd .. || error_exit "cd"
+}
 
 function django_createsuperuser() {
     cd src || error_exit "cd"
@@ -203,6 +209,7 @@ while [ "$#" -gt 0 ]; do
     '--envs-to-samples') envs_to_samples ;;
     '--samples-to-envs') samples_to_envs ;;
         # Django
+    '--runserver-web') django_runserver_web ;;
     '--runserver') django_runserver ;;
     '--createsuperuser') django_createsuperuser ;;
     '--clean-migrations') django_clean_migrations ;;
