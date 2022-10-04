@@ -73,17 +73,6 @@ function samples_to_envs() {
 }
 
 # Django
-function django_runserver() {
-    cd src || error_exit "cd"
-    python3 manage.py runserver 0.0.0.0:"$PORT"
-    cd .. || error_exit "cd"
-}
-function django_runserver_web() {
-    cd src || error_exit "cd"
-    gunicorn --timeout 1000 --workers=3 --bind=0.0.0.0:"$PORT" --log-level debug config.wsgi:application --reload
-    cd .. || error_exit "cd"
-}
-
 function django_createsuperuser() {
     cd src || error_exit "cd"
     python3 manage.py createsuperuser
@@ -97,19 +86,6 @@ function django_clean_migrations() {
     rm src/db.sqlite3
 }
 
-function django_test() {
-    cd src || error_exit "cd"
-    if [ "$1" == "" ]; then
-        python3 manage.py test
-    else
-        python3 manage.py test "$1"
-    fi
-    cd .. || error_exit "cd"
-}
-
-#                   "./shop/fixtures/shops.json" \
-#                   "./product/fixtures/products.json" \
-#                   "./loan/fixtures/loans.json";
 function django_loaddata() {
     cd src || error_exit "cd"
     python3 manage.py makemigrations
@@ -134,6 +110,10 @@ function set_cron() {
     cd .. || error_exit "cd"
 }
 
+function cron_restart() {
+    service cron restart
+}
+
 # Others
 function create_venv() {
     python3 -m venv venv
@@ -145,11 +125,6 @@ function create_venv() {
 
 function usage() {
     echo "USAGE:
-    # Project
-    '-c' | '--clean') clean ;;
-    '--tags') tags ;;
-    '--cloc') custom_cloc ;;
-        # Docker
     '--rm-docker-images-volumes') rm_docker_images_volumes ;;
     '--build-up-docker') build_up_docker ;;
     '--docker-show-ipaddress') docker_show_ipaddress ;;
@@ -157,19 +132,22 @@ function usage() {
     '--envs-to-samples') envs_to_samples ;;
     '--samples-to-envs') samples_to_envs ;;
         # Django
-    '--runserver') django_runserver ;;
+    '--runserver-dev') django_runserver_dev ;;
+    '--runserver-web') django_runserver_web ;;
     '--createsuperuser') django_createsuperuser ;;
     '--clean-migrations') django_clean_migrations ;;
-    '--test')
-        shift
-        django_test \$1
-        ;;
+    '--loaddata') django_loaddata ;;
+    '--update-product-status') django_update_product_status ;;
+    '--set-cron') set_cron ;;
         # Others
+    '--venv') create_venv ;;
     '-h' | '--help') usage ;;
+    '-c' | '--clean') clean ;;
+    '--tags') tags ;;
+    '--cloc') custom_cloc ;;
 "
 }
 
-# Project
 function clean() {
     #    ${RM} *.zip
 
@@ -195,6 +173,37 @@ function custom_cloc() {
     cloc --not-match-d=migrations --include-lang=Python src/
 }
 
+function run_local() {
+    cd src || error_exit"cd"
+    python3 manage.py runserver 0.0.0.0:8000
+    cd .. || error_exit"cd"
+}
+
+function web_docker() {
+    cd src || error_exit"cd"
+    service cron start
+    python3 manage.py crontab add
+    service cron restart
+    django_loaddata
+    gunicorn --timeout 1000 --workers=3 --bind=0.0.0.0:"$PORT" --log-level debug config.wsgi:application --reload
+    cd .. || error_exit"cd"
+
+}
+
+function dev_docker() {
+    cd src || error_exit "cd"
+    service cron start
+    python3 manage.py crontab add
+    service cron restart
+    cd .. || error_exit "cd"
+
+    django_loaddata
+
+    cd src || error_exit "cd"
+    python3 manage.py runserver 0.0.0.0:8000
+    cd .. || error_exit "cd"
+}
+
 # Main arguments loop
 [[ "$#" -eq 0 ]] && usage && exit 0
 while [ "$#" -gt 0 ]; do
@@ -207,25 +216,19 @@ while [ "$#" -gt 0 ]; do
     '--envs-to-samples') envs_to_samples ;;
     '--samples-to-envs') samples_to_envs ;;
         # Django
-    '--runserver-web') django_runserver_web ;;
-    '--runserver') django_runserver ;;
     '--createsuperuser') django_createsuperuser ;;
     '--clean-migrations') django_clean_migrations ;;
     '--loaddata') django_loaddata ;;
     '--update-product-status') django_update_product_status ;;
-    '--set-cron') set_cron ;;
-    '--test')
-        shift
-        django_test $1
-        ;;
+    '--runserver') run_local ;;
+    '--web-docker') web_docker ;;
+    '--dev-docker') dev_docker ;;
         # Others
     '--venv') create_venv ;;
     '-h' | '--help') usage ;;
-        # Project
     '-c' | '--clean') clean ;;
     '--tags') tags ;;
     '--cloc') custom_cloc ;;
-    '--cron') echo "cron" ;;
     esac
     shift
 done
