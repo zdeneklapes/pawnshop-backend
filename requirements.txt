@@ -6,6 +6,7 @@ django-crontab==0.7.1
 django-environ==0.9.0
 django-filter==22.1
 django-phonenumber-field==7.0.0
+django-wkhtmltopdf==3.4.0
 djangorestframework-simplejwt==5.2.1
 drf-writable-nested==0.7.0
 drf-yasg==1.21.4
@@ -23,4 +24,4 @@ pytest-django==4.5.2
 python-dotenv==0.21.0
 service-identity==21.1.0
 toml==0.10.2
-wkhtmltopdf==0.2
+xhtml2pdf==0.2.8

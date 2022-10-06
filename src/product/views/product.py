@@ -2,6 +2,11 @@
 from typing import Optional
 
 from django.utils.decorators import method_decorator
+from django.template.loader import get_template
+from django.views import View
+from django.http import HttpResponse
+from io import BytesIO
+from xhtml2pdf import pisa
 from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
 
@@ -54,7 +59,7 @@ class ProductQPSwagger(django_filters.FilterSet):
 @method_decorator(name="partial_update", decorator=swagger_auto_schema(manual_parameters=[ProductQPSwagger.operation]))
 class ProductViewSet(viewsets.ModelViewSet):
     queryset = models.Product.objects.all()
-    serializer_class = product_serializers.CreateProductSerializer
+    serializer_class = product_serializers.ProductSerializer
     http_method_names = ["get", "post", "patch"]
 
     # permission_classes = [permissions.IsAuthenticated] # TODO: Uncomment
@@ -161,3 +166,56 @@ class ProductViewSet(viewsets.ModelViewSet):
                 data={"details": f"Bad query params - {e}"}, status=BadQueryParam.status_code, exception=True
             )
         return response
+
+
+data = {
+    "customer": {
+        "full_name": "a b",
+        "residence": "Cejl 222",
+        "sex": "M",
+        "nationality": "SK",
+        "personal_id": "0000000000",
+        "personal_id_expiration_date": "2023-02-02",
+        "birthplace": "Prha",
+        "id_birth": "000000/0001",
+    },
+    "user": 1,
+    "status": "LOAN",
+    "interest_rate_or_quantity": 10,
+    "inventory_id": 3,
+    "product_name": "watch",
+    "buy_price": 3000,
+    "sell_price": 4200,
+}
+
+
+class ContractPdf(View):
+    def render_to_pdf(self, template_src, context_dict=None, encoding="UTF-8"):
+        if context_dict is None:
+            context_dict = {}
+        template = get_template(template_src)
+        html = template.render(context_dict)
+        result = BytesIO()
+        pdf = pisa.pisaDocument(html, result, encoding=encoding)
+        # pdf = pisa.pisaDocument(StringIO.StringIO(html.encode("ISO-8859-1")), result)
+        if not pdf.err:
+            response = HttpResponse(result.getvalue(), content_type="application/pdf")
+            filename = "loan_contract.pdf"
+            content = f"inline; filename={filename}"
+            response["Content-Disposition"] = content
+            return response
+        return HttpResponse("Not found")
+
+    def render_to_pdf_2(self, template_src, context_dict=None):
+        template = get_template(template_src)
+        html = template.render(context_dict)
+        result = BytesIO()
+        html_encoded = str(html).encode("UTF-8")
+        pdf = pisa.pisaDocument(html_encoded, result, encoding="UTF-8")
+        if not pdf.err:
+            return HttpResponse(result.getvalue(), content_type="application/pdf")
+        return HttpResponse("We had some errors")
+
+    def get(self, request, *args, **kwargs):
+        template2 = "documents/test1.html"
+        return self.render_to_pdf_2(template2)

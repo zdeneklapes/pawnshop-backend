@@ -233,3 +233,5 @@ LOGGING = {
 }
 
 CRONJOBS = [("* * * * *", "django.core.management.call_command", ["update_product_status"])]
+
+# WKHTMLTOPDF_CMD = os.system("which wkhtmltopdf")

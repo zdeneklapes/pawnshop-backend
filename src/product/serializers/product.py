@@ -22,7 +22,7 @@ def get_interests(rate: float, buy_price: int, rate_times: int):
     ]
 
 
-class CreateProductSerializer(WritableNestedModelSerializer):
+class ProductSerializer(WritableNestedModelSerializer):
     # user = serializers.PrimaryKeyRelatedField(U)
     customer = CustomerProfileSerializer()
     sell_price = serializers.IntegerField(required=False)
@@ -39,7 +39,7 @@ class CreateProductSerializer(WritableNestedModelSerializer):
             )
             return dict_
         else:
-            return super(CreateProductSerializer, self).to_representation(instance)
+            return super(ProductSerializer, self).to_representation(instance)
 
     def to_internal_value(self, data):
         data.update(
