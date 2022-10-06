@@ -14,5 +14,18 @@ class ProductManager(models.Manager):
         return qs
 
     def get_shop_state(self):
-        qs = super().get_queryset().all().values("status").annotate(count=models.Count("status"))
+        qs = (
+            super()
+            .get_queryset()
+            .filter(
+                models.Q(status=ProductStatus.LOAN.name)
+                | models.Q(status=ProductStatus.OFFER.name)
+                | models.Q(status=ProductStatus.AFTER_MATURITY.name)
+            )
+            .values("status")
+            .order_by("status")
+            .annotate(count=models.Count("status"))
+            .annotate(buy=models.Sum("buy_price"))
+            .annotate(sell=models.Sum("sell_price"))
+        )
         return qs
