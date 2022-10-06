@@ -1,4 +1,5 @@
 # pylint: disable=E1101
+import os.path
 from typing import Optional
 
 from django.utils.decorators import method_decorator
@@ -22,6 +23,7 @@ from statistic.serializers.statistic import StatisticDefaultSerializer
 from statistic.models.choices import StatisticDescription
 from common.exceptions import BadQueryParam
 from statistic.models.choices import StatisticQPData
+from config.settings import BASE_DIR
 
 
 class ProductQPSwagger(django_filters.FilterSet):
@@ -207,6 +209,7 @@ class ContractPdf(View):
         return HttpResponse("Not found")
 
     def render_to_pdf_2(self, template_src, context_dict=None):
+        context_dict = {"font_dir": f"{os.path.join(BASE_DIR, 'product/templates/fonts/dejavu-sans/')}"}
         template = get_template(template_src)
         html = template.render(context_dict)
         result = BytesIO()
@@ -217,5 +220,6 @@ class ContractPdf(View):
         return HttpResponse("We had some errors")
 
     def get(self, request, *args, **kwargs):
+        template1 = "documents/loan_contract.html"
         template2 = "documents/test1.html"
-        return self.render_to_pdf_2(template2)
+        return self.render_to_pdf_2(template1)
