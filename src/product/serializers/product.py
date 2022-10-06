@@ -34,6 +34,9 @@ class ProductSerializer(WritableNestedModelSerializer):
     def to_representation(self, instance):
         if instance.status == choices.ProductStatus.LOAN.name:
             dict_ = super().to_representation(instance)
+            dict_["date_create"] = instance.date_create.date() if instance.date_create else ""
+            dict_["date_extend"] = instance.date_extend.date() if instance.date_extend else ""
+            dict_["date_end"] = instance.date_end.date() if instance.date_end else ""
             dict_["interest"] = get_interests(
                 rate=float(instance.interest_rate), buy_price=instance.buy_price, rate_times=instance.rate_times
             )
