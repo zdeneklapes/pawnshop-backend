@@ -6,9 +6,8 @@ from drf_writable_nested import WritableNestedModelSerializer
 
 from customer.serializers import CustomerProfileSerializer
 
-from product.models import models
+from product.models import models, choices
 from common import utils
-from product.models import choices
 
 
 def get_interests(rate: float, buy_price: int, rate_times: int):
@@ -34,6 +33,13 @@ class ProductSerializer(WritableNestedModelSerializer):
     def to_representation(self, instance):
         if instance.status == choices.ProductStatus.LOAN.name:
             dict_ = super().to_representation(instance)
+            del dict_["interest_rate"]
+            del dict_["quantity"]
+            del dict_["rate_frequency"]
+            del dict_["rate_times"]
+            dict_["interest_rate_or_quantity"] = (
+                instance.interest_rate if instance.status == choices.ProductStatus.LOAN.name else instance.quantity
+            )
             dict_["interest"] = get_interests(
                 rate=float(instance.interest_rate), buy_price=instance.buy_price, rate_times=instance.rate_times
             )
