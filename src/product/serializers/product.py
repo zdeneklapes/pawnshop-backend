@@ -44,7 +44,7 @@ class CreateProductSerializer(WritableNestedModelSerializer):
     def to_internal_value(self, data):
         data.update(
             {
-                "user": data["user"],
+                "user": data["user"],  # TODO: Change to - data.user.id
                 "customer": {
                     "id_birth": data["customer"]["id_birth"],
                     "full_name": data["customer"]["full_name"],
