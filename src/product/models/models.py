@@ -1,3 +1,4 @@
+import datetime
 from django.db import models
 
 from authentication.models import User
@@ -19,7 +20,7 @@ class Product(models.Model):
     # Rate
     rate_frequency = models.CharField(max_length=50, choices=RateFrequency.choices, default="WEEK")
     rate_times = models.PositiveIntegerField(default=4)
-    rate = models.DecimalField(max_digits=4, decimal_places=1, null=True)
+    interest_rate = models.DecimalField(max_digits=4, decimal_places=1, null=True)
 
     # Product
     product_name = models.TextField()
@@ -32,3 +33,7 @@ class Product(models.Model):
     date_create = models.DateTimeField(auto_now_add=True)
     date_extend = models.DateTimeField(null=True)
     date_end = models.DateTimeField(null=True)
+
+    def save(self, *args, **kwargs):
+        self.date_end = (self.date_extend.date() + datetime.timedelta(weeks=4)).__str__()
+        return super().save(*args, **kwargs)
