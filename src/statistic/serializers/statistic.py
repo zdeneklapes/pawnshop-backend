@@ -63,12 +63,15 @@ class StatisticDefaultSerializer(WritableNestedModelSerializer):
         serializer_stats.save()
 
     def to_internal_value(self, data):
-        data.update(
-            {
-                "user": 1,  # TODO: Change to - self.request.user.id
-                "description": StatisticQPData.RESET.name,
-            }
-        )
+        if data["update"] in [StatisticQPData.RESET.name]:
+            data.update(
+                {
+                    "user": 1,  # TODO: Change to - self.request.user.id
+                    "description": StatisticQPData.RESET.name,
+                }
+            )
+            return super().to_internal_value(data)
+
         return super().to_internal_value(data)
 
 

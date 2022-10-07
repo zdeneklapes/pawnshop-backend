@@ -29,14 +29,32 @@ class ProductQPSwagger(django_filters.FilterSet):
         f"{ProductStatusOrData.AFTER_MATURITY.name}",
         type=openapi.TYPE_STRING,
     )
+    update = openapi.Schema(
+        type=openapi.TYPE_OBJECT,
+        in_=openapi.IN_BODY,
+        properties={
+            "update": openapi.Schema(
+                type=openapi.TYPE_STRING,
+                default=f"{StatisticDescription.LOAN_RETURN.name} | "
+                f"{StatisticDescription.LOAN_EXTEND.name} | "
+                f"{StatisticDescription.LOAN_TO_OFFER.name} | "
+                f"{StatisticDescription.OFFER_SELL.name} | "
+                f"{StatisticDescription.OFFER_BUY.name} | "
+                f"{StatisticDescription.UPDATE_DATA.name}",
+            ),
+            "product_name": openapi.Schema(type=openapi.TYPE_STRING),
+            "sell_price": openapi.Schema(type=openapi.TYPE_STRING),
+            "date_create": openapi.Schema(type=openapi.TYPE_STRING),
+            "date_extend": openapi.Schema(type=openapi.TYPE_STRING),
+            "inventory_id": openapi.Schema(type=openapi.TYPE_STRING),
+        },
+    )
 
 
 @method_decorator(name="list", decorator=swagger_auto_schema(manual_parameters=[ProductQPSwagger.data]))
 @method_decorator(name="create", decorator=swagger_auto_schema(manual_parameters=[]))
 @method_decorator(name="retrieve", decorator=swagger_auto_schema(manual_parameters=[]))
-@method_decorator(
-    name="partial_update", decorator=swagger_auto_schema(request_body=product_serializers.ProductUpdateSerializer)
-)
+@method_decorator(name="partial_update", decorator=swagger_auto_schema(request_body=ProductQPSwagger.update))
 # @method_decorator(name="partial_update", decorator=swagger_auto_schema(manual_parameters=[ProductQPSwagger.update]))
 # @method_decorator(name="partial_update", decorator=swagger_auto_schema(request_body=))
 class ProductViewSet(viewsets.ModelViewSet):

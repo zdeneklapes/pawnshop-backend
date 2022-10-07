@@ -21,16 +21,17 @@ class StatisticQPSwagger(django_filters.FilterSet):
         f"{StatisticQPData.CASH_AMOUNT.name}",  # pylint: disable=E1101
         type=openapi.TYPE_STRING,
     )
-    operation = openapi.Parameter(
-        name="operation",
-        in_=openapi.IN_QUERY,
-        description=f"What should be done: {StatisticQPData.RESET.name}",  # pylint: disable=E1101
-        type=openapi.TYPE_STRING,
+    update = openapi.Schema(
+        type=openapi.TYPE_OBJECT,
+        in_=openapi.IN_BODY,
+        properties={
+            "update": openapi.Schema(type=openapi.TYPE_STRING, default=f"{StatisticQPData.RESET.name}"),
+        },
     )
 
 
 @method_decorator(name="list", decorator=swagger_auto_schema(manual_parameters=[StatisticQPSwagger.data]))
-@method_decorator(name="create", decorator=swagger_auto_schema(manual_parameters=[StatisticQPSwagger.operation]))
+@method_decorator(name="create", decorator=swagger_auto_schema(request_body=StatisticQPSwagger.update))
 class StatisticViewSet(mixins.ListModelMixin, mixins.CreateModelMixin, viewsets.GenericViewSet):
     queryset = Statistic.objects.all()
     serializer_class = statistic_serializer.StatisticDefaultSerializer
@@ -64,9 +65,6 @@ class StatisticViewSet(mixins.ListModelMixin, mixins.CreateModelMixin, viewsets.
 
         if data_choice == StatisticQPData.DAILY_STATS.name:
             return Statistic.objects.get_daily_stats()
-
-        if data_choice == StatisticQPData.SHOP_STATS.name:
-            return Statistic.objects.get_shop_state()
 
         return super(StatisticViewSet, self).get_queryset()  # default
 
