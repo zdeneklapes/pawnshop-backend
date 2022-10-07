@@ -30,12 +30,12 @@ class ProductSerializer(WritableNestedModelSerializer):
         fields = "__all__"
 
     def to_representation(self, instance):
+        dict_ = super().to_representation(instance)
+        del dict_["interest_rate"]
+        del dict_["quantity"]
+        del dict_["rate_frequency"]
+        del dict_["rate_times"]
         if instance.status == ProductStatus.LOAN.name:
-            dict_ = super().to_representation(instance)
-            del dict_["interest_rate"]
-            del dict_["quantity"]
-            del dict_["rate_frequency"]
-            del dict_["rate_times"]
             dict_["interest_rate_or_quantity"] = (
                 instance.interest_rate if instance.status == ProductStatus.LOAN.name else instance.quantity
             )

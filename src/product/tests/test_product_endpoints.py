@@ -132,11 +132,13 @@ def test_update_product(login_client, load_all_fixtures, product_id, payload_dat
     assert response_get.data["inventory_id"] == payload_data["inventory_id"]
 
 
-def test_extend(login_client, load_all_fixtures, product_id, payload_data, exp_status_patch, exp_status_get):
-    pass
+def test_loan_extend(login_client, load_all_fixtures, product_id, payload_data, exp_status_patch, exp_status_get):
+    response_update = login_client.patch(
+        path=f"/product/{product_id}/?", data=payload_data, format="json"
+    )
 
 
-def test_return(login_client, load_all_fixtures, product_id, payload_data, exp_status_patch, exp_status_get):
+def test_loan_return(login_client, load_all_fixtures, product_id, payload_data, exp_status_patch, exp_status_get):
     pass
 
 
@@ -144,9 +146,9 @@ def test_loan_to_move(login_client, load_all_fixtures, product_id, payload_data,
     pass
 
 
-def test_extend(login_client, load_all_fixtures, product_id, payload_data, exp_status_patch, exp_status_get):
+def test_offer_sell(login_client, load_all_fixtures, product_id, payload_data, exp_status_patch, exp_status_get):
     pass
 
 
-def test_extend(login_client, load_all_fixtures, product_id, payload_data, exp_status_patch, exp_status_get):
+def test_offer_buy(login_client, load_all_fixtures, product_id, payload_data, exp_status_patch, exp_status_get):
     pass
