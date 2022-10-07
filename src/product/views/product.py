@@ -7,7 +7,7 @@ from drf_yasg.utils import swagger_auto_schema
 
 from rest_framework.request import Request
 from rest_framework.response import Response
-from rest_framework import viewsets, permissions
+from rest_framework import viewsets
 
 import django_filters
 
@@ -33,7 +33,8 @@ class ProductQPSwagger(django_filters.FilterSet):
         f"{StatisticDescription.LOAN_EXTEND.name}, "
         f"{StatisticDescription.LOAN_RETURN.name}, "
         f"{StatisticDescription.LOAN_TO_OFFER.name}, "
-        f"{StatisticDescription.OFFER_SELL.name}",
+        f"{StatisticDescription.OFFER_SELL.name}, "
+        f"{StatisticDescription.UPDATE.name}",
         type=openapi.TYPE_STRING,
     )
     status = openapi.Parameter(
@@ -57,8 +58,6 @@ class ProductViewSet(viewsets.ModelViewSet):
     queryset = Product.objects.all()
     serializer_class = product_serializers.ProductSerializer
     http_method_names = ["get", "post", "patch"]
-    permission_classes = [permissions.IsAuthenticated]
-
     # permission_classes = [permissions.IsAuthenticated] # TODO: Uncomment
 
     def parse_status_request(self):
