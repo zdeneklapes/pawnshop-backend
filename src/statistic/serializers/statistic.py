@@ -99,18 +99,3 @@ class StatisticCashAmountSerializer(serializers.ModelSerializer):
     class Meta:
         model = Statistic
         fields = ["amount"]
-
-
-class StatisticResetSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Statistic
-        fields = ["user", "description"]
-
-    def to_internal_value(self, data):
-        data.update(
-            {
-                "user": 1,  # TODO: Change to - self.request.user.id
-                "description": StatisticQPData.RESET.name,
-            }
-        )
-        return super().to_internal_value(data)

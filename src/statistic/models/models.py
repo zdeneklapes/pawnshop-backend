@@ -9,8 +9,11 @@ from .choices import StatisticDescription
 
 class StatisticManager(models.Manager):
     def get_cash_amount(self):
-        instance = super().get_queryset().last()
-        return [{"amount": instance.amount}]
+        instance = super().get_queryset().all().last()
+        if instance:
+            return [{"amount": instance.amount}]
+        else:
+            return [{"amount": 0}]
 
     def get_daily_stats(self):
         qs = (

@@ -39,22 +39,26 @@ class StatisticViewSet(mixins.ListModelMixin, mixins.CreateModelMixin, viewsets.
     # permission_classes = [permissions.IsAuthenticated] # TODO: Uncomment
 
     def parse_data_request(self):
-        if "data" not in self.request.query_params:
+        var_search = "data"
+
+        if var_search not in self.request.query_params:
             return StatisticQPData.DEFAULT.name
 
-        if self.request.query_params["data"] not in StatisticQPData.values:  # pylint: disable=E1101:
+        if self.request.query_params[var_search] not in StatisticQPData.values:  # pylint: disable=E1101:
             return StatisticQPData.DEFAULT.name
 
-        return self.request.query_params["data"]
+        return self.request.query_params[var_search]
 
-    def parse_operation_request(self):
-        if "operation" not in self.request.query_params:
+    def parse_update_request(self):
+        var_search = "update"
+
+        if var_search not in self.request.data:
             return StatisticQPData.DEFAULT.name
 
-        if self.request.query_params["operation"] not in StatisticQPData.values:  # pylint: disable=E1101:
+        if self.request.data[var_search] not in StatisticQPData.values:  # pylint: disable=E1101:
             return StatisticQPData.DEFAULT.name
 
-        return self.request.query_params["operation"]
+        return self.request.data[var_search]
 
     def get_queryset(self):
         data_choice = self.parse_data_request()
@@ -69,31 +73,27 @@ class StatisticViewSet(mixins.ListModelMixin, mixins.CreateModelMixin, viewsets.
         return super(StatisticViewSet, self).get_queryset()  # default
 
     def get_serializer_class(self):
-        data_choice = self.parse_data_request()
-        operation_choice = self.parse_operation_request()
+        data_req = self.parse_data_request()
+        update_req = self.parse_update_request()
 
-        if data_choice == StatisticQPData.CASH_AMOUNT.name:
+        if data_req == StatisticQPData.CASH_AMOUNT.name:
             return statistic_serializer.StatisticCashAmountSerializer  # pylint: disable=E1120
 
-        if data_choice == StatisticQPData.DAILY_STATS.name:
+        if data_req == StatisticQPData.DAILY_STATS.name:
             return statistic_serializer.StatisticDailyStatsSerializer  # pylint: disable=E1120
 
-        if operation_choice == StatisticQPData.RESET.name:
-            return statistic_serializer.StatisticResetSerializer  # pylint: disable=E1120
+        if update_req == StatisticQPData.RESET.name:
+            return statistic_serializer.StatisticDefaultSerializer  # pylint: disable=E1120
 
         return super(StatisticViewSet, self).get_serializer_class()  # default
-
-    def query_params_data_choice(self, request) -> str:
-        if "data" in request.query_params:
-            return request.query_params["data"]
 
     def list(self, request, *args, **kwargs):
         return super(StatisticViewSet, self).list(request)
 
     def create(self, request: Request, *args, **kwargs):
-        operation_choice = self.parse_operation_request()
+        update_req = self.parse_update_request()
 
-        if operation_choice == StatisticQPData.RESET.name:
+        if update_req == StatisticQPData.RESET.name:
             return super().create(request)
 
         # Error
