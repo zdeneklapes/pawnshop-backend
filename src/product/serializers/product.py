@@ -35,16 +35,16 @@ class ProductSerializer(WritableNestedModelSerializer):
         del dict_["quantity"]
         del dict_["rate_frequency"]
         del dict_["rate_times"]
+        dict_["interest_rate_or_quantity"] = (
+            instance.interest_rate if instance.status == ProductStatus.LOAN.name else instance.quantity
+        )
+
         if instance.status == ProductStatus.LOAN.name:
-            dict_["interest_rate_or_quantity"] = (
-                instance.interest_rate if instance.status == ProductStatus.LOAN.name else instance.quantity
-            )
             dict_["interest"] = get_interests(
                 rate=float(instance.interest_rate), buy_price=instance.buy_price, rate_times=instance.rate_times
             )
-            return dict_
-        else:
-            return super(ProductSerializer, self).to_representation(instance)
+
+        return dict_
 
     def to_internal_value(self, data):
         data.update(
