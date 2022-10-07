@@ -4,7 +4,6 @@ from typing import Optional
 
 from django.utils.decorators import method_decorator
 from django.template.loader import get_template
-from django.views import View
 from django.http import HttpResponse
 from io import BytesIO
 from xhtml2pdf import pisa
@@ -13,8 +12,11 @@ from drf_yasg.utils import swagger_auto_schema
 
 from rest_framework.request import Request
 from rest_framework.response import Response
-from rest_framework import viewsets
+from rest_framework import viewsets, generics
+from rest_framework.renderers import TemplateHTMLRenderer
+
 import django_filters
+
 
 from product.serializers import product as product_serializers
 from product.models import models
@@ -191,24 +193,13 @@ data = {
 }
 
 
-class ContractPdf(View):
-    def render_to_pdf(self, template_src, context_dict=None, encoding="UTF-8"):
-        if context_dict is None:
-            context_dict = {}
-        template = get_template(template_src)
-        html = template.render(context_dict)
-        result = BytesIO()
-        pdf = pisa.pisaDocument(html, result, encoding=encoding)
-        # pdf = pisa.pisaDocument(StringIO.StringIO(html.encode("ISO-8859-1")), result)
-        if not pdf.err:
-            response = HttpResponse(result.getvalue(), content_type="application/pdf")
-            filename = "loan_contract.pdf"
-            content = f"inline; filename={filename}"
-            response["Content-Disposition"] = content
-            return response
-        return HttpResponse("Not found")
+class ContractPdf(generics.RetrieveAPIView):
+    filename = "my_pdf.pdf"
+    template_name = "documents/loan_contract.html"
+    queryset = models.Product.objects.all()
+    renderer_classes = [TemplateHTMLRenderer]
 
-    def render_to_pdf_2(self, template_src, context_dict=None):
+    def render_to_pdf(self, template_src, context_dict=None):
         context_dict = {"font_dir": f"{os.path.join(BASE_DIR, 'product/templates/fonts/dejavu-sans/')}"}
         template = get_template(template_src)
         html = template.render(context_dict)
@@ -221,5 +212,5 @@ class ContractPdf(View):
 
     def get(self, request, *args, **kwargs):
         template1 = "documents/loan_contract.html"
-        template2 = "documents/test1.html"
-        return self.render_to_pdf_2(template1)
+        context_dict = {"font_dir": f"{os.path.join(BASE_DIR, 'product/templates/fonts/dejavu-sans/')}"}
+        return self.render_to_pdf(template1, context_dict=context_dict)

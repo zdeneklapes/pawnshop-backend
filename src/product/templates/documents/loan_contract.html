@@ -2,7 +2,8 @@
 <html lang="en">
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-  <title>Contract for id: 1</title>
+  <link rel="stylesheet" type="text/css"/>
+  <title>Contract id: {{ insatnce.id }}</title>
 </head>
 <style>
   @page {
@@ -17,13 +18,19 @@
 
   * {
     font-family: "DejaVu Sans";
-    font-size: 8px;
+  {#font-size: 8px;#}
   }
 
-  {#.contract {#}
-  {#  position: absolute;#}
-  {#  rotate: -90deg;#}
-  {#}#}
+  .contract {
+    position: absolute;
+    rotate: -90deg;
+    width: 50%;
+    height: 50%;
+  }
+
+  body {
+    font-size: 10px;
+  }
 
   .part_a {
     margin: 10px;
@@ -35,42 +42,43 @@
     justify-content: space-evenly;
   }
 
-  {#.terms_and_conditions {#}
-  {#  margin: 10px;#}
-  {#}#}
-  {##}
-  {#.signature {#}
-  {#  display: grid;#}
-  {#  justify-content: space-around;#}
-  {#  grid-template-columns: auto auto;#}
-  {#  column-gap: 2px;#}
-  {#  row-gap: 2px;#}
-  {#  padding: 5px;#}
-  {#  margin: 10px;#}
-  {#}#}
-  {##}
-  {#.side {#}
-  {#  position: absolute;#}
-  {#  rotate: -90deg;#}
-  {#  top: 200px;#}
-  {#  right: -75px;#}
-  {#  font-size: large;#}
-  {#  font-weight: bold;#}
-  {#}#}
-  {##}
-  {#.shop_info {#}
-  {#  border: 1px solid black;#}
-  {#}#}
-  {##}
+  .terms_and_conditions {
+    margin: 10px;
+    font-size: 8px;
+  }
+
+  .signature {
+    display: grid;
+    justify-content: space-around;
+    grid-template-columns: auto auto;
+    column-gap: 2px;
+    row-gap: 2px;
+    padding: 5px;
+    margin: 10px;
+  }
+
+  .side {
+    position: absolute;
+    rotate: -90deg;
+    top: 200px;
+    right: -75px;
+    font-size: 15px;
+    font-weight: bold;
+  }
+
+  .shop_info {
+    border: 1px solid black;
+  }
+
 
   .my_grid {
     display: grid;
-  {#border: 1px solid black;#}
-  {#grid-template-columns: auto auto auto;#}
-  {#column-gap: 2px;#}
-  {#row-gap: 20px;#}
-  {#padding: 5px;#}
-  {#margin: 10px;#}
+    border: 1px solid black;
+    grid-template-columns: auto auto auto;
+    column-gap: 2px;
+    row-gap: 20px;
+    padding: 5px;
+    margin: 10px;
   }
 
   div > p {
@@ -82,6 +90,12 @@
 
 <div class="contract">
   <div class="part_a">
+    <table>
+      <table repeat="1">
+  <tr><th>Column 1</th><th>...</th></tr>
+  ...
+</table>
+    </table>
     <div class="header">
       <p>Část A</p>
       <p>BAZAR A ZASTAVÁRNA V PASÁŽI Křenová 14</p>
