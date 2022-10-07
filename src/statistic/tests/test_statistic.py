@@ -4,34 +4,15 @@ from statistic.models.choices import StatisticQPData
 
 
 @pytest.mark.django_db
-def test_get_all(client, load_fixtures):
-    response = client.get(path="/statistic/")
-    assert response.status_code == status.HTTP_200_OK
-
-
-@pytest.mark.django_db
-# @pytest.mark.skip
-def test_get_daily_stats(client, load_fixtures):
-    response = client.get(path=f"/statistic/?data={StatisticQPData.DAILY_STATS.name}")
-    assert response.status_code == status.HTTP_200_OK
-
-
-@pytest.mark.django_db
-@pytest.mark.skip
-def test_get_shop_stats(client, load_all_fixtures):
-    response = client.get(path=f"/statistic/?data={StatisticQPData.SHOP_STATS.name}")
-    assert response.status_code == status.HTTP_200_OK
-
-
-@pytest.mark.django_db
-@pytest.mark.skip
-def test_get_cash_amount(client, load_all_fixtures):
-    response = client.get(path=f"/statistic/?data={StatisticQPData.CASH_AMOUNT.name}")
-    assert response.status_code == status.HTTP_200_OK
-
-
-@pytest.mark.django_db
-@pytest.mark.skip
-def test_post_reset(client, load_all_fixtures):
-    response = client.post(path=f"/statistic/?data={StatisticQPData.CASH_AMOUNT.name}")
-    assert response.status_code == status.HTTP_200_OK
+@pytest.mark.parametrize(
+    "data, status_code",
+    [
+        pytest.param(StatisticQPData.DEFAULT.name, status.HTTP_200_OK),
+        pytest.param(StatisticQPData.DAILY_STATS.name, status.HTTP_200_OK),
+        pytest.param(StatisticQPData.CASH_AMOUNT.name, status.HTTP_200_OK),
+        pytest.param(StatisticQPData.RESET.name, status.HTTP_200_OK),
+    ],
+)
+def test_get(login_client, data, status_code):
+    response = login_client.get(path=f"/statistic/?data={data}")
+    assert response.status_code == status_code

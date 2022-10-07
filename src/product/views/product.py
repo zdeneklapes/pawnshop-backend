@@ -29,24 +29,13 @@ class ProductQPSwagger(django_filters.FilterSet):
         f"{ProductStatusOrData.AFTER_MATURITY.name}",
         type=openapi.TYPE_STRING,
     )
-    update = openapi.Parameter(
-        name="update",
-        in_=openapi.IN_BODY,
-        description=f"Operation Type: "
-        f"{StatisticDescription.LOAN_EXTEND.name}, "
-        f"{StatisticDescription.LOAN_RETURN.name}, "
-        f"{StatisticDescription.LOAN_TO_OFFER.name}, "
-        f"{StatisticDescription.OFFER_SELL.name}, "
-        f"{StatisticDescription.UPDATE_DATA.name}",
-        type=openapi.TYPE_STRING,
-    )
 
 
 @method_decorator(name="list", decorator=swagger_auto_schema(manual_parameters=[ProductQPSwagger.data]))
 @method_decorator(name="create", decorator=swagger_auto_schema(manual_parameters=[]))
 @method_decorator(name="retrieve", decorator=swagger_auto_schema(manual_parameters=[]))
 @method_decorator(
-    name="partial_update", decorator=swagger_auto_schema(request_body=product_serializers.ProductSerializer)
+    name="partial_update", decorator=swagger_auto_schema(request_body=product_serializers.ProductUpdateSerializer)
 )
 # @method_decorator(name="partial_update", decorator=swagger_auto_schema(manual_parameters=[ProductQPSwagger.update]))
 # @method_decorator(name="partial_update", decorator=swagger_auto_schema(request_body=))
@@ -95,7 +84,7 @@ class ProductViewSet(viewsets.ModelViewSet):
         status_or_data = self.parse_data_request()
 
         if status_or_data == ProductStatusOrData.SHOP_STATS.name:
-            return product_serializers.ShopStateSerializer
+            return product_serializers.ProductShopStateSerializer
 
         if update_req in [
             StatisticDescription.LOAN_EXTEND.name,
@@ -103,14 +92,9 @@ class ProductViewSet(viewsets.ModelViewSet):
             StatisticDescription.LOAN_TO_OFFER.name,
             StatisticDescription.OFFER_SELL.name,
             StatisticDescription.OFFER_BUY.name,
+            StatisticDescription.UPDATE_DATA.name,
         ]:
             return product_serializers.ProductUpdateSerializer
-
-        if update_req == StatisticDescription.OFFER_SELL.name:
-            return product_serializers.OfferUpdateSerializer
-
-        if update_req == StatisticDescription.UPDATE_DATA.name:
-            return product_serializers.UpdateProductSerializer
 
         return super().get_serializer_class()
 

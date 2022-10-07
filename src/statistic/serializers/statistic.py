@@ -5,7 +5,8 @@ from drf_writable_nested import WritableNestedModelSerializer
 from rest_framework.request import Request
 
 from statistic.models import Statistic
-from statistic.models.choices import StatisticQPData, StatisticDescription, BadQueryParam
+from statistic.models.choices import StatisticQPData, StatisticDescription
+from common.exceptions import BadQueryParam
 
 
 class StatisticDefaultSerializer(WritableNestedModelSerializer):
@@ -60,6 +61,15 @@ class StatisticDefaultSerializer(WritableNestedModelSerializer):
         )
         serializer_stats.is_valid()
         serializer_stats.save()
+
+    def to_internal_value(self, data):
+        data.update(
+            {
+                "user": 1,  # TODO: Change to - self.request.user.id
+                "description": StatisticQPData.RESET.name,
+            }
+        )
+        return super().to_internal_value(data)
 
 
 class StatisticDailyStatsSerializer(serializers.Serializer):
