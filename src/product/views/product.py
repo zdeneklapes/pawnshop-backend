@@ -30,20 +30,20 @@ class ProductQPSwagger(django_filters.FilterSet):
         name="operation",
         in_=openapi.IN_QUERY,
         description=f"Operation Type: "
-        f"{StatisticDescription.LOAN_EXTEND.name}, "
-        f"{StatisticDescription.LOAN_RETURN.name}, "
-        f"{StatisticDescription.LOAN_TO_OFFER.name}, "
-        f"{StatisticDescription.OFFER_SELL.name}, "
-        f"{StatisticDescription.UPDATE.name}",
+                    f"{StatisticDescription.LOAN_EXTEND.name}, "
+                    f"{StatisticDescription.LOAN_RETURN.name}, "
+                    f"{StatisticDescription.LOAN_TO_OFFER.name}, "
+                    f"{StatisticDescription.OFFER_SELL.name}, "
+                    f"{StatisticDescription.UPDATE.name}",
         type=openapi.TYPE_STRING,
     )
     status = openapi.Parameter(
         name="status",
         in_=openapi.IN_QUERY,
         description=f"Product status: "
-        f"{ProductStatus.LOAN.name}, "
-        f"{ProductStatus.OFFER.name}, "
-        f"{ProductStatus.AFTER_MATURITY.name}",
+                    f"{ProductStatus.LOAN.name}, "
+                    f"{ProductStatus.OFFER.name}, "
+                    f"{ProductStatus.AFTER_MATURITY.name}",
         type=openapi.TYPE_STRING,
     )
 
@@ -58,6 +58,7 @@ class ProductViewSet(viewsets.ModelViewSet):
     queryset = Product.objects.all()
     serializer_class = product_serializers.ProductSerializer
     http_method_names = ["get", "post", "patch"]
+
     # permission_classes = [permissions.IsAuthenticated] # TODO: Uncomment
 
     def parse_status_request(self):
@@ -116,7 +117,7 @@ class ProductViewSet(viewsets.ModelViewSet):
             return product_serializers.LoanToOfferSerializer
 
         if operation == StatisticDescription.OFFER_SELL.name:
-            return product_serializers.OfferSellSerializer
+            return product_serializers.OfferUpdateSerializer
 
         if operation == StatisticDescription.UPDATE.name:
             return product_serializers.UpdateProductSerializer

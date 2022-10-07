@@ -31,18 +31,11 @@ class ProductSerializer(WritableNestedModelSerializer):
 
     def to_representation(self, instance):
         dict_ = super().to_representation(instance)
-        del dict_["interest_rate"]
-        del dict_["quantity"]
         del dict_["rate_frequency"]
         del dict_["rate_times"]
-        dict_["interest_rate_or_quantity"] = (
-            instance.interest_rate if instance.status == ProductStatus.LOAN.name else instance.quantity
-        )
-
         if instance.status == ProductStatus.LOAN.name:
-            dict_["interest"] = get_interests(
-                rate=float(instance.interest_rate), buy_price=instance.buy_price, rate_times=instance.rate_times
-            )
+            dict_["interest"] = get_interests(rate=float(instance.interest_rate_or_quantity),
+                                              buy_price=instance.buy_price, rate_times=instance.rate_times)
 
         return dict_
 
@@ -62,14 +55,11 @@ class ProductSerializer(WritableNestedModelSerializer):
                 },
                 "status": data["status"],
                 "inventory_id": data["inventory_id"],
-                "interest_rate": data["interest_rate_or_quantity"]
-                if data["status"] == ProductStatus.LOAN.name
-                else None,
+                "interest_rate_or_quantity": data["interest_rate_or_quantity"],
                 "product_name": data["product_name"],
                 "buy_price": data["buy_price"],
-                "sell_price": utils.get_sell_price(
-                    rate=float(data["interest_rate_or_quantity"]), buy_price=int(data["buy_price"])
-                ),
+                "sell_price": utils.get_sell_price(rate=float(data["interest_rate_or_quantity"]),
+                                                   buy_price=int(data["buy_price"])),
                 "date_extend": timezone.now(),
                 "quantity": data["interest_rate_or_quantity"] if data["status"] == ProductStatus.OFFER.name else 1,
             }
@@ -143,14 +133,20 @@ class ShopStateSerializer(serializers.Serializer):
     sell = serializers.IntegerField()
 
 
-class OfferSellSerializer(WritableNestedModelSerializer):
+class OfferUpdateSerializer(WritableNestedModelSerializer):
     class Meta:
         model = Product
-        fields = ["status", "sell_price"]
+        fields = ["status", "interest_rate_or_quantity", "sell_price"]
 
     def to_internal_value(self, data):
         product = Product.objects.get(id=self.context["view"].kwargs["pk"])
-        data.update({"status": ProductStatus.INACTIVE_OFFER.name, "sell_price": product.sell_price})
+        data.update(
+            {
+                "status": ProductStatus.INACTIVE_OFFER.name,
+                # "quantity"
+                "sell_price": product.sell_price
+            }
+        )
         return super().to_internal_value(data)
 
 
@@ -158,15 +154,3 @@ class UpdateProductSerializer(WritableNestedModelSerializer):
     class Meta:
         model = Product
         fields = ["product_name", "sell_price", "date_create", "date_extend", "inventory_id"]
-
-    def to_internal_value(self, data):
-        data.update(
-            {
-                "product_name": data["product_name"],
-                "sell_price": data["sell_price"],
-                "date_create": data["date_create"],
-                "date_extend": data["date_extend"],
-                "inventory_id": data["inventory_id"],
-            }
-        )
-        return super().to_internal_value(data)

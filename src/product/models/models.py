@@ -20,20 +20,28 @@ class Product(models.Model):
     # Rate
     rate_frequency = models.CharField(max_length=50, choices=RateFrequency.choices, default="WEEK")
     rate_times = models.PositiveIntegerField(default=4)
-    interest_rate = models.DecimalField(max_digits=4, decimal_places=1, null=True)
+    interest_rate_or_quantity = models.DecimalField(max_digits=4, decimal_places=1, null=True)
 
     # Product
     product_name = models.TextField()
     buy_price = models.PositiveIntegerField()
     sell_price = models.PositiveIntegerField(null=True)  # Cron
-    quantity = models.PositiveIntegerField(default=1)
+    # quantity = models.PositiveIntegerField(default=1)
     inventory_id = models.PositiveIntegerField()
 
     # Dates
-    date_create = models.DateTimeField(auto_now_add=True)
+    date_create = models.DateTimeField(null=True)
     date_extend = models.DateTimeField(null=True)
     date_end = models.DateTimeField(null=True)
 
     def save(self, *args, **kwargs):
-        self.date_end = (self.date_extend.date() + datetime.timedelta(weeks=4)).__str__()
+        if not self.date_create:
+            self.date_create = datetime.datetime.now()
+
+        if not self.date_extend:
+            self.date_extend = datetime.datetime.now()
+
+        if not self.date_end:
+            self.date_end = (self.date_extend.date() + datetime.timedelta(weeks=4)).__str__()
+
         return super().save(*args, **kwargs)
