@@ -1,5 +1,6 @@
 import pytest
 from rest_framework import status
+from statistic.models.choices import StatisticDescription
 
 
 @pytest.mark.django_db
@@ -132,23 +133,18 @@ def test_update_product(login_client, load_all_fixtures, product_id, payload_dat
     assert response_get.data["inventory_id"] == payload_data["inventory_id"]
 
 
-def test_loan_extend(login_client, load_all_fixtures, product_id, payload_data, exp_status_patch, exp_status_get):
+@pytest.mark.django_db
+@pytest.mark.parametrize(
+    "product_id, operation, payload, exp_status_patch",
+    [
+        pytest.param(1, StatisticDescription.LOAN_RETURN.name, {}, status.HTTP_200_OK),
+        pytest.param(6, StatisticDescription.LOAN_EXTEND.name, {}, status.HTTP_200_OK),
+        pytest.param(7, StatisticDescription.LOAN_TO_OFFER.name, {}, status.HTTP_200_OK),
+        pytest.param(4, StatisticDescription.OFFER_SELL.name, {}, status.HTTP_200_OK),
+    ],
+)
+def test_loan_operation(login_client, load_all_fixtures, product_id, operation, payload, exp_status_patch):
     response_update = login_client.patch(
-        path=f"/product/{product_id}/?", data=payload_data, format="json"
+        path=f"/product/{product_id}/?operation={operation}", data=payload, format="json"
     )
-
-
-def test_loan_return(login_client, load_all_fixtures, product_id, payload_data, exp_status_patch, exp_status_get):
-    pass
-
-
-def test_loan_to_move(login_client, load_all_fixtures, product_id, payload_data, exp_status_patch, exp_status_get):
-    pass
-
-
-def test_offer_sell(login_client, load_all_fixtures, product_id, payload_data, exp_status_patch, exp_status_get):
-    pass
-
-
-def test_offer_buy(login_client, load_all_fixtures, product_id, payload_data, exp_status_patch, exp_status_get):
-    pass
+    assert response_update.status_code == exp_status_patch

@@ -97,7 +97,7 @@ class LoanExtendSerializer(WritableNestedModelSerializer):
         data.update(
             {
                 "status": ProductStatus.LOAN.name,
-                "sell_price": utils.get_sell_price(rate=loan.rate, buy_price=loan.buy_price),
+                "sell_price": utils.get_sell_price(rate=loan.interest_rate, buy_price=loan.buy_price),
                 "date_extend": timezone.now(),
             }
         )
