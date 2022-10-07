@@ -5,8 +5,9 @@ from rest_framework import serializers
 from drf_writable_nested import WritableNestedModelSerializer
 
 from customer.serializers import CustomerProfileSerializer
-from product.models import Product, ProductStatus
+from product.models import Product, ProductStatusOrData
 from common import utils
+from statistic.models.choices import StatisticDescription
 
 
 def get_interests(rate: float, buy_price: int, rate_times: int):
@@ -33,9 +34,12 @@ class ProductSerializer(WritableNestedModelSerializer):
         dict_ = super().to_representation(instance)
         del dict_["rate_frequency"]
         del dict_["rate_times"]
-        if instance.status == ProductStatus.LOAN.name:
-            dict_["interest"] = get_interests(rate=float(instance.interest_rate_or_quantity),
-                                              buy_price=instance.buy_price, rate_times=instance.rate_times)
+        if instance.status == ProductStatusOrData.LOAN.name:
+            dict_["interest"] = get_interests(
+                rate=float(instance.interest_rate_or_quantity),
+                buy_price=instance.buy_price,
+                rate_times=instance.rate_times,
+            )
 
         return dict_
 
@@ -58,71 +62,116 @@ class ProductSerializer(WritableNestedModelSerializer):
                 "interest_rate_or_quantity": data["interest_rate_or_quantity"],
                 "product_name": data["product_name"],
                 "buy_price": data["buy_price"],
-                "sell_price": utils.get_sell_price(rate=float(data["interest_rate_or_quantity"]),
-                                                   buy_price=int(data["buy_price"])),
+                "sell_price": utils.get_sell_price(
+                    rate=float(data["interest_rate_or_quantity"]), buy_price=int(data["buy_price"])
+                ),
                 "date_extend": timezone.now(),
-                "quantity": data["interest_rate_or_quantity"] if data["status"] == ProductStatus.OFFER.name else 1,
+                "quantity": data["interest_rate_or_quantity"]
+                if data["status"] == ProductStatusOrData.OFFER.name
+                else 1,
             }
         )
         return super().to_internal_value(data)
 
 
-class LoanExtendSerializer(WritableNestedModelSerializer):
-    customer = CustomerProfileSerializer()
-    sell_price = serializers.IntegerField(required=False)
-
+class ProductUpdateSerializer(WritableNestedModelSerializer):
     class Meta:
         model = Product
         fields = "__all__"
 
+    def get_status(self, data, product):
+        map_ = {
+            StatisticDescription.LOAN_RETURN.name: ProductStatusOrData.INACTIVE_LOAN.name,
+            StatisticDescription.LOAN_EXTEND.name: ProductStatusOrData.LOAN.name,
+            StatisticDescription.LOAN_TO_OFFER.name: ProductStatusOrData.OFFER.name,
+            StatisticDescription.OFFER_SELL.name: ProductStatusOrData.INACTIVE_OFFER.name
+            if self.get_interest_rate_or_quantity(data, product) <= 0
+            else ProductStatusOrData.OFFER.name,
+            StatisticDescription.OFFER_BUY.name: ProductStatusOrData.OFFER.name,
+        }
+        return map_[data["update"]]
+
+    def get_sell_price(self, data, product):
+        map_ = {
+            StatisticDescription.LOAN_RETURN.name: product.sell_price,
+            StatisticDescription.LOAN_EXTEND.name: utils.get_sell_price(
+                rate=product.interest_rate_or_quantity, buy_price=product.buy_price
+            ),
+            StatisticDescription.OFFER_SELL.name: product.sell_price,
+            StatisticDescription.OFFER_BUY.name: product.sell_price,
+        }
+
+        if StatisticDescription.LOAN_TO_OFFER.name == data["update"]:
+            return data["sell_price"]
+
+        return map_[data["update"]]
+
+    def get_date_extend(self, data, product):
+        map_ = {
+            StatisticDescription.LOAN_RETURN.name: product.date_extend,
+            StatisticDescription.LOAN_EXTEND.name: timezone.now(),
+            StatisticDescription.LOAN_TO_OFFER.name: product.date_extend,
+            StatisticDescription.OFFER_SELL.name: product.date_extend,
+            StatisticDescription.OFFER_BUY.name: product.date_extend,
+        }
+        return map_[data["update"]]
+
+    def get_date_end(self, data, product):
+        map_ = {
+            StatisticDescription.LOAN_RETURN.name: timezone.now(),
+            StatisticDescription.LOAN_EXTEND.name: timezone.now() + datetime.timedelta(weeks=product.rate_times),
+            StatisticDescription.LOAN_TO_OFFER.name: timezone.now(),
+            StatisticDescription.OFFER_SELL.name: product.date_end,
+            StatisticDescription.OFFER_BUY.name: product.date_end,
+        }
+        return map_[data["update"]]
+
+    def get_interest_rate_or_quantity(self, data, product):
+        map_ = {
+            StatisticDescription.LOAN_RETURN.name: product.interest_rate_or_quantity,
+            StatisticDescription.LOAN_EXTEND.name: product.interest_rate_or_quantity,
+            StatisticDescription.LOAN_TO_OFFER.name: 1,
+        }
+
+        if data["update"] in [StatisticDescription.OFFER_SELL.name, StatisticDescription.OFFER_BUY.name]:
+            map_ = {
+                StatisticDescription.OFFER_SELL.name: product.interest_rate_or_quantity - data["quantity"],
+                StatisticDescription.OFFER_BUY.name: product.interest_rate_or_quantity + data["quantity"],
+            }
+
+        return map_[data["update"]]
+
+    #
     def to_representation(self, instance):
         dict_ = super().to_representation(instance)
         dict_["interest"] = get_interests(
-            rate=float(instance.rate), buy_price=instance.buy_price, rate_times=instance.rate_times
+            rate=float(instance.interest_rate_or_quantity), buy_price=instance.buy_price, rate_times=instance.rate_times
         )
         return dict_
 
     def to_internal_value(self, data):
-        loan = Product.objects.get(id=self.context["view"].kwargs["pk"])
-        data.update(
-            {
-                "status": ProductStatus.LOAN.name,
-                "sell_price": utils.get_sell_price(rate=loan.interest_rate, buy_price=loan.buy_price),
-                "date_extend": timezone.now(),
-            }
-        )
-        return super().to_internal_value(data)
+        product = Product.objects.get(id=self.context["view"].kwargs["pk"])
 
+        if data["update"] in [
+            StatisticDescription.LOAN_RETURN.name,
+            StatisticDescription.LOAN_EXTEND.name,
+            StatisticDescription.LOAN_TO_OFFER.name,
+            StatisticDescription.OFFER_SELL.name,
+            StatisticDescription.OFFER_BUY.name,
+        ]:
+            data.update(
+                {
+                    "status": self.get_status(data, product),
+                    "sell_price": self.get_sell_price(data, product),
+                    "date_extend": self.get_date_extend(data, product),
+                    "date_end": self.get_date_end(data, product),
+                    "interest_rate_or_quantity": self.get_interest_rate_or_quantity(data, product),
+                }
+            )
+        elif data["update"] in [StatisticDescription.UPDATE_DATA]:
+            # Here will be updated data
+            pass
 
-class LoanReturnSerializer(WritableNestedModelSerializer):
-    customer = CustomerProfileSerializer()
-    sell_price = serializers.IntegerField(required=False)
-
-    class Meta:
-        model = Product
-        fields = "__all__"
-
-    def to_internal_value(self, data):
-        data.update(
-            {
-                "status": ProductStatus.INACTIVE_LOAN.name,
-                "date_end": timezone.now()
-                # "sell_price": "" # Note: Is already set from command
-            }
-        )
-        return super().to_internal_value(data)
-
-
-class LoanToOfferSerializer(WritableNestedModelSerializer):
-    customer = CustomerProfileSerializer()
-    sell_price = serializers.IntegerField(required=False)
-
-    class Meta:
-        model = Product
-        fields = "__all__"
-
-    def to_internal_value(self, data):
-        data.update({"status": ProductStatus.OFFER.name, "sell_price": data["sell_price"]})
         return super().to_internal_value(data)
 
 
@@ -140,13 +189,7 @@ class OfferUpdateSerializer(WritableNestedModelSerializer):
 
     def to_internal_value(self, data):
         product = Product.objects.get(id=self.context["view"].kwargs["pk"])
-        data.update(
-            {
-                "status": ProductStatus.INACTIVE_OFFER.name,
-                # "quantity"
-                "sell_price": product.sell_price
-            }
-        )
+        data.update({"status": ProductStatusOrData.INACTIVE_OFFER.name, "sell_price": product.sell_price})
         return super().to_internal_value(data)
 
 

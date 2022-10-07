@@ -1,5 +1,5 @@
 from .models import Product
-from .choices import ProductStatus, ProductQPData
+from .choices import ProductStatusOrData
 from .managers import ProductManager
 
-__all__ = ["Product", "ProductStatus", "ProductManager", "ProductQPData"]
+__all__ = ["Product", "ProductStatusOrData", "ProductManager"]

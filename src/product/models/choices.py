@@ -1,17 +1,16 @@
 from django.db import models
 
 
-class ProductQPData(models.TextChoices):
-    SHOP_STATS = "SHOP_STATS", "Shop state"
-
-
 class RateFrequency(models.TextChoices):
     DAY = "DAY", "Day"
     WEEK = "WEEK", "Week"
     YEAR = "YEAR", "Year"
 
 
-class ProductStatus(models.TextChoices):
+class ProductStatusOrData(models.TextChoices):
+    # Statistics Data
+    SHOP_STATS = "SHOP_STATS", "Shop state"
+    # Status
     OFFER = "OFFER", "Offer"
     LOAN = "LOAN", "Loan"
     AFTER_MATURITY = "AFTER_MATURITY", "After_maturity"

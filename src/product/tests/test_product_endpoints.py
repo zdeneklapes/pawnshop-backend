@@ -103,11 +103,53 @@ def test_post_get(login_client, payload_data, exp_status_post, exp_status_get):
 
 @pytest.mark.django_db
 @pytest.mark.parametrize(
+    "product_id, operation, payload, exp_status_patch",
+    [
+        pytest.param(
+            1,
+            StatisticDescription.LOAN_RETURN.name,
+            {"update": StatisticDescription.LOAN_RETURN.name},
+            status.HTTP_200_OK,
+        ),
+        pytest.param(
+            6,
+            StatisticDescription.LOAN_EXTEND.name,
+            {"update": StatisticDescription.LOAN_EXTEND.name},
+            status.HTTP_200_OK,
+        ),
+        pytest.param(
+            7,
+            StatisticDescription.LOAN_TO_OFFER.name,
+            {"update": StatisticDescription.LOAN_TO_OFFER.name, "sell_price": 1200},
+            status.HTTP_200_OK,
+        ),
+        pytest.param(
+            4,
+            StatisticDescription.OFFER_SELL.name,
+            {"update": StatisticDescription.OFFER_SELL.name, "quantity": 1},
+            status.HTTP_200_OK,
+        ),
+        pytest.param(
+            4,
+            StatisticDescription.OFFER_BUY.name,
+            {"update": StatisticDescription.OFFER_BUY.name, "quantity": 1},
+            status.HTTP_200_OK,
+        ),
+    ],
+)
+def test_update_status(login_client, load_all_fixtures, product_id, operation, payload, exp_status_patch):
+    response_update = login_client.patch(path=f"/product/{product_id}/", data=payload, format="json")
+    assert response_update.status_code == exp_status_patch
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize(
     "product_id, payload_data, exp_status_patch, exp_status_get",
     [
         pytest.param(
             1,
             {
+                "update": f"{StatisticDescription.UPDATE_DATA.name}",
                 "product_name": "Telefon Samsung 1",
                 "sell_price": 100,
                 "date_create": "2022-09-01T14:31:47.080000Z",
@@ -119,10 +161,8 @@ def test_post_get(login_client, payload_data, exp_status_post, exp_status_get):
         ),
     ],
 )
-def test_update_product(login_client, load_all_fixtures, product_id, payload_data, exp_status_patch, exp_status_get):
-    response_update = login_client.patch(
-        path=f"/product/{product_id}/?operation=UPDATE", data=payload_data, format="json"
-    )
+def test_update_data(login_client, load_all_fixtures, product_id, payload_data, exp_status_patch, exp_status_get):
+    response_update = login_client.patch(path=f"/product/{product_id}/", data=payload_data, format="json")
     response_get = login_client.get(path="/product/1/")
     assert response_update.status_code == exp_status_patch
     assert response_update.status_code == exp_status_get
@@ -131,20 +171,3 @@ def test_update_product(login_client, load_all_fixtures, product_id, payload_dat
     assert response_get.data["date_create"] == payload_data["date_create"]
     assert response_get.data["date_extend"] == payload_data["date_extend"]
     assert response_get.data["inventory_id"] == payload_data["inventory_id"]
-
-
-@pytest.mark.django_db
-@pytest.mark.parametrize(
-    "product_id, operation, payload, exp_status_patch",
-    [
-        pytest.param(1, StatisticDescription.LOAN_RETURN.name, {}, status.HTTP_200_OK),
-        pytest.param(6, StatisticDescription.LOAN_EXTEND.name, {}, status.HTTP_200_OK),
-        pytest.param(7, StatisticDescription.LOAN_TO_OFFER.name, {}, status.HTTP_200_OK),
-        pytest.param(4, StatisticDescription.OFFER_SELL.name, {}, status.HTTP_200_OK),
-    ],
-)
-def test_loan_operation(login_client, load_all_fixtures, product_id, operation, payload, exp_status_patch):
-    response_update = login_client.patch(
-        path=f"/product/{product_id}/?operation={operation}", data=payload, format="json"
-    )
-    assert response_update.status_code == exp_status_patch

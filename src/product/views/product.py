@@ -12,8 +12,7 @@ from rest_framework import viewsets
 import django_filters
 
 from product.serializers import product as product_serializers
-from product.models.models import Product, ProductStatus
-from product.models.choices import ProductQPData
+from product.models.models import Product, ProductStatusOrData
 from statistic.serializers.statistic import StatisticDefaultSerializer
 from statistic.models.choices import StatisticDescription
 from common.exceptions import BadQueryParam
@@ -23,37 +22,34 @@ class ProductQPSwagger(django_filters.FilterSet):
     data = openapi.Parameter(
         name="data",
         in_=openapi.IN_QUERY,
-        description=f"Operation Type: " f"{ProductQPData.SHOP_STATS.name}",
-        type=openapi.TYPE_STRING,
-    )
-    operation = openapi.Parameter(
-        name="operation",
-        in_=openapi.IN_QUERY,
         description=f"Operation Type: "
-                    f"{StatisticDescription.LOAN_EXTEND.name}, "
-                    f"{StatisticDescription.LOAN_RETURN.name}, "
-                    f"{StatisticDescription.LOAN_TO_OFFER.name}, "
-                    f"{StatisticDescription.OFFER_SELL.name}, "
-                    f"{StatisticDescription.UPDATE.name}",
+        f"{ProductStatusOrData.SHOP_STATS.name}, "
+        f"{ProductStatusOrData.LOAN.name}, "
+        f"{ProductStatusOrData.OFFER.name}, "
+        f"{ProductStatusOrData.AFTER_MATURITY.name}",
         type=openapi.TYPE_STRING,
     )
-    status = openapi.Parameter(
-        name="status",
-        in_=openapi.IN_QUERY,
-        description=f"Product status: "
-                    f"{ProductStatus.LOAN.name}, "
-                    f"{ProductStatus.OFFER.name}, "
-                    f"{ProductStatus.AFTER_MATURITY.name}",
+    update = openapi.Parameter(
+        name="update",
+        in_=openapi.IN_BODY,
+        description=f"Operation Type: "
+        f"{StatisticDescription.LOAN_EXTEND.name}, "
+        f"{StatisticDescription.LOAN_RETURN.name}, "
+        f"{StatisticDescription.LOAN_TO_OFFER.name}, "
+        f"{StatisticDescription.OFFER_SELL.name}, "
+        f"{StatisticDescription.UPDATE_DATA.name}",
         type=openapi.TYPE_STRING,
     )
 
 
-@method_decorator(
-    name="list", decorator=swagger_auto_schema(manual_parameters=[ProductQPSwagger.status, ProductQPSwagger.data])
-)
+@method_decorator(name="list", decorator=swagger_auto_schema(manual_parameters=[ProductQPSwagger.data]))
 @method_decorator(name="create", decorator=swagger_auto_schema(manual_parameters=[]))
 @method_decorator(name="retrieve", decorator=swagger_auto_schema(manual_parameters=[]))
-@method_decorator(name="partial_update", decorator=swagger_auto_schema(manual_parameters=[ProductQPSwagger.operation]))
+@method_decorator(
+    name="partial_update", decorator=swagger_auto_schema(request_body=product_serializers.ProductSerializer)
+)
+# @method_decorator(name="partial_update", decorator=swagger_auto_schema(manual_parameters=[ProductQPSwagger.update]))
+# @method_decorator(name="partial_update", decorator=swagger_auto_schema(request_body=))
 class ProductViewSet(viewsets.ModelViewSet):
     queryset = Product.objects.all()
     serializer_class = product_serializers.ProductSerializer
@@ -61,65 +57,59 @@ class ProductViewSet(viewsets.ModelViewSet):
 
     # permission_classes = [permissions.IsAuthenticated] # TODO: Uncomment
 
-    def parse_status_request(self):
-        if "status" not in self.request.query_params:
+    def parse_data_request(self):
+        var_search = "data"
+
+        if var_search not in self.request.query_params:
             return None
 
-        if self.request.query_params["status"] in ProductStatus.values:
-            return self.request.query_params["status"]
+        if self.request.query_params[var_search] in ProductStatusOrData.values:
+            return self.request.query_params[var_search]
 
         return None
 
-    def parse_data_request(self) -> Optional[str]:
-        if "data" not in self.request.query_params:
+    def parse_update_request(self) -> Optional[str]:
+        var_search = "update"
+
+        if var_search not in self.request.data:
             return None
 
-        if self.request.query_params["data"] == ProductQPData.SHOP_STATS.name:
-            return self.request.query_params["data"]
-
-        return None
-
-    def parse_operation_request(self) -> Optional[str]:
-        if "operation" not in self.request.query_params:
+        if self.request.data[var_search] not in StatisticDescription.values:
             return None
 
-        if self.request.query_params["operation"] not in StatisticDescription.values:  # Note: StatisticQPData
-            return None
-
-        return self.request.query_params["operation"]
+        return self.request.data[var_search]
 
     def get_queryset(self):
-        status_choice = self.parse_status_request()
-        data_choice = self.parse_data_request()
+        status_or_data = self.parse_data_request()
 
-        if status_choice:
-            return Product.objects.get_product_by_status(status_choice)
-
-        if data_choice == ProductQPData.SHOP_STATS.name:
+        if status_or_data == ProductStatusOrData.SHOP_STATS.name:
             return Product.objects.get_shop_state()
+
+        if status_or_data in ProductStatusOrData.values:
+            return Product.objects.get_product_by_status(status_or_data)
 
         return super().get_queryset()
 
     def get_serializer_class(self):
-        operation = self.parse_operation_request()
-        data_choice = self.parse_data_request()
+        update_req = self.parse_update_request()
+        status_or_data = self.parse_data_request()
 
-        if data_choice == ProductQPData.SHOP_STATS.name:
+        if status_or_data == ProductStatusOrData.SHOP_STATS.name:
             return product_serializers.ShopStateSerializer
 
-        if operation == StatisticDescription.LOAN_EXTEND.name:
-            return product_serializers.LoanExtendSerializer
+        if update_req in [
+            StatisticDescription.LOAN_EXTEND.name,
+            StatisticDescription.LOAN_RETURN.name,
+            StatisticDescription.LOAN_TO_OFFER.name,
+            StatisticDescription.OFFER_SELL.name,
+            StatisticDescription.OFFER_BUY.name,
+        ]:
+            return product_serializers.ProductUpdateSerializer
 
-        if operation == StatisticDescription.LOAN_RETURN.name:
-            return product_serializers.LoanReturnSerializer
-
-        if operation == StatisticDescription.LOAN_TO_OFFER.name:
-            return product_serializers.LoanToOfferSerializer
-
-        if operation == StatisticDescription.OFFER_SELL.name:
+        if update_req == StatisticDescription.OFFER_SELL.name:
             return product_serializers.OfferUpdateSerializer
 
-        if operation == StatisticDescription.UPDATE.name:
+        if update_req == StatisticDescription.UPDATE_DATA.name:
             return product_serializers.UpdateProductSerializer
 
         return super().get_serializer_class()
@@ -134,7 +124,7 @@ class ProductViewSet(viewsets.ModelViewSet):
             StatisticDefaultSerializer.save_statistics(
                 price=-response.data["buy_price"],
                 operation=StatisticDescription.LOAN_CREATE.name,
-                user=request.data["user"],  # TODO: change to user: response.user.id
+                user=1,  # TODO: change to user: response.user.id
                 product=response.data["id"],
             )
         except AssertionError as e:
@@ -142,18 +132,6 @@ class ProductViewSet(viewsets.ModelViewSet):
                 data={"error": f"{ProductViewSet.create.__qualname__} - {e} - statistics"}, status=response.status_code
             )
         return response
-
-    def patial_update_save_statistics(self, request: Request, buy_price_prev: int, sell_price_prev: int):
-        # Validate
-        operation, price = StatisticDescription.validate_operation(request, buy_price_prev, sell_price_prev)
-
-        # Save Statistics
-        StatisticDefaultSerializer.save_statistics(
-            price=price,
-            operation=operation,
-            user=request.user.id,
-            product=request.parser_context["kwargs"]["pk"],
-        )
 
     def partial_update(self, request: Request, *args, **kwargs):
         # Store previous price
@@ -163,7 +141,7 @@ class ProductViewSet(viewsets.ModelViewSet):
 
         response = super().partial_update(request)
         try:
-            self.patial_update_save_statistics(request, buy_price_prev, sell_price_prev)
+            StatisticDefaultSerializer.validate_and_save(request, buy_price_prev, sell_price_prev)
         except BadQueryParam as e:
             return Response(data={"details": f"Statistic - {e}"}, status=BadQueryParam.status_code, exception=True)
         return response

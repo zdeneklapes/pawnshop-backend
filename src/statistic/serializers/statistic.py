@@ -1,8 +1,11 @@
+from typing import Tuple
+
 from rest_framework import serializers
 from drf_writable_nested import WritableNestedModelSerializer
+from rest_framework.request import Request
 
 from statistic.models import Statistic
-from statistic.models.choices import StatisticQPData
+from statistic.models.choices import StatisticQPData, StatisticDescription, BadQueryParam
 
 
 class StatisticDefaultSerializer(WritableNestedModelSerializer):
@@ -13,8 +16,45 @@ class StatisticDefaultSerializer(WritableNestedModelSerializer):
         model = Statistic
         fields = "__all__"
 
-    @classmethod
-    def save_statistics(self, price: int, operation: str, user: int, product: int = None) -> None:
+    @staticmethod
+    def validate_operation(request: Request, buy_price_prev: int, sell_price_prev: int) -> Tuple[str, int]:
+        var_search = "update"
+
+        if var_search not in request.data:
+            raise BadQueryParam()
+        else:
+            operation = request.data[var_search]
+            if operation == StatisticDescription.LOAN_EXTEND.name:  # pylint: disable=E1101
+                price = sell_price_prev - buy_price_prev
+            elif operation == StatisticDescription.LOAN_RETURN.name:  # pylint: disable=E1101
+                price = sell_price_prev
+            elif operation == StatisticDescription.LOAN_TO_OFFER.name:  # pylint: disable=E1101
+                price = 0
+            elif operation == StatisticDescription.OFFER_SELL.name:  # pylint: disable=E1101
+                price = request.data["quantity"] * sell_price_prev
+            elif operation == StatisticDescription.OFFER_BUY.name:  # pylint: disable=E1101
+                price = request.data["quantity"] * buy_price_prev
+            elif operation == StatisticDescription.UPDATE_DATA.name:  # pylint: disable=E1101
+                price = 0
+            else:
+                raise BadQueryParam()
+        return operation, price
+
+    @staticmethod
+    def validate_and_save(request: Request, buy_price_prev: int, sell_price_prev: int) -> None:
+        # Validate
+        operation, price = StatisticDefaultSerializer.validate_operation(request, buy_price_prev, sell_price_prev)
+
+        # Save Statistics
+        StatisticDefaultSerializer.save_statistics(
+            price=price,
+            operation=operation,
+            user=request.user.id,
+            product=request.parser_context["kwargs"]["pk"],
+        )
+
+    @staticmethod
+    def save_statistics(price: int, operation: str, user: int, product: int = None) -> None:
         serializer_stats = StatisticDefaultSerializer(
             data={"description": operation, "price": price, "product": product, "user": 1}  # TODO: user
         )

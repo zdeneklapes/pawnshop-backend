@@ -42,16 +42,16 @@ class StatisticManager(models.Manager):
                     | models.Q(description=StatisticDescription.LOAN_RETURN.name),
                 ),
                 offer_create_count=models.Count(
-                    "price", filter=models.Q(description=StatisticDescription.OFFER_CREATE.name)
+                    "price", filter=models.Q(description=StatisticDescription.OFFER_BUY.name)
                 ),
                 offer_sell_count=models.Count(
                     "price", filter=models.Q(description=StatisticDescription.OFFER_SELL.name)
                 ),
-                offer_income=models.Sum("price", filter=models.Q(description=StatisticDescription.OFFER_CREATE.name)),
+                offer_income=models.Sum("price", filter=models.Q(description=StatisticDescription.OFFER_BUY.name)),
                 offer_outcome=models.Sum("price", filter=models.Q(description=StatisticDescription.OFFER_SELL.name)),
                 offer_profit=models.Sum(
                     "price",
-                    filter=models.Q(description=StatisticDescription.OFFER_CREATE.name)
+                    filter=models.Q(description=StatisticDescription.OFFER_BUY.name)
                     | models.Q(description=StatisticDescription.OFFER_SELL.name),
                 ),
                 all_income=models.Sum(
@@ -63,14 +63,14 @@ class StatisticManager(models.Manager):
                 all_outcome=models.Sum(
                     "price",
                     filter=models.Q(description=StatisticDescription.OFFER_SELL.name)
-                    | models.Q(description=StatisticDescription.OFFER_CREATE.name),
+                    | models.Q(description=StatisticDescription.OFFER_BUY.name),
                 ),
                 all_profit=models.Sum(
                     "price",
                     filter=models.Q(description=StatisticDescription.LOAN_CREATE.name)
                     | models.Q(description=StatisticDescription.LOAN_EXTEND.name)
                     | models.Q(description=StatisticDescription.LOAN_RETURN.name)
-                    | models.Q(description=StatisticDescription.OFFER_CREATE.name)
+                    | models.Q(description=StatisticDescription.OFFER_BUY.name)
                     | models.Q(description=StatisticDescription.OFFER_SELL.name),
                 ),
             )

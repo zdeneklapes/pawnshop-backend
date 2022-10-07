@@ -3,12 +3,12 @@ from django.db import models
 
 from authentication.models import User
 from customer.models import CustomerProfile
-from .choices import ProductStatus, RateFrequency
+from .choices import ProductStatusOrData, RateFrequency
 from .managers import ProductManager
 
 
 class Product(models.Model):
-    status = models.CharField(max_length=50, choices=ProductStatus.choices)
+    status = models.CharField(max_length=50, choices=ProductStatusOrData.choices)
 
     # Managers
     objects = ProductManager()
@@ -42,6 +42,6 @@ class Product(models.Model):
             self.date_extend = datetime.datetime.now()
 
         if not self.date_end:
-            self.date_end = (self.date_extend.date() + datetime.timedelta(weeks=4)).__str__()
+            self.date_end = (self.date_extend.date() + datetime.timedelta(weeks=self.rate_times)).__str__()
 
         return super().save(*args, **kwargs)
