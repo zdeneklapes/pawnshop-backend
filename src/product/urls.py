@@ -8,6 +8,6 @@ router.register(prefix=r"", viewset=ProductViewSet)
 
 urlpatterns = [
     path("contract/", ContractPdf.as_view()),
-    # path("contract/", PDFTemplateView.as_view(template_name='documents/loan_contract.html')),
+    # path("contract/", PDFTemplateView.as_view(template_name='documents/loan_contract.html', filename="my_pdf.pdf")),
     path("", include(router.urls)),
 ]

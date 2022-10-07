@@ -144,3 +144,14 @@ class ShopStateSerializer(serializers.Serializer):
     count = serializers.IntegerField()
     buy = serializers.IntegerField()
     sell = serializers.IntegerField()
+
+
+class OfferSellSerializer(WritableNestedModelSerializer):
+    class Meta:
+        model = models.Product
+        fields = ["status", "sell_price"]
+
+    def to_internal_value(self, data):
+        product = models.Product.objects.get(id=self.context["view"].kwargs["pk"])
+        data.update({"status": choices.ProductStatus.INACTIVE_OFFER.name, "sell_price": product.sell_price})
+        return super().to_internal_value(data)

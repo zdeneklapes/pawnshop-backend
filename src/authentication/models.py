@@ -1,6 +1,5 @@
 from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.db import models
-from phonenumber_field.modelfields import PhoneNumberField
 
 from shop.models import Shop
 
@@ -50,7 +49,6 @@ class User(AbstractUser):
 
     # Auth field
     email = models.EmailField(max_length=255, unique=True)
-    phone_number = PhoneNumberField(max_length=20, unique=True)
 
     # Date
     date_joined = models.DateTimeField(auto_now_add=True)

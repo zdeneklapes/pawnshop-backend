@@ -1,5 +1,4 @@
 from django.contrib.auth import get_user_model
-from phonenumber_field.serializerfields import PhoneNumberField
 from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
@@ -16,7 +15,6 @@ class UserSerializer(serializers.ModelSerializer):
 
 class AttendantProfileSerializer(serializers.ModelSerializer):
     email = serializers.EmailField(max_length=255)
-    phone_number = PhoneNumberField(allow_null=False, allow_blank=False)
     password = serializers.CharField(min_length=8, write_only=True)
     role = serializers.CharField(max_length=50, required=False)
 
@@ -31,14 +29,11 @@ class AttendantProfileSerializer(serializers.ModelSerializer):
         if len(attrs["password"]) < 8:
             raise serializers.ValidationError(detail="User password must have at least 8 characters")
 
-        # TODO: Validate phone number
-
         return super().validate(attrs)
 
     def create(self, validated_data):
         user = self.Meta.model.objects.create(
             email=validated_data["email"],
-            phone_number=validated_data["phone_number"],
         )
         user.set_password(validated_data["password"])
         user.save()
@@ -55,7 +50,7 @@ class AttendantProfileSerializer(serializers.ModelSerializer):
 class TokenUser:
     @staticmethod
     def add_user_to_data(data, user):
-        data["user"] = {"id": user.id, "email": user.email, "role": user.role, "phone_number": str(user.phone_number)}
+        data["user"] = {"id": user.id, "email": user.email, "role": user.role}
         return data
 
 

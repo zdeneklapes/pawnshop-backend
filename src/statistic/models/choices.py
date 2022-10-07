@@ -42,6 +42,8 @@ class StatisticDescription(models.TextChoices):
                 price = sell_price_prev
             elif operation == StatisticDescription.LOAN_TO_OFFER.name:  # pylint: disable=E1101
                 price = 0
+            elif operation == StatisticDescription.OFFER_SELL.name:  # pylint: disable=E1101
+                price = sell_price_prev
             else:
                 raise BadQueryParam()
         return operation, price

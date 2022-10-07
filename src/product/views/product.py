@@ -2,6 +2,7 @@
 import os.path
 from typing import Optional
 
+import pdfkit
 from django.utils.decorators import method_decorator
 from django.template.loader import get_template
 from django.http import HttpResponse
@@ -13,10 +14,8 @@ from drf_yasg.utils import swagger_auto_schema
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework import viewsets, generics
-from rest_framework.renderers import TemplateHTMLRenderer
 
 import django_filters
-
 
 from product.serializers import product as product_serializers
 from product.models import models
@@ -24,7 +23,6 @@ from product.models.choices import ProductStatus, ProductQPData
 from statistic.serializers.statistic import StatisticDefaultSerializer
 from statistic.models.choices import StatisticDescription
 from common.exceptions import BadQueryParam
-from statistic.models.choices import StatisticQPData
 from config.settings import BASE_DIR
 
 
@@ -41,7 +39,8 @@ class ProductQPSwagger(django_filters.FilterSet):
         description=f"Operation Type: "
         f"{StatisticDescription.LOAN_EXTEND.name}, "
         f"{StatisticDescription.LOAN_RETURN.name}, "
-        f"{StatisticDescription.LOAN_TO_OFFER.name}",
+        f"{StatisticDescription.LOAN_TO_OFFER.name}, "
+        f"{StatisticDescription.OFFER_SELL.name}",
         type=openapi.TYPE_STRING,
     )
     status = openapi.Parameter(
@@ -72,7 +71,7 @@ class ProductViewSet(viewsets.ModelViewSet):
         if "status" not in self.request.query_params:
             return None
 
-        if self.request.query_params["status"] in ProductStatus.values:  # pylint: disable=E1101:
+        if self.request.query_params["status"] in ProductStatus.values:
             return self.request.query_params["status"]
 
         return None
@@ -81,7 +80,7 @@ class ProductViewSet(viewsets.ModelViewSet):
         if "data" not in self.request.query_params:
             return None
 
-        if self.request.query_params["data"] == ProductQPData.SHOP_STATS.name:  # pylint: disable=E1101:
+        if self.request.query_params["data"] == ProductQPData.SHOP_STATS.name:
             return self.request.query_params["data"]
 
         return None
@@ -90,7 +89,7 @@ class ProductViewSet(viewsets.ModelViewSet):
         if "operation" not in self.request.query_params:
             return None
 
-        if self.request.query_params["operation"] not in StatisticQPData.values:  # pylint: disable=E1101:
+        if self.request.query_params["operation"] not in StatisticDescription.values:  # Note: StatisticQPData
             return None
 
         return self.request.query_params["operation"]
@@ -122,6 +121,9 @@ class ProductViewSet(viewsets.ModelViewSet):
 
         if operation == StatisticDescription.LOAN_TO_OFFER.name:
             return product_serializers.LoanToOfferSerializer
+
+        if operation == StatisticDescription.OFFER_SELL.name:
+            return product_serializers.OfferSellSerializer
 
         return super().get_serializer_class()
 
@@ -166,9 +168,7 @@ class ProductViewSet(viewsets.ModelViewSet):
             response = super().partial_update(request)
             self.patial_update_save_statistics(request, buy_price_prev, sell_price_prev)
         except BadQueryParam as e:
-            return Response(
-                data={"details": f"Bad query params - {e}"}, status=BadQueryParam.status_code, exception=True
-            )
+            return Response(data={"details": f"Statistic - {e}"}, status=BadQueryParam.status_code, exception=True)
         return response
 
 
@@ -194,12 +194,15 @@ data = {
 
 
 class ContractPdf(generics.RetrieveAPIView):
-    filename = "my_pdf.pdf"
-    template_name = "documents/loan_contract.html"
-    queryset = models.Product.objects.all()
-    renderer_classes = [TemplateHTMLRenderer]
+    template = os.path.join(BASE_DIR, "product/templates/documents", "loan_contract.html")
+    font = os.path.join(BASE_DIR, "product/templates/fonts/dejavu-sans", "DejaVuSans.ttf")
 
-    def render_to_pdf(self, template_src, context_dict=None):
+    # pdf_name = "contract.pdf"
+    # queryset = models.Product.objects.all()
+    # renderer_classes = [TemplateHTMLRenderer]
+    # pdfs_dir = os.path.join(BASE_DIR, 'product/templates/pdf/')
+
+    def render_to_pdf_xhtml2pdf(self, template_src, context_dict=None):
         context_dict = {"font_dir": f"{os.path.join(BASE_DIR, 'product/templates/fonts/dejavu-sans/')}"}
         template = get_template(template_src)
         html = template.render(context_dict)
@@ -210,7 +213,33 @@ class ContractPdf(generics.RetrieveAPIView):
             return HttpResponse(result.getvalue(), content_type="application/pdf")
         return HttpResponse("We had some errors")
 
+    def render_to_pdf_wkhtmltopdf(self, data=None):
+        data = dict()
+        # data["name"] = "ThePythonDjango.Com"
+        # data["DOB"] = "Jan 10, 2015"
+        data["font"] = ContractPdf.font
+
+        template = get_template(ContractPdf.template)
+        html = template.render(data)
+        pdf = pdfkit.from_string(html, False)
+
+        filename = "sample_pdf.pdf"
+
+        response = HttpResponse(pdf, content_type="application/pdf")
+        response["Content-Disposition"] = 'attachment; filename="' + filename + '"'
+        return response
+        # context_dict = {"font_dir": f"{os.path.join(BASE_DIR, 'product/templates/fonts/dejavu-sans/')}"}
+        # template = get_template(template_src)
+        # html = template.render(context_dict)
+        # pdf_check = pdfkit.from_file(os.path.join(ContractPdf.documents_dir, ContractPdf.template_name),
+        #                  os.path.join(ContractPdf.pdfs_dir, ContractPdf.pdf_name))
+        # if not pdf_check:
+        #     return HttpResponse(, content_type="application/pdf")
+        # return HttpResponse("We had some errors")
+
     def get(self, request, *args, **kwargs):
-        template1 = "documents/loan_contract.html"
-        context_dict = {"font_dir": f"{os.path.join(BASE_DIR, 'product/templates/fonts/dejavu-sans/')}"}
-        return self.render_to_pdf(template1, context_dict=context_dict)
+        # template1 = "documents/loan_contract.html"
+        # template1 = "documents/test1.html"
+        # context_dict = {"font_dir": f"{os.path.join(BASE_DIR, 'product/templates/fonts/dejavu-sans/')}"}
+        # response = HttpResponse(response.content, content_type='application/pdf')
+        return self.render_to_pdf_wkhtmltopdf()

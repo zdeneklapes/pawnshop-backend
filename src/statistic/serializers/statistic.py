@@ -16,7 +16,7 @@ class StatisticDefaultSerializer(WritableNestedModelSerializer):
     @classmethod
     def save_statistics(self, price: int, operation: str, user: int, product: int = None) -> None:
         serializer_stats = StatisticDefaultSerializer(
-            data={"description": operation, "price": price, "product": product, "user": user}
+            data={"description": operation, "price": price, "product": product, "user": 1}  # TODO: user
         )
         serializer_stats.is_valid()
         serializer_stats.save()
