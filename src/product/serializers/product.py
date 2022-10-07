@@ -5,8 +5,7 @@ from rest_framework import serializers
 from drf_writable_nested import WritableNestedModelSerializer
 
 from customer.serializers import CustomerProfileSerializer
-
-from product.models import models, choices
+from product.models import Product, ProductStatus
 from common import utils
 
 
@@ -27,18 +26,18 @@ class ProductSerializer(WritableNestedModelSerializer):
     sell_price = serializers.IntegerField(required=False)
 
     class Meta:
-        model = models.Product
+        model = Product
         fields = "__all__"
 
     def to_representation(self, instance):
-        if instance.status == choices.ProductStatus.LOAN.name:
+        if instance.status == ProductStatus.LOAN.name:
             dict_ = super().to_representation(instance)
             del dict_["interest_rate"]
             del dict_["quantity"]
             del dict_["rate_frequency"]
             del dict_["rate_times"]
             dict_["interest_rate_or_quantity"] = (
-                instance.interest_rate if instance.status == choices.ProductStatus.LOAN.name else instance.quantity
+                instance.interest_rate if instance.status == ProductStatus.LOAN.name else instance.quantity
             )
             dict_["interest"] = get_interests(
                 rate=float(instance.interest_rate), buy_price=instance.buy_price, rate_times=instance.rate_times
@@ -64,7 +63,7 @@ class ProductSerializer(WritableNestedModelSerializer):
                 "status": data["status"],
                 "inventory_id": data["inventory_id"],
                 "interest_rate": data["interest_rate_or_quantity"]
-                if data["status"] == choices.ProductStatus.LOAN.name
+                if data["status"] == ProductStatus.LOAN.name
                 else None,
                 "product_name": data["product_name"],
                 "buy_price": data["buy_price"],
@@ -72,9 +71,7 @@ class ProductSerializer(WritableNestedModelSerializer):
                     rate=float(data["interest_rate_or_quantity"]), buy_price=int(data["buy_price"])
                 ),
                 "date_extend": timezone.now(),
-                "quantity": data["interest_rate_or_quantity"]
-                if data["status"] == choices.ProductStatus.OFFER.name
-                else 1,
+                "quantity": data["interest_rate_or_quantity"] if data["status"] == ProductStatus.OFFER.name else 1,
             }
         )
         return super().to_internal_value(data)
@@ -85,7 +82,7 @@ class LoanExtendSerializer(WritableNestedModelSerializer):
     sell_price = serializers.IntegerField(required=False)
 
     class Meta:
-        model = models.Product
+        model = Product
         fields = "__all__"
 
     def to_representation(self, instance):
@@ -96,10 +93,10 @@ class LoanExtendSerializer(WritableNestedModelSerializer):
         return dict_
 
     def to_internal_value(self, data):
-        loan = models.Product.objects.get(id=self.context["view"].kwargs["pk"])
+        loan = Product.objects.get(id=self.context["view"].kwargs["pk"])
         data.update(
             {
-                "status": models.ProductStatus.LOAN.name,
+                "status": ProductStatus.LOAN.name,
                 "sell_price": utils.get_sell_price(rate=loan.rate, buy_price=loan.buy_price),
                 "date_extend": timezone.now(),
             }
@@ -112,13 +109,13 @@ class LoanReturnSerializer(WritableNestedModelSerializer):
     sell_price = serializers.IntegerField(required=False)
 
     class Meta:
-        model = models.Product
+        model = Product
         fields = "__all__"
 
     def to_internal_value(self, data):
         data.update(
             {
-                "status": choices.ProductStatus.INACTIVE_LOAN.name,
+                "status": ProductStatus.INACTIVE_LOAN.name,
                 "date_end": timezone.now()
                 # "sell_price": "" # Note: Is already set from command
             }
@@ -131,11 +128,11 @@ class LoanToOfferSerializer(WritableNestedModelSerializer):
     sell_price = serializers.IntegerField(required=False)
 
     class Meta:
-        model = models.Product
+        model = Product
         fields = "__all__"
 
     def to_internal_value(self, data):
-        data.update({"status": choices.ProductStatus.OFFER.name, "sell_price": data["sell_price"]})
+        data.update({"status": ProductStatus.OFFER.name, "sell_price": data["sell_price"]})
         return super().to_internal_value(data)
 
 
@@ -148,18 +145,18 @@ class ShopStateSerializer(serializers.Serializer):
 
 class OfferSellSerializer(WritableNestedModelSerializer):
     class Meta:
-        model = models.Product
+        model = Product
         fields = ["status", "sell_price"]
 
     def to_internal_value(self, data):
-        product = models.Product.objects.get(id=self.context["view"].kwargs["pk"])
-        data.update({"status": choices.ProductStatus.INACTIVE_OFFER.name, "sell_price": product.sell_price})
+        product = Product.objects.get(id=self.context["view"].kwargs["pk"])
+        data.update({"status": ProductStatus.INACTIVE_OFFER.name, "sell_price": product.sell_price})
         return super().to_internal_value(data)
 
 
 class UpdateProductSerializer(WritableNestedModelSerializer):
     class Meta:
-        model = models.Product
+        model = Product
         fields = ["product_name", "sell_price", "date_create", "date_extend", "inventory_id"]
 
     def to_internal_value(self, data):

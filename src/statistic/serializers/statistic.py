@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from drf_writable_nested import WritableNestedModelSerializer
 
-from statistic.models import models
+from statistic.models import Statistic
 from statistic.models.choices import StatisticQPData
 
 
@@ -10,7 +10,7 @@ class StatisticDefaultSerializer(WritableNestedModelSerializer):
     profit = serializers.IntegerField(required=False, read_only=True)
 
     class Meta:
-        model = models.Statistic
+        model = Statistic
         fields = "__all__"
 
     @classmethod
@@ -44,13 +44,13 @@ class StatisticDailyStatsSerializer(serializers.Serializer):
 
 class StatisticCashAmountSerializer(serializers.ModelSerializer):
     class Meta:
-        model = models.Statistic
+        model = Statistic
         fields = ["amount"]
 
 
 class StatisticResetSerializer(serializers.ModelSerializer):
     class Meta:
-        model = models.Statistic
+        model = Statistic
         fields = ["user", "description"]
 
     def to_internal_value(self, data):

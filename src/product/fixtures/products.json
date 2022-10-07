@@ -1,83 +1,10 @@
 [
-  {
-    "model": "product.product",
-    "pk": 1,
-    "fields": {
-      "status": "LOAN",
-      "user": 1,
-      "customer": "000000/0000",
-      "rate_frequency": "WEEK",
-      "rate_times": 4,
-      "interest_rate": "2.2",
-      "product_name": "tel",
-      "buy_price": 1000,
-      "sell_price": 111,
-      "quantity": 1,
-      "inventory_id": 0,
-      "date_create": "2022-10-01T14:31:31.018Z",
-      "date_extend": "2022-10-01T14:31:31.018Z",
-      "date_end": null
-    }
-  },
-  {
-    "model": "product.product",
-    "pk": 2,
-    "fields": {
-      "status": "LOAN",
-      "user": 1,
-      "customer": "000000/0000",
-      "rate_frequency": "WEEK",
-      "rate_times": 4,
-      "interest_rate": "2.2",
-      "interest_rate": "2.2",
-      "product_name": "tel",
-      "buy_price": 1000,
-      "sell_price": 1200,
-      "quantity": 1,
-      "inventory_id": 0,
-      "date_create": "2022-10-01T14:31:47.080Z",
-      "date_extend": "2022-10-01T14:31:47.080Z",
-      "date_end": null
-    }
-  },
-  {
-    "model": "product.product",
-    "pk": 3,
-    "fields": {
-      "status": "LOAN",
-      "user": 1,
-      "customer": "000000/0000",
-      "rate_frequency": "WEEK",
-      "rate_times": 4,
-      "interest_rate": "2.2",
-      "product_name": "tel",
-      "buy_price": 1000,
-      "sell_price": 1200,
-      "quantity": 1,
-      "inventory_id": 0,
-      "date_create": "2022-09-01T14:31:47.080Z",
-      "date_extend": "2022-09-01T14:31:47.080Z",
-      "date_end": null
-    }
-  },
-  {
-    "model": "product.product",
-    "pk": 4,
-    "fields": {
-      "status": "OFFER",
-      "user": 1,
-      "customer": "000000/0000",
-      "rate_frequency": "WEEK",
-      "rate_times": 4,
-      "interest_rate": "2.2",
-      "product_name": "tel",
-      "buy_price": 1000,
-      "sell_price": 1200,
-      "quantity": 1,
-      "inventory_id": 0,
-      "date_create": "2022-09-01T14:31:47.080Z",
-      "date_extend": "2022-09-01T14:31:47.080Z",
-      "date_end": null
-    }
-  }
+  { "model": "product.product", "pk": 1, "fields": { "status": "LOAN", "user": 1, "customer": "000000/0000", "rate_frequency": "WEEK", "rate_times": 4, "interest_rate": "2.2", "product_name": "tel", "buy_price": 1000, "sell_price": 111, "quantity": 1, "inventory_id": 0, "date_create": "2022-10-01T14:31:31.018Z", "date_extend": "2022-10-01T14:31:31.018Z", "date_end": null } },
+  { "model": "product.product", "pk": 2, "fields": { "status": "LOAN", "user": 1, "customer": "000000/0000", "rate_frequency": "WEEK", "rate_times": 4, "interest_rate": "2.2", "product_name": "tel", "buy_price": 1000, "sell_price": 1200, "quantity": 1, "inventory_id": 0, "date_create": "2022-10-01T14:31:47.080Z", "date_extend": "2022-10-01T14:31:47.080Z", "date_end": null } },
+  { "model": "product.product", "pk": 4, "fields": { "status": "OFFER", "user": 1, "customer": "000000/0000", "rate_frequency": "WEEK", "rate_times": 4, "interest_rate": "2.2", "product_name": "tel", "buy_price": 1000, "sell_price": 1200, "quantity": 1, "inventory_id": 0, "date_create": "2022-09-01T14:31:47.080Z", "date_extend": "2022-10-02T14:31:47.080Z", "date_end": null } },
+  { "model": "product.product", "pk": 5, "fields": { "status": "OFFER", "user": 1, "customer": "000000/0000", "rate_frequency": "WEEK", "rate_times": 4, "interest_rate": "2.2", "product_name": "tel", "buy_price": 1000, "sell_price": 1200, "quantity": 1, "inventory_id": 0, "date_create": "2022-09-01T14:31:47.080Z", "date_extend": "2022-10-03T14:31:47.080Z", "date_end": null } },
+  { "model": "product.product", "pk": 6, "fields": { "status": "AFTER_MATURITY", "user": 1, "customer": "000000/0000", "rate_frequency": "WEEK", "rate_times": 4, "interest_rate": "2.2", "product_name": "tel", "buy_price": 1000, "sell_price": 1200, "quantity": 1, "inventory_id": 0, "date_create": "2022-09-01T14:31:47.080Z", "date_extend": "2022-10-04T14:31:47.080Z", "date_end": null } },
+  { "model": "product.product", "pk": 7, "fields": { "status": "AFTER_MATURITY", "user": 1, "customer": "000000/0000", "rate_frequency": "WEEK", "rate_times": 4, "interest_rate": "2.2", "product_name": "tel", "buy_price": 1000, "sell_price": 1200, "quantity": 1, "inventory_id": 0, "date_create": "2022-09-01T14:31:47.080Z", "date_extend": "2022-10-04T14:31:47.080Z", "date_end": null } },
+  { "model": "product.product", "pk": 8, "fields": { "status": "INACTIVE_LOAN", "user": 1, "customer": "000000/0000", "rate_frequency": "WEEK", "rate_times": 4, "interest_rate": "2.2", "product_name": "tel", "buy_price": 1000, "sell_price": 1200, "quantity": 1, "inventory_id": 0, "date_create": "2022-09-01T14:31:47.080Z", "date_extend": "2022-10-05T14:31:47.080Z", "date_end": null } },
+  { "model": "product.product", "pk": 9, "fields": { "status": "INACTIVE_OFFER", "user": 1, "customer": "000000/0000", "rate_frequency": "WEEK", "rate_times": 4, "interest_rate": "2.2", "product_name": "tel", "buy_price": 1000, "sell_price": 1200, "quantity": 1, "inventory_id": 0, "date_create": "2022-09-01T14:31:47.080Z", "date_extend": "2022-10-06T14:31:47.080Z", "date_end": null } }
 ]

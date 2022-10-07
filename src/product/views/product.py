@@ -7,13 +7,13 @@ from drf_yasg.utils import swagger_auto_schema
 
 from rest_framework.request import Request
 from rest_framework.response import Response
-from rest_framework import viewsets
+from rest_framework import viewsets, permissions
 
 import django_filters
 
 from product.serializers import product as product_serializers
-from product.models import models
-from product.models.choices import ProductStatus, ProductQPData
+from product.models.models import Product, ProductStatus
+from product.models.choices import ProductQPData
 from statistic.serializers.statistic import StatisticDefaultSerializer
 from statistic.models.choices import StatisticDescription
 from common.exceptions import BadQueryParam
@@ -54,9 +54,10 @@ class ProductQPSwagger(django_filters.FilterSet):
 @method_decorator(name="retrieve", decorator=swagger_auto_schema(manual_parameters=[]))
 @method_decorator(name="partial_update", decorator=swagger_auto_schema(manual_parameters=[ProductQPSwagger.operation]))
 class ProductViewSet(viewsets.ModelViewSet):
-    queryset = models.Product.objects.all()
+    queryset = Product.objects.all()
     serializer_class = product_serializers.ProductSerializer
     http_method_names = ["get", "post", "patch"]
+    permission_classes = [permissions.IsAuthenticated]
 
     # permission_classes = [permissions.IsAuthenticated] # TODO: Uncomment
 
@@ -92,10 +93,10 @@ class ProductViewSet(viewsets.ModelViewSet):
         data_choice = self.parse_data_request()
 
         if status_choice:
-            return models.Product.objects.get_product_by_status(status_choice)
+            return Product.objects.get_product_by_status(status_choice)
 
         if data_choice == ProductQPData.SHOP_STATS.name:
-            return models.Product.objects.get_shop_state()
+            return Product.objects.get_shop_state()
 
         return super().get_queryset()
 
@@ -156,7 +157,7 @@ class ProductViewSet(viewsets.ModelViewSet):
 
     def partial_update(self, request: Request, *args, **kwargs):
         # Store previous price
-        loan = models.Product.objects.get(pk=request.parser_context["kwargs"]["pk"])
+        loan = Product.objects.get(pk=request.parser_context["kwargs"]["pk"])
         sell_price_prev = loan.sell_price
         buy_price_prev = loan.buy_price
 
