@@ -1,19 +1,13 @@
 # pylint: disable=E1101
-import os.path
 from typing import Optional
 
-import pdfkit
 from django.utils.decorators import method_decorator
-from django.template.loader import get_template
-from django.http import HttpResponse
-from io import BytesIO
-from xhtml2pdf import pisa
 from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
 
 from rest_framework.request import Request
 from rest_framework.response import Response
-from rest_framework import viewsets, generics
+from rest_framework import viewsets
 
 import django_filters
 
@@ -23,7 +17,6 @@ from product.models.choices import ProductStatus, ProductQPData
 from statistic.serializers.statistic import StatisticDefaultSerializer
 from statistic.models.choices import StatisticDescription
 from common.exceptions import BadQueryParam
-from config.settings import BASE_DIR
 
 
 class ProductQPSwagger(django_filters.FilterSet):
@@ -125,6 +118,9 @@ class ProductViewSet(viewsets.ModelViewSet):
         if operation == StatisticDescription.OFFER_SELL.name:
             return product_serializers.OfferSellSerializer
 
+        if operation == StatisticDescription.UPDATE.name:
+            return product_serializers.UpdateProductSerializer
+
         return super().get_serializer_class()
 
     # Request Handlers
@@ -164,82 +160,9 @@ class ProductViewSet(viewsets.ModelViewSet):
         sell_price_prev = loan.sell_price
         buy_price_prev = loan.buy_price
 
+        response = super().partial_update(request)
         try:
-            response = super().partial_update(request)
             self.patial_update_save_statistics(request, buy_price_prev, sell_price_prev)
         except BadQueryParam as e:
             return Response(data={"details": f"Statistic - {e}"}, status=BadQueryParam.status_code, exception=True)
         return response
-
-
-data = {
-    "customer": {
-        "full_name": "a b",
-        "residence": "Cejl 222",
-        "sex": "M",
-        "nationality": "SK",
-        "personal_id": "0000000000",
-        "personal_id_expiration_date": "2023-02-02",
-        "birthplace": "Prha",
-        "id_birth": "000000/0001",
-    },
-    "user": 1,
-    "status": "LOAN",
-    "interest_rate_or_quantity": 10,
-    "inventory_id": 3,
-    "product_name": "watch",
-    "buy_price": 3000,
-    "sell_price": 4200,
-}
-
-
-class ContractPdf(generics.RetrieveAPIView):
-    template = os.path.join(BASE_DIR, "product/templates/documents", "loan_contract.html")
-    font = os.path.join(BASE_DIR, "product/templates/fonts/dejavu-sans", "DejaVuSans.ttf")
-
-    # pdf_name = "contract.pdf"
-    # queryset = models.Product.objects.all()
-    # renderer_classes = [TemplateHTMLRenderer]
-    # pdfs_dir = os.path.join(BASE_DIR, 'product/templates/pdf/')
-
-    def render_to_pdf_xhtml2pdf(self, template_src, context_dict=None):
-        context_dict = {"font_dir": f"{os.path.join(BASE_DIR, 'product/templates/fonts/dejavu-sans/')}"}
-        template = get_template(template_src)
-        html = template.render(context_dict)
-        result = BytesIO()
-        html_encoded = str(html).encode("UTF-8")
-        pdf = pisa.pisaDocument(html_encoded, result, encoding="UTF-8")
-        if not pdf.err:
-            return HttpResponse(result.getvalue(), content_type="application/pdf")
-        return HttpResponse("We had some errors")
-
-    def render_to_pdf_wkhtmltopdf(self, data=None):
-        data = dict()
-        # data["name"] = "ThePythonDjango.Com"
-        # data["DOB"] = "Jan 10, 2015"
-        data["font"] = ContractPdf.font
-
-        template = get_template(ContractPdf.template)
-        html = template.render(data)
-        pdf = pdfkit.from_string(html, False)
-
-        filename = "sample_pdf.pdf"
-
-        response = HttpResponse(pdf, content_type="application/pdf")
-        response["Content-Disposition"] = 'attachment; filename="' + filename + '"'
-        return response
-        # context_dict = {"font_dir": f"{os.path.join(BASE_DIR, 'product/templates/fonts/dejavu-sans/')}"}
-        # template = get_template(template_src)
-        # html = template.render(context_dict)
-        # pdf_check = pdfkit.from_file(os.path.join(ContractPdf.documents_dir, ContractPdf.template_name),
-        #                  os.path.join(ContractPdf.pdfs_dir, ContractPdf.pdf_name))
-        # if not pdf_check:
-        #     return HttpResponse(, content_type="application/pdf")
-        # return HttpResponse("We had some errors")
-
-    def get(self, request, *args, **kwargs):
-        # template1 = "documents/loan_contract.html"
-        # template1 = "documents/test1.html"
-        # context_dict = {"font_dir": f"{os.path.join(BASE_DIR, 'product/templates/fonts/dejavu-sans/')}"}
-        # response = HttpResponse(response.content, content_type='application/pdf')
-        return self.render_to_pdf_wkhtmltopdf()

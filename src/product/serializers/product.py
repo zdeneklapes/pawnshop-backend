@@ -155,3 +155,21 @@ class OfferSellSerializer(WritableNestedModelSerializer):
         product = models.Product.objects.get(id=self.context["view"].kwargs["pk"])
         data.update({"status": choices.ProductStatus.INACTIVE_OFFER.name, "sell_price": product.sell_price})
         return super().to_internal_value(data)
+
+
+class UpdateProductSerializer(WritableNestedModelSerializer):
+    class Meta:
+        model = models.Product
+        fields = ["product_name", "sell_price", "date_create", "date_extend", "inventory_id"]
+
+    def to_internal_value(self, data):
+        data.update(
+            {
+                "product_name": data["product_name"],
+                "sell_price": data["sell_price"],
+                "date_create": data["date_create"],
+                "date_extend": data["date_extend"],
+                "inventory_id": data["inventory_id"],
+            }
+        )
+        return super().to_internal_value(data)

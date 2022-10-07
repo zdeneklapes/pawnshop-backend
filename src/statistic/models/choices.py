@@ -24,6 +24,8 @@ class StatisticDescription(models.TextChoices):
     OFFER_SELL = "OFFER_SELL", "Prodej"
     # Move
     LOAN_TO_OFFER = "LOAN_TO_OFFER", "Presunuti do bazaru"
+    #
+    UPDATE = "UPDATE", "Update"
     # Logins
     LOGIN = "LOGIN", "Prihlaseni"
     LOGOUT = "LOGOUT", "Odhlaseni"
@@ -44,6 +46,10 @@ class StatisticDescription(models.TextChoices):
                 price = 0
             elif operation == StatisticDescription.OFFER_SELL.name:  # pylint: disable=E1101
                 price = sell_price_prev
+            elif operation == StatisticDescription.OFFER_SELL.name:  # pylint: disable=E1101
+                price = sell_price_prev
+            elif operation == StatisticDescription.UPDATE.name:  # pylint: disable=E1101
+                price = 0
             else:
                 raise BadQueryParam()
         return operation, price
