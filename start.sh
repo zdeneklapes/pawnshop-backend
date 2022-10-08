@@ -191,12 +191,6 @@ function web_docker() {
 }
 
 function dev_docker() {
-    cd src || error_exit "cd"
-#    service cron start
-#    python3 manage.py crontab add
-#    service cron restart
-    cd .. || error_exit "cd"
-
     django_loaddata
 
     cd src || error_exit "cd"
@@ -204,17 +198,29 @@ function dev_docker() {
     cd .. || error_exit "cd"
 }
 
+function cron_docker() {
+    cd src || error_exit "cd"
+    python3 manage.py crontab add
+    python3 manage.py crontab show
+    cd .. || error_exit "cd"
+
+    cron -f
+}
+
 # Main arguments loop
 [[ "$#" -eq 0 ]] && usage && exit 0
 while [ "$#" -gt 0 ]; do
     case "$1" in
+
     # Docker
     '--rm-docker-images-volumes') rm_docker_images_volumes ;;
     '--build-up-docker') build_up_docker ;;
     '--docker-show-ipaddress') docker_show_ipaddress ;;
+
         # Env
     '--envs-to-samples') envs_to_samples ;;
     '--samples-to-envs') samples_to_envs ;;
+
         # Django
     '--createsuperuser') django_createsuperuser ;;
     '--clean-migrations') django_clean_migrations ;;
@@ -223,6 +229,8 @@ while [ "$#" -gt 0 ]; do
     '--runserver') run_local ;;
     '--web-docker') web_docker ;;
     '--dev-docker') dev_docker ;;
+    '--cron-docker') cron_docker ;;
+
         # Others
     '--venv') create_venv ;;
     '-h' | '--help') usage ;;

@@ -219,8 +219,13 @@ LOGGING = {
     },
 }
 
+
 # Cron
-CRONJOBS = [("* * * * *", "django.core.management.call_command", ["update_product_status"])]
+CRONJOBS = [
+    # ("* * * * *", "django.core.management.call_command", ["update_product_status"]),
+    ("* * * * *", "config.cron.fun"),
+    ("* * * * *", "config.cron.update_product_status"),
+]
 
 # PDF
 WKHTMLTOPDF_CMD = os.system("which wkhtmltopdf")  # nosec
