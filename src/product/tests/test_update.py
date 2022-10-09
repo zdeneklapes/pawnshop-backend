@@ -327,28 +327,35 @@ def test_loan_extend_calc(login_client, load_all_fixtures_for_module, product_id
         )
 
 
-@pytest.mark.django_db
 @pytest.mark.parametrize(
-    "path_url, exp_status",
+    "product_id, payload, exp_status",
     [
-        pytest.param(f"/product/?data={ProductStatusOrData.LOAN.name}", status.HTTP_200_OK),
+        pytest.param(
+            1,
+            {"update": StatisticDescription.LOAN_RETURN.name},
+            status.HTTP_200_OK,
+        )
     ],
 )
-def test_loan_create(login_client, load_all_fixtures_for_module, path_url, exp_status):
-    response = login_client.get(path=path_url)
-    assert response.status_code == exp_status
-
-
 @pytest.mark.django_db
-@pytest.mark.parametrize(
-    "path_url, exp_status",
-    [
-        pytest.param(f"/product/?data={ProductStatusOrData.LOAN.name}", status.HTTP_200_OK),
-    ],
-)
-def test_loan_update(login_client, load_all_fixtures_for_module, path_url, exp_status):
-    response = login_client.get(path=path_url)
-    assert response.status_code == exp_status
+def test_loan_return_calc(login_client, load_all_fixtures_for_module, product_id, payload, exp_status):
+    response_get = login_client.get(path=f"/product/{product_id}/", data=payload, format="json")
+    response_update = login_client.patch(path=f"/product/{product_id}/", data=payload, format="json")
+    assert response_update.status_code == exp_status
+
+    # Check update
+    if exp_status == status.HTTP_200_OK:
+        assert response_get.data["user"] == response_update.data["user"]
+        assert ProductStatusOrData.INACTIVE_LOAN.name == response_update.data["status"]
+        assert response_get.data["customer"]["id_birth"] == response_update.data["customer"]
+        assert response_get.data["interest_rate_or_quantity"] == response_update.data["interest_rate_or_quantity"]
+        assert response_get.data["inventory_id"] == response_update.data["inventory_id"]
+        assert response_get.data["product_name"] == response_update.data["product_name"]
+        assert response_get.data["buy_price"] == response_update.data["buy_price"]
+        assert response_get.data["sell_price"] == response_update.data["sell_price"]
+        assert str(response_get.data["date_create"]) in response_update.data["date_create"]
+        assert str(response_get.data["date_extend"]) in response_update.data["date_extend"]
+        assert str(datetime.date.today()) in response_update.data["date_end"]
 
 
 @pytest.mark.django_db
@@ -382,51 +389,3 @@ def test_update_data(
     assert response_get.data["date_create"] == payload_data["date_create"]
     assert response_get.data["date_extend"] == payload_data["date_extend"]
     assert response_get.data["inventory_id"] == payload_data["inventory_id"]
-
-
-@pytest.mark.django_db
-@pytest.mark.parametrize(
-    "path_url, exp_status",
-    [
-        pytest.param(f"/product/?data={ProductStatusOrData.LOAN.name}", status.HTTP_200_OK),
-    ],
-)
-def test_loan_interest_and_sell_price_response(login_client, load_all_fixtures_for_module, path_url, exp_status):
-    response = login_client.get(path=path_url)
-    assert response.status_code == exp_status
-
-    # for i in response.data:
-    #     pass
-
-
-@pytest.mark.django_db
-@pytest.mark.parametrize(
-    "",
-    [
-        pytest.param(),
-    ],
-)
-def test_loan_response_data_for_product(login_client, load_all_fixtures_for_module):
-    pass
-
-
-@pytest.mark.django_db
-@pytest.mark.parametrize(
-    "",
-    [
-        pytest.param(),
-    ],
-)
-def test_loan_create_calculations(login_client, load_all_fixtures_for_module):
-    pass
-
-
-@pytest.mark.django_db
-@pytest.mark.parametrize(
-    "",
-    [
-        pytest.param(),
-    ],
-)
-def test_loan_extend_calculations(login_client, load_all_fixtures_for_module):
-    pass

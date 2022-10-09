@@ -50,4 +50,7 @@ class Product(models.Model):
             if self.status == ProductStatusOrData.LOAN.name:
                 self.date_end = (self.date_extend.date() + datetime.timedelta(weeks=self.rate_times)).__str__()
 
+            if self.status == ProductStatusOrData.INACTIVE_LOAN.name:
+                self.date_end = datetime.datetime.now()
+
         return super().save(*args, **kwargs)
