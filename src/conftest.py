@@ -7,8 +7,9 @@ from authentication.models import User
 
 @pytest.fixture(scope="function")
 def user():
-    user = User.objects.create_superuser(email="super1@a.com", password="a")
-    return user
+    payload = {"email": "super1@a.com", "password": "a"}
+    user = User.objects.create_superuser(**payload)
+    return user, payload
 
 
 @pytest.fixture()
@@ -24,8 +25,6 @@ def load_all_fixtures(django_db_setup, django_db_blocker):
 
 @pytest.fixture()
 def login_client(client, user):
-    client.post()
-    client.credentials(
-        HTTP_AUTHORIZATION="Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjY2MDA3NTc5LCJpYXQiOjE2NjUxNDM1NzksImp0aSI6ImI3ZGJjMmRiMTQ2NTQzMDJhYjA3ZmMyNzY5YjI1OTY2IiwidXNlcl9pZCI6MX0.s2OFNo8vJyt_W6yOXwQcblI_umUSKNvfFfpCOE14dFM"  # noqa: E501
-    )
+    response = client.post("http://localhost:8000/authentication/token/create/", data=user[1])
+    client.credentials(HTTP_AUTHORIZATION=f"Bearer {response.data['access']}")
     return client
