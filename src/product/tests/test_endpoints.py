@@ -1,22 +1,24 @@
 import pytest
 from rest_framework import status
 from statistic.models.choices import StatisticDescription
+from product.models import ProductStatusOrData, ProductShopData
 
 
 @pytest.mark.django_db
-def test_get(login_client):
-    # TODO: fix data
-    response_all = login_client.get(path="/product/")
-    response_loans = login_client.get(path="/product/?data=LOAN")
-    response_offers = login_client.get(path="/product/?data=OFFER")
-    response_after_maturity = login_client.get(path="/product/?data=AFTER_MATURITY")
-    response_shop_data = login_client.get(path="/product/?data=SHOP_STATA")
-
-    assert response_all.status_code == status.HTTP_200_OK
-    assert response_loans.status_code == status.HTTP_200_OK
-    assert response_offers.status_code == status.HTTP_200_OK
-    assert response_after_maturity.status_code == status.HTTP_200_OK
-    assert response_shop_data.status_code == status.HTTP_200_OK
+@pytest.mark.parametrize(
+    "path_data, count, exp_status",
+    [
+        pytest.param("/product/", 9, status.HTTP_200_OK),
+        pytest.param(f"/product/?data={ProductStatusOrData.LOAN.name}", 3, status.HTTP_200_OK),
+        pytest.param(f"/product/?data={ProductStatusOrData.OFFER.name}", 2, status.HTTP_200_OK),
+        pytest.param(f"/product/?data={ProductStatusOrData.AFTER_MATURITY.name}", 2, status.HTTP_200_OK),
+        pytest.param(f"/product/?data={ProductShopData.SHOP_STATS.name}", 3, status.HTTP_200_OK),
+    ],
+)
+def test_get(login_client, load_all_fixtures, path_data, count, exp_status):
+    response = login_client.get(path=path_data)
+    assert response.data.__len__() == count
+    assert response.status_code == exp_status
 
 
 @pytest.mark.django_db
@@ -172,3 +174,39 @@ def test_update_data(login_client, load_all_fixtures, product_id, payload_data, 
     assert response_get.data["date_create"] == payload_data["date_create"]
     assert response_get.data["date_extend"] == payload_data["date_extend"]
     assert response_get.data["inventory_id"] == payload_data["inventory_id"]
+
+
+@pytest.mark.parametrize(
+    "",
+    [
+        pytest.param(),
+    ],
+)
+@pytest.mark.django_db
+@pytest.mark.xfail
+def test_loan_response_data_for_product(login_client, load_all_fixtures):
+    pass
+
+
+@pytest.mark.parametrize(
+    "",
+    [
+        pytest.param(),
+    ],
+)
+@pytest.mark.django_db
+@pytest.mark.xfail
+def test_after_maturity_response_data_for_product(login_client, load_all_fixtures):
+    pass
+
+
+@pytest.mark.parametrize(
+    "",
+    [
+        pytest.param(),
+    ],
+)
+@pytest.mark.django_db
+@pytest.mark.xfail
+def test_offer_response_data_for_product(login_client, load_all_fixtures):
+    pass

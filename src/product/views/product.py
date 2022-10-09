@@ -70,7 +70,7 @@ class ProductViewSet(viewsets.ModelViewSet):
         if var_search not in self.request.query_params:
             return None
 
-        if self.request.query_params[var_search] in ProductStatusOrData.values:
+        if self.request.query_params[var_search] in [*ProductStatusOrData.values, *ProductShopData.values]:
             return self.request.query_params[var_search]
 
         return None

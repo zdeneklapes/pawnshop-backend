@@ -11,7 +11,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Env
 if load_dotenv(path.join(ROOT_DIR, "env", ".env.local")):
     print("ENV: local")
-if load_dotenv(path.join(ROOT_DIR, "env", ".env.heroku")):
+elif load_dotenv(path.join(ROOT_DIR, "env", ".env.heroku")):
     print("ENV: heroku")
 else:  # Docker, because env folder nto available
     print("ENV: docker")

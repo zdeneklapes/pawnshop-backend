@@ -1,4 +1,0 @@
-ENV: docker
-DB: postgress
-hello cron
-Successfully Updated Loanshello cron

@@ -39,7 +39,9 @@ def update_product_status():
             f.write("Hello4")
 
         loan.sell_price = utils.get_sell_price(
-            rate=loan.interest_rate_or_quantity, buy_price=loan.buy_price, times=utils.get_week_delta(loan.date_extend)
+            rate=loan.interest_rate_or_quantity,
+            buy_price=loan.buy_price,
+            rate_times=utils.get_week_delta(loan.date_extend),
         )
 
         with open(f"{path.join(BASE_DIR, 'cron_test1.txt')}", "a") as f:

@@ -27,8 +27,7 @@ class ProductSerializer(WritableNestedModelSerializer):
             dict_["interest"] = utils.get_interests(
                 rate=float(instance.interest_rate_or_quantity),
                 buy_price=instance.buy_price,
-                rate_times=instance.rate_times,
-                from_date=instance.date_extend,
+                from_date=instance.date_extend.date(),
             )
 
         return dict_
@@ -137,8 +136,7 @@ class ProductUpdateSerializer(WritableNestedModelSerializer):
         dict_["interest"] = utils.get_interests(
             rate=float(instance.interest_rate_or_quantity),
             buy_price=instance.buy_price,
-            rate_times=instance.rate_times,
-            from_date=instance.date_extend,
+            from_date=instance.date_extend.date(),
         )
         return dict_
 
