@@ -47,6 +47,7 @@ class ProductQPSwagger(django_filters.FilterSet):
             "date_create": openapi.Schema(type=openapi.TYPE_STRING),
             "date_extend": openapi.Schema(type=openapi.TYPE_STRING),
             "inventory_id": openapi.Schema(type=openapi.TYPE_STRING),
+            "quantity": openapi.Schema(type=openapi.TYPE_STRING),
         },
     )
 
