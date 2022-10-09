@@ -32,3 +32,19 @@ def get_interests(rate: float, buy_price: int, from_date: datetime.date, rate_ti
         }
         for i in range(delta if delta > rate_times else rate_times)
     ][-4:]
+
+
+def is_float(s):
+    try:
+        float(s)
+        return True
+    except ValueError:
+        return False
+
+
+def is_integer(s: float):
+    x = int(s)
+    temp2 = s - x
+    if temp2 > 0:
+        return False
+    return True

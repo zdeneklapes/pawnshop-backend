@@ -1,3 +1,4 @@
+# pylint: disable=E1101
 import datetime
 from django.db import models
 
@@ -46,6 +47,7 @@ class Product(models.Model):
             self.date_extend = datetime.datetime.now()
 
         if not self.date_end:
-            self.date_end = (self.date_extend.date() + datetime.timedelta(weeks=self.rate_times)).__str__()
+            if self.status == ProductStatusOrData.LOAN.name:
+                self.date_end = (self.date_extend.date() + datetime.timedelta(weeks=self.rate_times)).__str__()
 
         return super().save(*args, **kwargs)

@@ -27,6 +27,11 @@ class ProductSerializer(WritableNestedModelSerializer):
                     f"{ProductStatusOrData.OFFER.name} or {ProductStatusOrData.LOAN.name}"
                 }
             )
+
+        if attrs["status"] in [ProductStatusOrData.OFFER.name]:
+            if not utils.is_integer(attrs["interest_rate_or_quantity"]):
+                raise serializers.ValidationError({"interest_rate_or_quantity": "Must be integer"})
+
         return super().validate(attrs)
 
     def to_representation(self, instance):
@@ -43,6 +48,12 @@ class ProductSerializer(WritableNestedModelSerializer):
         return dict_
 
     def to_internal_value(self, data):
+        sell_price = (
+            data["sell_price"]
+            if data["status"] == ProductStatusOrData.OFFER.name
+            else utils.get_sell_price(rate=float(data["interest_rate_or_quantity"]), buy_price=int(data["buy_price"]))
+        )
+
         data.update(
             {
                 "user": data["user"],  # TODO: Change to - data.user.id
@@ -61,9 +72,7 @@ class ProductSerializer(WritableNestedModelSerializer):
                 "interest_rate_or_quantity": data["interest_rate_or_quantity"],
                 "product_name": data["product_name"],
                 "buy_price": data["buy_price"],
-                "sell_price": utils.get_sell_price(
-                    rate=float(data["interest_rate_or_quantity"]), buy_price=int(data["buy_price"])
-                ),
+                "sell_price": sell_price,
                 "date_extend": timezone.now(),
                 "quantity": data["interest_rate_or_quantity"]
                 if data["status"] == ProductStatusOrData.OFFER.name
