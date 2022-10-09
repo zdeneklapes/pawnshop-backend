@@ -63,6 +63,11 @@ class StatisticDefaultSerializer(WritableNestedModelSerializer):
         serializer_stats.save()
 
     def to_internal_value(self, data):
+        var_search = "update"
+
+        if var_search not in data:
+            return super().to_internal_value(data)
+
         if data["update"] in [StatisticQPData.RESET.name]:
             data.update(
                 {
