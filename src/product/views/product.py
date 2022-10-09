@@ -12,7 +12,7 @@ from rest_framework import viewsets
 import django_filters
 
 from product.serializers import product as product_serializers
-from product.models.models import Product, ProductStatusOrData
+from product.models import Product, ProductStatusOrData, ProductShopData
 from statistic.serializers.statistic import StatisticDefaultSerializer
 from statistic.models.choices import StatisticDescription
 from common.exceptions import BadQueryParam
@@ -23,7 +23,7 @@ class ProductQPSwagger(django_filters.FilterSet):
         name="data",
         in_=openapi.IN_QUERY,
         description=f"Operation Type: "
-        f"{ProductStatusOrData.SHOP_STATS.name}, "
+        f"{ProductShopData.SHOP_STATS.name}, "
         f"{ProductStatusOrData.LOAN.name}, "
         f"{ProductStatusOrData.OFFER.name}, "
         f"{ProductStatusOrData.AFTER_MATURITY.name}",
@@ -47,7 +47,6 @@ class ProductQPSwagger(django_filters.FilterSet):
             "date_create": openapi.Schema(type=openapi.TYPE_STRING),
             "date_extend": openapi.Schema(type=openapi.TYPE_STRING),
             "inventory_id": openapi.Schema(type=openapi.TYPE_STRING),
-            "quantity": openapi.Schema(type=openapi.TYPE_STRING),
         },
     )
 
@@ -90,7 +89,7 @@ class ProductViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         status_or_data = self.parse_data_request()
 
-        if status_or_data == ProductStatusOrData.SHOP_STATS.name:
+        if status_or_data == ProductShopData.SHOP_STATS.name:
             return Product.objects.get_shop_state()
 
         if status_or_data in ProductStatusOrData.values:
@@ -102,7 +101,7 @@ class ProductViewSet(viewsets.ModelViewSet):
         update_req = self.parse_update_request()
         status_or_data = self.parse_data_request()
 
-        if status_or_data == ProductStatusOrData.SHOP_STATS.name:
+        if status_or_data == ProductShopData.SHOP_STATS.name:
             return product_serializers.ProductShopStateSerializer
 
         if update_req in [

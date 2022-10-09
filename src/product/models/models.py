@@ -35,6 +35,10 @@ class Product(models.Model):
     date_end = models.DateTimeField(null=True)
 
     def save(self, *args, **kwargs):
+        # TODO: if status==OFFER -> interest_rate_or_quantity must be int
+        if self.status == ProductStatusOrData.OFFER:
+            self.interest_rate_or_quantity = round(self.interest_rate_or_quantity)
+
         if not self.date_create:
             self.date_create = datetime.datetime.now()
 
