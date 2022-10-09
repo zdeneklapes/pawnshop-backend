@@ -9,6 +9,12 @@ src/staticfiles
 # C extensions
 *.so
 
+src/cron_fun.txt
+src/cron_test1.txt
+src/cron_test2.txt
+src/cron_update_product_status.txt
+
+
 # Django migrations
 #**/migrations/*
 #!**/migrations/__init__.py
