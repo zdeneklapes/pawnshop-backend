@@ -3,6 +3,7 @@ from django.core.management import call_command
 from rest_framework.test import APIClient
 
 from authentication.models import User
+from config.settings import SIMPLE_JWT
 
 
 @pytest.fixture(scope="function")
@@ -26,5 +27,5 @@ def load_all_fixtures(django_db_setup, django_db_blocker):
 @pytest.fixture()
 def login_client(client, user):
     response = client.post("http://localhost:8000/authentication/token/create/", data=user[1])
-    client.credentials(HTTP_AUTHORIZATION=f"Bearer {response.data['access']}")
+    client.credentials(HTTP_AUTHORIZATION=f"{SIMPLE_JWT['AUTH_HEADER_TYPES'][0]} {response.data['access']}")
     return client
