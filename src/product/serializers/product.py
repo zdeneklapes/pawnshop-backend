@@ -10,17 +10,6 @@ from common import utils
 from statistic.models.choices import StatisticDescription
 
 
-def get_interests(rate: float, buy_price: int, rate_times: int):
-    return [
-        {
-            "from": datetime.date.today() + datetime.timedelta(weeks=i),
-            "to": datetime.date.today() + datetime.timedelta(weeks=i + 1),
-            "price": utils.get_sell_price(rate, buy_price, i + 1),
-        }
-        for i in range(rate_times)
-    ]
-
-
 class ProductSerializer(WritableNestedModelSerializer):
     # user = serializers.PrimaryKeyRelatedField(U)
     customer = CustomerProfileSerializer()
@@ -34,11 +23,12 @@ class ProductSerializer(WritableNestedModelSerializer):
         dict_ = super().to_representation(instance)
         del dict_["rate_frequency"]
         del dict_["rate_times"]
-        if instance.status == ProductStatusOrData.LOAN.name:
-            dict_["interest"] = get_interests(
+        if instance.status in [ProductStatusOrData.LOAN.name, ProductStatusOrData.AFTER_MATURITY.name]:
+            dict_["interest"] = utils.get_interests(
                 rate=float(instance.interest_rate_or_quantity),
                 buy_price=instance.buy_price,
                 rate_times=instance.rate_times,
+                from_date=instance.date_extend,
             )
 
         return dict_
@@ -144,8 +134,11 @@ class ProductUpdateSerializer(WritableNestedModelSerializer):
     #
     def to_representation(self, instance):
         dict_ = super().to_representation(instance)
-        dict_["interest"] = get_interests(
-            rate=float(instance.interest_rate_or_quantity), buy_price=instance.buy_price, rate_times=instance.rate_times
+        dict_["interest"] = utils.get_interests(
+            rate=float(instance.interest_rate_or_quantity),
+            buy_price=instance.buy_price,
+            rate_times=instance.rate_times,
+            from_date=instance.date_extend,
         )
         return dict_
 

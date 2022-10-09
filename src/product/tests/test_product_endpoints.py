@@ -5,11 +5,12 @@ from statistic.models.choices import StatisticDescription
 
 @pytest.mark.django_db
 def test_get(login_client):
+    # TODO: fix data
     response_all = login_client.get(path="/product/")
-    response_loans = login_client.get(path="/product/?status=LOAN")
-    response_offers = login_client.get(path="/product/?status=OFFER")
-    response_after_maturity = login_client.get(path="/product/?status=AFTER_MATURITY")
-    response_shop_data = login_client.get(path="/product/?status=SHOP_STATA")
+    response_loans = login_client.get(path="/product/?data=LOAN")
+    response_offers = login_client.get(path="/product/?data=OFFER")
+    response_after_maturity = login_client.get(path="/product/?data=AFTER_MATURITY")
+    response_shop_data = login_client.get(path="/product/?data=SHOP_STATA")
 
     assert response_all.status_code == status.HTTP_200_OK
     assert response_loans.status_code == status.HTTP_200_OK
