@@ -93,30 +93,49 @@ from statistic.models import StatisticDescription
     ],
 )
 @pytest.mark.django_db
-def test_is_update_possible(login_client, load_all_fixtures, product_id, payload, exp_status):
+def test_is_update_possible(login_client, load_all_fixtures_for_module, product_id, payload, exp_status):
     response_update = login_client.patch(path=f"/product/{product_id}/", data=payload, format="json")
     assert response_update.status_code == exp_status
 
 
 @pytest.mark.parametrize(
-    "product_id, payload, exp_status",
+    "product_id, payload, exp_offer_status, exp_quantity, exp_status",
     [
         # OFFER
         pytest.param(
             4,
             {"update": StatisticDescription.OFFER_BUY.name, "quantity": 2},
+            ProductStatusOrData.OFFER.name,
+            "3.0",
             status.HTTP_200_OK,
         ),
         pytest.param(
             4,
             {"update": StatisticDescription.OFFER_SELL.name, "quantity": 1},
+            ProductStatusOrData.INACTIVE_OFFER.name,
+            "0.0",
             status.HTTP_200_OK,
+        ),
+        pytest.param(
+            4,
+            {"update": StatisticDescription.OFFER_SELL.name, "quantity": 3},
+            ProductStatusOrData.OFFER.name,
+            "0.0",
+            status.HTTP_400_BAD_REQUEST,
         ),
     ],
 )
 @pytest.mark.django_db
-def test_offer_buy_sell_calculation_quantity(login_client, load_all_fixtures, product_id, payload, exp_status):
+def test_offer_buy_sell_calculation_quantity(
+    login_client, load_all_fixtures_for_function, product_id, payload, exp_offer_status, exp_quantity, exp_status
+):
     response_update = login_client.patch(path=f"/product/{product_id}/", data=payload, format="json")
+
+    if exp_status == status.HTTP_200_OK:
+        assert not response_update.data["interest_rate_or_quantity"].isdecimal()
+        assert response_update.data["interest_rate_or_quantity"] == exp_quantity
+        assert response_update.data["status"] == exp_offer_status
+
     assert response_update.status_code == exp_status
 
 
@@ -127,7 +146,7 @@ def test_offer_buy_sell_calculation_quantity(login_client, load_all_fixtures, pr
         pytest.param(f"/product/?data={ProductStatusOrData.LOAN.name}", status.HTTP_200_OK),
     ],
 )
-def test_loan_create(login_client, load_all_fixtures, path_url, exp_status):
+def test_loan_create(login_client, load_all_fixtures_for_module, path_url, exp_status):
     response = login_client.get(path=path_url)
     assert response.status_code == exp_status
 
@@ -139,7 +158,7 @@ def test_loan_create(login_client, load_all_fixtures, path_url, exp_status):
         pytest.param(f"/product/?data={ProductStatusOrData.LOAN.name}", status.HTTP_200_OK),
     ],
 )
-def test_loan_update(login_client, load_all_fixtures, path_url, exp_status):
+def test_loan_update(login_client, load_all_fixtures_for_module, path_url, exp_status):
     response = login_client.get(path=path_url)
     assert response.status_code == exp_status
 
@@ -163,7 +182,9 @@ def test_loan_update(login_client, load_all_fixtures, path_url, exp_status):
         ),
     ],
 )
-def test_update_data(login_client, load_all_fixtures, product_id, payload_data, exp_status_patch, exp_status_get):
+def test_update_data(
+    login_client, load_all_fixtures_for_module, product_id, payload_data, exp_status_patch, exp_status_get
+):
     response_update = login_client.patch(path=f"/product/{product_id}/", data=payload_data, format="json")
     response_get = login_client.get(path="/product/1/")
     assert response_update.status_code == exp_status_patch
@@ -182,7 +203,7 @@ def test_update_data(login_client, load_all_fixtures, product_id, payload_data, 
         pytest.param(f"/product/?data={ProductStatusOrData.LOAN.name}", status.HTTP_200_OK),
     ],
 )
-def test_loan_interest_and_sell_price_response(login_client, load_all_fixtures, path_url, exp_status):
+def test_loan_interest_and_sell_price_response(login_client, load_all_fixtures_for_module, path_url, exp_status):
     response = login_client.get(path=path_url)
     assert response.status_code == exp_status
 
@@ -197,7 +218,7 @@ def test_loan_interest_and_sell_price_response(login_client, load_all_fixtures, 
         pytest.param(),
     ],
 )
-def test_loan_response_data_for_product(login_client, load_all_fixtures):
+def test_loan_response_data_for_product(login_client, load_all_fixtures_for_module):
     pass
 
 
@@ -208,7 +229,7 @@ def test_loan_response_data_for_product(login_client, load_all_fixtures):
         pytest.param(),
     ],
 )
-def test_loan_create_calculations(login_client, load_all_fixtures):
+def test_loan_create_calculations(login_client, load_all_fixtures_for_module):
     pass
 
 
@@ -219,5 +240,5 @@ def test_loan_create_calculations(login_client, load_all_fixtures):
         pytest.param(),
     ],
 )
-def test_loan_extend_calculations(login_client, load_all_fixtures):
+def test_loan_extend_calculations(login_client, load_all_fixtures_for_module):
     pass

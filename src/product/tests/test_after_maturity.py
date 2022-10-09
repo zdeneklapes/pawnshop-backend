@@ -8,7 +8,7 @@ import pytest
         pytest.param(),
     ],
 )
-def test_after_maturity_response_data_for_product(login_client, load_all_fixtures):
+def test_after_maturity_response_data_for_product(login_client, load_all_fixtures_for_module):
     pass
 
 

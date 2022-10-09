@@ -15,7 +15,7 @@ from product.models import ProductStatusOrData, ProductShopData
         pytest.param(f"/product/?data={ProductShopData.SHOP_STATS.name}", 3, status.HTTP_200_OK),
     ],
 )
-def test_get_data(login_client, load_all_fixtures, path_data, count, exp_status):
+def test_get_data(login_client, load_all_fixtures_for_module, path_data, count, exp_status):
     response = login_client.get(path=path_data)
     assert response.data.__len__() == count
     assert response.status_code == exp_status
@@ -136,7 +136,7 @@ def test_create_product(login_client, payload_data, exp_status_post, exp_status_
         ),
     ],
 )
-def test_update_status(login_client, load_all_fixtures, product_id, payload, exp_status_patch):
+def test_update_status(login_client, load_all_fixtures_for_module, product_id, payload, exp_status_patch):
     response_update = login_client.patch(path=f"/product/{product_id}/", data=payload, format="json")
     assert response_update.status_code == exp_status_patch
 
@@ -149,7 +149,7 @@ def test_update_status(login_client, load_all_fixtures, product_id, payload, exp
 )
 @pytest.mark.django_db
 @pytest.mark.xfail
-def test_loan_response_data_for_product(login_client, load_all_fixtures):
+def test_loan_response_data_for_product(login_client, load_all_fixtures_for_module):
     pass
 
 
@@ -161,7 +161,7 @@ def test_loan_response_data_for_product(login_client, load_all_fixtures):
 )
 @pytest.mark.django_db
 @pytest.mark.xfail
-def test_after_maturity_response_data_for_product(login_client, load_all_fixtures):
+def test_after_maturity_response_data_for_product(login_client, load_all_fixtures_for_module):
     pass
 
 
@@ -173,5 +173,5 @@ def test_after_maturity_response_data_for_product(login_client, load_all_fixture
 )
 @pytest.mark.django_db
 @pytest.mark.xfail
-def test_offer_response_data_for_product(login_client, load_all_fixtures):
+def test_offer_response_data_for_product(login_client, load_all_fixtures_for_module):
     pass
