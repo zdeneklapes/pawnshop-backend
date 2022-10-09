@@ -24,6 +24,7 @@ def load_all_fixtures(django_db_setup, django_db_blocker):
 
 @pytest.fixture()
 def login_client(client, user):
+    client.post()
     client.credentials(
         HTTP_AUTHORIZATION="Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjY2MDA3NTc5LCJpYXQiOjE2NjUxNDM1NzksImp0aSI6ImI3ZGJjMmRiMTQ2NTQzMDJhYjA3ZmMyNzY5YjI1OTY2IiwidXNlcl9pZCI6MX0.s2OFNo8vJyt_W6yOXwQcblI_umUSKNvfFfpCOE14dFM"  # noqa: E501
     )
