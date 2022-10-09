@@ -186,6 +186,8 @@ function runsever_heroku() {
 }
 
 function set_and_run_cron() {
+    chmod +s /usr/bin/crontab
+
     service cron start
 
     cd src || error_exit "cd"

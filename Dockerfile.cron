@@ -18,5 +18,6 @@ RUN set -ex && \
 
 
 COPY src/ /app/src
-RUN chmod +x /app/start.sh && chmod +s /usr/bin/crontab
-CMD ["/app/start.sh", "--web-docker"]
+RUN chmod +x /app/start.sh
+#RUN #touch /etc/service/cron/down && chmod +x /etc/service/cron/down
+CMD ["/app/start.sh", "--cron-docker"]

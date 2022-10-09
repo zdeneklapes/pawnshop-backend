@@ -1,6 +1,7 @@
 version: '3.6'
 
 # How to run Cron: https://stackoverflow.com/questions/69802579/how-to-make-django-crontab-execute-commands-in-docker-container:
+# Cron in Heroku: https://stackoverflow.com/questions/43061967/running-an-docker-image-with-cron:
 
 services:
   backend:
@@ -22,7 +23,7 @@ services:
 #    container_name: cron
 #    build:
 #      context: .
-#      dockerfile: Dockerfile.dev
+#      dockerfile: Dockerfile.cron
 #    restart: unless-stopped
 #    env_file: env/.env.docker
 #    depends_on:
