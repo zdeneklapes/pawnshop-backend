@@ -91,6 +91,7 @@ class ProductUpdateSerializer(WritableNestedModelSerializer):
         if self.context["request"].data["update"] in [
             StatisticDescription.LOAN_EXTEND.name,
             StatisticDescription.LOAN_RETURN.name,
+            StatisticDescription.UPDATE_DATA.name,
         ]:
             return None
         else:
@@ -108,18 +109,23 @@ class ProductUpdateSerializer(WritableNestedModelSerializer):
                     }
                 )
             return None
+
+        if self.context["request"].data["update"] in [StatisticDescription.UPDATE_DATA.name]:
+            return None
+
         if self.context["request"].data["update"] in [StatisticDescription.OFFER_BUY.name]:
             return None
-        else:
-            raise serializers.ValidationError(
-                {"update": f"Bad update request for status product: {ProductStatusOrData.OFFER.name}"}
-            )
+
+        raise serializers.ValidationError(
+            {"update": f"Bad update request for status product: {ProductStatusOrData.OFFER.name}"}
+        )
 
     def validate_update_after_maturity(self):
         if self.context["request"].data["update"] in [
             StatisticDescription.LOAN_EXTEND.name,
             StatisticDescription.LOAN_RETURN.name,
             StatisticDescription.LOAN_TO_OFFER.name,
+            StatisticDescription.UPDATE_DATA.name,
         ]:
             return None
         else:

@@ -377,11 +377,44 @@ def test_loan_return_calc(login_client, load_all_fixtures_for_module, product_id
         ),
     ],
 )
-def test_update_data(
-    login_client, load_all_fixtures_for_module, product_id, payload_data, exp_status_patch, exp_status_get
+def test_update_loan(
+    login_client, load_all_fixtures_for_function, product_id, payload_data, exp_status_patch, exp_status_get
 ):
     response_update = login_client.patch(path=f"/product/{product_id}/", data=payload_data, format="json")
-    response_get = login_client.get(path="/product/1/")
+    response_get = login_client.get(path=f"/product/{product_id}/")
+    assert response_update.status_code == exp_status_patch
+    assert response_update.status_code == exp_status_get
+    assert response_get.data["product_name"] == payload_data["product_name"]
+    assert response_get.data["sell_price"] == payload_data["sell_price"]
+    assert response_get.data["date_create"] == payload_data["date_create"]
+    assert response_get.data["date_extend"] == payload_data["date_extend"]
+    assert response_get.data["inventory_id"] == payload_data["inventory_id"]
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize(
+    "product_id, payload_data, exp_status_patch, exp_status_get",
+    [
+        pytest.param(
+            4,
+            {
+                "update": f"{StatisticDescription.UPDATE_DATA.name}",
+                "product_name": "Telefon Samsung 1",
+                "sell_price": 100,
+                "date_create": "2022-09-01T14:31:47.080000Z",
+                "date_extend": "2022-09-01T14:31:47.080000Z",
+                "inventory_id": 23,
+            },
+            status.HTTP_200_OK,
+            status.HTTP_200_OK,
+        ),
+    ],
+)
+def test_update_offer(
+    login_client, load_all_fixtures_for_function, product_id, payload_data, exp_status_patch, exp_status_get
+):
+    response_update = login_client.patch(path=f"/product/{product_id}/", data=payload_data, format="json")
+    response_get = login_client.get(path=f"/product/{product_id}/")
     assert response_update.status_code == exp_status_patch
     assert response_update.status_code == exp_status_get
     assert response_get.data["product_name"] == payload_data["product_name"]
