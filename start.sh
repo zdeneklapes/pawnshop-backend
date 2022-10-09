@@ -199,7 +199,7 @@ function set_and_run_cron() {
 }
 
 function web_docker() {
-    set_and_run_cron
+#    set_and_run_cron
 
     django_loaddata
 
