@@ -191,6 +191,13 @@ function web_docker() {
 }
 
 function dev_docker() {
+    service cron start
+    cd src || error_exit "cd"
+    python3 manage.py crontab add
+    python3 manage.py crontab show
+    cd .. || error_exit "cd"
+    service cron restart
+
     django_loaddata
 
     cd src || error_exit "cd"

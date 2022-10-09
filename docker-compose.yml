@@ -18,16 +18,16 @@ services:
     depends_on:
       - db
 
-  cron:
-    container_name: cron
-    build:
-      context: .
-      dockerfile: Dockerfile.dev
-    restart: unless-stopped
-    env_file: env/.env.docker
-    depends_on:
-      - db
-    entrypoint: ./start.sh --cron-docker
+#  cron:
+#    container_name: cron
+#    build:
+#      context: .
+#      dockerfile: Dockerfile.dev
+#    restart: unless-stopped
+#    env_file: env/.env.docker
+#    depends_on:
+#      - db
+#    entrypoint: ./start.sh --cron-docker
 #    command:
 #      - cron -f
 

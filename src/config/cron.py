@@ -1,11 +1,11 @@
 import sys
+import os
 from os import path
 
 from django.db import models
 
 from config.settings import BASE_DIR
-from product.models.models import Product
-from product.models.choices import ProductStatusOrData
+from product.models import Product, ProductStatusOrData
 from common import utils
 
 
@@ -13,8 +13,12 @@ def update_product_status():
     print("hello cron")
     with open(f"{path.join(BASE_DIR, 'cron_test1.txt')}", "a") as f:
         f.write("Hello1")
+        f.write(os.environ.get("DJANGO_SETTINGS_MODULE"))
 
-    qs_after_maturity = Product.objects.filter(models.Q(status=ProductStatusOrData.LOAN.name))
+    qs_after_maturity = Product.objects.filter(
+        models.Q(status=ProductStatusOrData.LOAN.name)  # after_maturity products + set sell_price
+        | models.Q(status=ProductStatusOrData.AFTER_MATURITY.name)  # set sell_price
+    )
 
     with open(f"{path.join(BASE_DIR, 'cron_test1.txt')}", "a") as f:
         f.write("Hello2\n")
@@ -52,9 +56,6 @@ def update_product_status():
     print("hello cron")
     with open(f"{path.join(BASE_DIR, 'cron_test1.txt')}", "a") as f:
         f.write("Hello7")
-
-
-#
 
 
 def fun():

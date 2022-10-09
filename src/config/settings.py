@@ -105,6 +105,7 @@ WSGI_APPLICATION = "config.wsgi.application"
 # DB
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 if os.environ.get("SQL_SERVER") == "True":
+    print("DB: postgress")
     DATABASES = {
         "default": {
             "ENGINE": os.environ.get("SQL_ENGINE"),
@@ -116,6 +117,7 @@ if os.environ.get("SQL_SERVER") == "True":
         }
     }
 else:
+    print("DB: sqlite3")
     DATABASES = {
         "default": {
             "ENGINE": "django.db.backends.sqlite3",
@@ -219,13 +221,26 @@ LOGGING = {
     },
 }
 
-
 # Cron
 CRONJOBS = [
     # ("* * * * *", "django.core.management.call_command", ["update_product_status"]),
-    ("* * * * *", "config.cron.fun"),
-    ("* * * * *", "config.cron.update_product_status"),
+    ("* * * * *", "config.cron.fun", f"> {path.join(BASE_DIR, 'cron_fun.txt')} 2>&1"),  # To see errors
+    (
+        "* * * * *",
+        "config.cron.update_product_status",
+        f"> {path.join(BASE_DIR, 'cron_update_product_status.txt')} 2>&1",
+    ),  # To see errors
 ]
+# Note: I think this is a bug in crontab package, because it doesn't take env vars from docker .env file while building
+CRONTAB_COMMAND_PREFIX = (
+    f"SQL_SERVER={os.environ.get('SQL_SERVER')} "
+    f"SQL_ENGINE={os.environ.get('SQL_ENGINE')} "
+    f"SQL_NAME={os.environ.get('SQL_NAME')} "
+    f"SQL_USER={os.environ.get('SQL_USER')} "
+    f"SQL_PASSWORD={os.environ.get('SQL_PASSWORD')} "
+    f"SQL_HOST={os.environ.get('SQL_HOST')} "
+    f"SQL_PORT={os.environ.get('SQL_PORT')}"
+)
 
 # PDF
 WKHTMLTOPDF_CMD = os.system("which wkhtmltopdf")  # nosec
