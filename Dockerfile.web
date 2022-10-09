@@ -4,15 +4,19 @@ ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 ENV EDITOR vim
 
+
+
 WORKDIR /app
 COPY requirements.txt start.sh /app/
 RUN set -ex && \
     pip install --upgrade pip && \
     pip install --no-cache-dir -r /app/requirements.txt && \
-    apt-get update --no-install-recommends && apt-get -y install cron vim --no-install-recommends && \
-    rm -rf /var/lib/apt/lists/*
+    apt-get update --no-install-recommends &&  \
+    apt-get -y install cron vim --no-install-recommends && \
+    rm -rf /var/lib/apt/lists/* && \
+    service cron start
 
 
 COPY src/ /app/src
-RUN chmod +x /app/start.sh && /app/start.sh --set-cron
-ENTRYPOINT [ "/app/start.sh", "--loaddata", "--runserver-web"]
+RUN chmod +x /app/start.sh
+CMD ["/app/start.sh", "--web-docker"]

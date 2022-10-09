@@ -18,12 +18,5 @@ RUN set -ex && \
 
 
 COPY src/ /app/src
-RUN chmod +x /app/start.sh # &&
-#    echo "* * * * * root /bin/bash start.sh --update-product-status" >> /etc/crontab && \
-#    echo "* * * * * /bin/bash start.sh --update-product-status" >> /etc/crontab && \
-#    echo "* * * * * root /app/start.sh --update-product-status" >> /etc/crontab&&\
-#    echo "* * * * * /app/start.sh --update-product-status" >> /etc/crontab &&\
-#    echo "* * * * * root echo hello >> /app/cron.log" >> /etc/crontab &&\
-#    echo "* * * * * echo hello >> /app/cron.log" >> /etc/crontab
-#ENTRYPOINT ["/app/start.sh", "--cron-docker"]
+RUN chmod +x /app/start.sh
 CMD ["/app/start.sh", "--dev-docker"]

@@ -173,36 +173,43 @@ function custom_cloc() {
     cloc --not-match-d=migrations --include-lang=Python src/
 }
 
-function run_local() {
+function runserver_local_or_docker() {
     cd src || error_exit"cd"
     python3 manage.py runserver 0.0.0.0:8000
     cd .. || error_exit"cd"
 }
 
-function web_docker() {
-    cd src || error_exit"cd"
-    service cron start
-    python3 manage.py crontab add
-    service cron restart
-    django_loaddata
+function runsever_heroku() {
+    cd src || error_exit "cd"
     gunicorn --timeout 1000 --workers=3 --bind=0.0.0.0:"$PORT" --log-level debug config.wsgi:application --reload
     cd .. || error_exit"cd"
-
 }
 
-function dev_docker() {
+function set_and_run_cron() {
     service cron start
+
     cd src || error_exit "cd"
     python3 manage.py crontab add
     python3 manage.py crontab show
     cd .. || error_exit "cd"
+
     service cron restart
+}
+
+function web_docker() {
+    set_and_run_cron
 
     django_loaddata
 
-    cd src || error_exit "cd"
-    python3 manage.py runserver 0.0.0.0:8000
-    cd .. || error_exit "cd"
+    runsever_heroku
+}
+
+function dev_docker() {
+    set_and_run_cron
+
+    django_loaddata
+
+    runserver_local_or_docker
 }
 
 function cron_docker() {
@@ -233,7 +240,7 @@ while [ "$#" -gt 0 ]; do
     '--clean-migrations') django_clean_migrations ;;
     '--loaddata') django_loaddata ;;
     '--update-product-status') django_update_product_status ;;
-    '--runserver') run_local ;;
+    '--runserver') runserver_local_or_docker ;;
     '--web-docker') web_docker ;;
     '--dev-docker') dev_docker ;;
     '--cron-docker') cron_docker ;;

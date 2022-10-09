@@ -28,8 +28,6 @@ services:
 #    depends_on:
 #      - db
 #    entrypoint: ./start.sh --cron-docker
-#    command:
-#      - cron -f
 
   db:
     container_name: db
