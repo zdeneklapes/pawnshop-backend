@@ -122,6 +122,7 @@ class ProductViewSet(viewsets.ModelViewSet):
 
     def create(self, request: Request, *args, **kwargs):
         response: Response = super().create(request)  # to internal_repre -> to to_repre
+
         try:
             StatisticDefaultSerializer.save_statistics(
                 price=-response.data["buy_price"],
@@ -133,6 +134,7 @@ class ProductViewSet(viewsets.ModelViewSet):
             return Response(
                 data={"error": f"{ProductViewSet.create.__qualname__} - {e} - statistics"}, status=response.status_code
             )
+
         return response
 
     def partial_update(self, request: Request, *args, **kwargs):

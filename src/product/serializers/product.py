@@ -19,6 +19,16 @@ class ProductSerializer(WritableNestedModelSerializer):
         model = Product
         fields = "__all__"
 
+    def validate(self, attrs):
+        if attrs["status"] not in [ProductStatusOrData.LOAN.name, ProductStatusOrData.OFFER.name]:
+            raise serializers.ValidationError(
+                {
+                    "status": f"Creating product must have status set to: "
+                    f"{ProductStatusOrData.OFFER.name} or {ProductStatusOrData.LOAN.name}"
+                }
+            )
+        return super().validate(attrs)
+
     def to_representation(self, instance):
         dict_ = super().to_representation(instance)
         del dict_["rate_frequency"]
@@ -67,6 +77,58 @@ class ProductUpdateSerializer(WritableNestedModelSerializer):
     class Meta:
         model = Product
         fields = "__all__"
+
+    def validate_update_loan(self):
+        if self.context["request"].data["update"] in [
+            StatisticDescription.LOAN_EXTEND.name,
+            StatisticDescription.LOAN_RETURN.name,
+        ]:
+            return None
+        else:
+            raise serializers.ValidationError(
+                {"update": f"Bad update request for status product: {ProductStatusOrData.LOAN.name}"}
+            )
+
+    def validate_update_offer(self):
+        if self.context["request"].data["update"] in [StatisticDescription.OFFER_SELL.name]:
+            if self.context["request"].data["quantity"] > self.instance.interest_rate_or_quantity:
+                raise serializers.ValidationError(
+                    {
+                        "quantity": f"You can sell only only available quantity. "
+                        f"Available: {self.instance.interest_rate_or_quantity}"
+                    }
+                )
+            return None
+        if self.context["request"].data["update"] in [StatisticDescription.OFFER_BUY.name]:
+            return None
+        else:
+            raise serializers.ValidationError(
+                {"update": f"Bad update request for status product: {ProductStatusOrData.OFFER.name}"}
+            )
+
+    def validate_update_after_maturity(self):
+        if self.context["request"].data["update"] in [
+            StatisticDescription.LOAN_EXTEND.name,
+            StatisticDescription.LOAN_RETURN.name,
+            StatisticDescription.LOAN_TO_OFFER.name,
+        ]:
+            return None
+        else:
+            raise serializers.ValidationError(
+                {"update": f"Bad update request for status product: {ProductStatusOrData.AFTER_MATURITY.name}"}
+            )
+
+    def validate(self, attrs):
+        if self.instance.status in [ProductStatusOrData.AFTER_MATURITY.name]:
+            self.validate_update_after_maturity()
+
+        if self.instance.status in [ProductStatusOrData.LOAN.name]:
+            self.validate_update_loan()
+
+        if self.instance.status in [ProductStatusOrData.OFFER.name]:
+            self.validate_update_offer()
+
+        return super().validate(attrs)
 
     def get_status(self, data, product):
         map_ = {

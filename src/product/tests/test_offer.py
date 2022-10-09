@@ -11,3 +11,15 @@ def test_offer_quantity_buy_sell():
 @pytest.mark.xfail
 def test_offer_quantity_default():
     pass
+
+
+@pytest.mark.django_db
+@pytest.mark.xfail
+def test_sell_loan():
+    pass
+
+
+@pytest.mark.django_db
+@pytest.mark.xfail
+def test_buy_loan():
+    pass
