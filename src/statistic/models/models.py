@@ -115,8 +115,8 @@ class Statistic(models.Model):
     def save(self, *args, **kwargs):
         # Amount
         prev_stat = Statistic.objects.last()
-        amount = prev_stat.amount if prev_stat else 0  # if first occurrence
-        self.amount = self.price + amount
+        # Note: if first occurrence (therefore if statement)
+        self.amount = self.price + (prev_stat.amount if prev_stat else 0)
 
         # Profit
         if self.description == StatisticDescription.RESET.name:  # pylint: disable=E1101

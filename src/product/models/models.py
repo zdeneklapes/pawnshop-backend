@@ -1,3 +1,4 @@
+# pylint: disable=E1101
 import datetime
 from django.db import models
 
@@ -35,6 +36,10 @@ class Product(models.Model):
     date_end = models.DateTimeField(null=True)
 
     def save(self, *args, **kwargs):
+        # TODO: if status==OFFER -> interest_rate_or_quantity must be int
+        if self.status == ProductStatusOrData.OFFER:
+            self.interest_rate_or_quantity = round(self.interest_rate_or_quantity)
+
         if not self.date_create:
             self.date_create = datetime.datetime.now()
 
@@ -42,6 +47,10 @@ class Product(models.Model):
             self.date_extend = datetime.datetime.now()
 
         if not self.date_end:
-            self.date_end = (self.date_extend.date() + datetime.timedelta(weeks=self.rate_times)).__str__()
+            if self.status == ProductStatusOrData.LOAN.name:
+                self.date_end = (self.date_extend.date() + datetime.timedelta(weeks=self.rate_times)).__str__()
+
+            if self.status == ProductStatusOrData.INACTIVE_LOAN.name:
+                self.date_end = datetime.datetime.now()
 
         return super().save(*args, **kwargs)

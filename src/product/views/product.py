@@ -12,7 +12,7 @@ from rest_framework import viewsets
 import django_filters
 
 from product.serializers import product as product_serializers
-from product.models.models import Product, ProductStatusOrData
+from product.models import Product, ProductStatusOrData, ProductShopData
 from statistic.serializers.statistic import StatisticDefaultSerializer
 from statistic.models.choices import StatisticDescription
 from common.exceptions import BadQueryParam
@@ -23,7 +23,7 @@ class ProductQPSwagger(django_filters.FilterSet):
         name="data",
         in_=openapi.IN_QUERY,
         description=f"Operation Type: "
-        f"{ProductStatusOrData.SHOP_STATS.name}, "
+        f"{ProductShopData.SHOP_STATS.name}, "
         f"{ProductStatusOrData.LOAN.name}, "
         f"{ProductStatusOrData.OFFER.name}, "
         f"{ProductStatusOrData.AFTER_MATURITY.name}",
@@ -70,7 +70,7 @@ class ProductViewSet(viewsets.ModelViewSet):
         if var_search not in self.request.query_params:
             return None
 
-        if self.request.query_params[var_search] in ProductStatusOrData.values:
+        if self.request.query_params[var_search] in [*ProductStatusOrData.values, *ProductShopData.values]:
             return self.request.query_params[var_search]
 
         return None
@@ -89,7 +89,7 @@ class ProductViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         status_or_data = self.parse_data_request()
 
-        if status_or_data == ProductStatusOrData.SHOP_STATS.name:
+        if status_or_data == ProductShopData.SHOP_STATS.name:
             return Product.objects.get_shop_state()
 
         if status_or_data in ProductStatusOrData.values:
@@ -101,7 +101,7 @@ class ProductViewSet(viewsets.ModelViewSet):
         update_req = self.parse_update_request()
         status_or_data = self.parse_data_request()
 
-        if status_or_data == ProductStatusOrData.SHOP_STATS.name:
+        if status_or_data == ProductShopData.SHOP_STATS.name:
             return product_serializers.ProductShopStateSerializer
 
         if update_req in [
@@ -122,10 +122,13 @@ class ProductViewSet(viewsets.ModelViewSet):
 
     def create(self, request: Request, *args, **kwargs):
         response: Response = super().create(request)  # to internal_repre -> to to_repre
+
         try:
             StatisticDefaultSerializer.save_statistics(
                 price=-response.data["buy_price"],
-                operation=StatisticDescription.LOAN_CREATE.name,
+                operation=StatisticDescription.LOAN_CREATE.name
+                if request.data["status"] == ProductStatusOrData.LOAN.name
+                else StatisticDescription.OFFER_BUY.name,
                 user=1,  # TODO: change to user: response.user.id
                 product=response.data["id"],
             )
@@ -133,6 +136,7 @@ class ProductViewSet(viewsets.ModelViewSet):
             return Response(
                 data={"error": f"{ProductViewSet.create.__qualname__} - {e} - statistics"}, status=response.status_code
             )
+
         return response
 
     def partial_update(self, request: Request, *args, **kwargs):

@@ -27,6 +27,8 @@ class StatisticDefaultSerializer(WritableNestedModelSerializer):
             operation = request.data[var_search]
             if operation == StatisticDescription.LOAN_EXTEND.name:  # pylint: disable=E1101
                 price = sell_price_prev - buy_price_prev
+            elif operation == StatisticDescription.LOAN_CREATE.name:  # pylint: disable=E1101
+                price = -buy_price_prev
             elif operation == StatisticDescription.LOAN_RETURN.name:  # pylint: disable=E1101
                 price = sell_price_prev
             elif operation == StatisticDescription.LOAN_TO_OFFER.name:  # pylint: disable=E1101
@@ -34,7 +36,7 @@ class StatisticDefaultSerializer(WritableNestedModelSerializer):
             elif operation == StatisticDescription.OFFER_SELL.name:  # pylint: disable=E1101
                 price = request.data["quantity"] * sell_price_prev
             elif operation == StatisticDescription.OFFER_BUY.name:  # pylint: disable=E1101
-                price = request.data["quantity"] * buy_price_prev
+                price = -request.data["quantity"] * buy_price_prev
             elif operation == StatisticDescription.UPDATE_DATA.name:  # pylint: disable=E1101
                 price = 0
             else:

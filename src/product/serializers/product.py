@@ -10,17 +10,6 @@ from common import utils
 from statistic.models.choices import StatisticDescription
 
 
-def get_interests(rate: float, buy_price: int, rate_times: int):
-    return [
-        {
-            "from": datetime.date.today() + datetime.timedelta(weeks=i),
-            "to": datetime.date.today() + datetime.timedelta(weeks=i + 1),
-            "price": utils.get_sell_price(rate, buy_price, i + 1),
-        }
-        for i in range(rate_times)
-    ]
-
-
 class ProductSerializer(WritableNestedModelSerializer):
     # user = serializers.PrimaryKeyRelatedField(U)
     customer = CustomerProfileSerializer()
@@ -30,20 +19,41 @@ class ProductSerializer(WritableNestedModelSerializer):
         model = Product
         fields = "__all__"
 
+    def validate(self, attrs):
+        if attrs["status"] not in [ProductStatusOrData.LOAN.name, ProductStatusOrData.OFFER.name]:
+            raise serializers.ValidationError(
+                {
+                    "status": f"Creating product must have status set to: "
+                    f"{ProductStatusOrData.OFFER.name} or {ProductStatusOrData.LOAN.name}"
+                }
+            )
+
+        if attrs["status"] in [ProductStatusOrData.OFFER.name]:
+            if not utils.is_integer(attrs["interest_rate_or_quantity"]):
+                raise serializers.ValidationError({"interest_rate_or_quantity": "Must be integer"})
+
+        return super().validate(attrs)
+
     def to_representation(self, instance):
         dict_ = super().to_representation(instance)
         del dict_["rate_frequency"]
         del dict_["rate_times"]
-        if instance.status == ProductStatusOrData.LOAN.name:
-            dict_["interest"] = get_interests(
+        if instance.status in [ProductStatusOrData.LOAN.name, ProductStatusOrData.AFTER_MATURITY.name]:
+            dict_["interest"] = utils.get_interests(
                 rate=float(instance.interest_rate_or_quantity),
                 buy_price=instance.buy_price,
-                rate_times=instance.rate_times,
+                from_date=instance.date_extend.date(),
             )
 
         return dict_
 
     def to_internal_value(self, data):
+        sell_price = (
+            data["sell_price"]
+            if data["status"] == ProductStatusOrData.OFFER.name
+            else utils.get_sell_price(rate=float(data["interest_rate_or_quantity"]), buy_price=int(data["buy_price"]))
+        )
+
         data.update(
             {
                 "user": data["user"],  # TODO: Change to - data.user.id
@@ -62,9 +72,7 @@ class ProductSerializer(WritableNestedModelSerializer):
                 "interest_rate_or_quantity": data["interest_rate_or_quantity"],
                 "product_name": data["product_name"],
                 "buy_price": data["buy_price"],
-                "sell_price": utils.get_sell_price(
-                    rate=float(data["interest_rate_or_quantity"]), buy_price=int(data["buy_price"])
-                ),
+                "sell_price": sell_price,
                 "date_extend": timezone.now(),
                 "quantity": data["interest_rate_or_quantity"]
                 if data["status"] == ProductStatusOrData.OFFER.name
@@ -78,6 +86,64 @@ class ProductUpdateSerializer(WritableNestedModelSerializer):
     class Meta:
         model = Product
         fields = "__all__"
+
+    def validate_update_loan(self):
+        if self.context["request"].data["update"] in [
+            StatisticDescription.LOAN_EXTEND.name,
+            StatisticDescription.LOAN_RETURN.name,
+            StatisticDescription.UPDATE_DATA.name,
+        ]:
+            return None
+        else:
+            raise serializers.ValidationError(
+                {"update": f"Bad update request for status product: {ProductStatusOrData.LOAN.name}"}
+            )
+
+    def validate_update_offer(self):
+        if self.context["request"].data["update"] in [StatisticDescription.OFFER_SELL.name]:
+            if self.context["request"].data["quantity"] > self.instance.interest_rate_or_quantity:
+                raise serializers.ValidationError(
+                    {
+                        "quantity": f"You can sell only only available quantity. "
+                        f"Available: {self.instance.interest_rate_or_quantity}"
+                    }
+                )
+            return None
+
+        if self.context["request"].data["update"] in [StatisticDescription.UPDATE_DATA.name]:
+            return None
+
+        if self.context["request"].data["update"] in [StatisticDescription.OFFER_BUY.name]:
+            return None
+
+        raise serializers.ValidationError(
+            {"update": f"Bad update request for status product: {ProductStatusOrData.OFFER.name}"}
+        )
+
+    def validate_update_after_maturity(self):
+        if self.context["request"].data["update"] in [
+            StatisticDescription.LOAN_EXTEND.name,
+            StatisticDescription.LOAN_RETURN.name,
+            StatisticDescription.LOAN_TO_OFFER.name,
+            StatisticDescription.UPDATE_DATA.name,
+        ]:
+            return None
+        else:
+            raise serializers.ValidationError(
+                {"update": f"Bad update request for status product: {ProductStatusOrData.AFTER_MATURITY.name}"}
+            )
+
+    def validate(self, attrs):
+        if self.instance.status in [ProductStatusOrData.AFTER_MATURITY.name]:
+            self.validate_update_after_maturity()
+
+        if self.instance.status in [ProductStatusOrData.LOAN.name]:
+            self.validate_update_loan()
+
+        if self.instance.status in [ProductStatusOrData.OFFER.name]:
+            self.validate_update_offer()
+
+        return super().validate(attrs)
 
     def get_status(self, data, product):
         map_ = {
@@ -144,8 +210,10 @@ class ProductUpdateSerializer(WritableNestedModelSerializer):
     #
     def to_representation(self, instance):
         dict_ = super().to_representation(instance)
-        dict_["interest"] = get_interests(
-            rate=float(instance.interest_rate_or_quantity), buy_price=instance.buy_price, rate_times=instance.rate_times
+        dict_["interest"] = utils.get_interests(
+            rate=float(instance.interest_rate_or_quantity),
+            buy_price=instance.buy_price,
+            from_date=instance.date_extend.date(),
         )
         return dict_
 
