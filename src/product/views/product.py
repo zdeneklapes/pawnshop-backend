@@ -126,7 +126,9 @@ class ProductViewSet(viewsets.ModelViewSet):
         try:
             StatisticDefaultSerializer.save_statistics(
                 price=-response.data["buy_price"],
-                operation=StatisticDescription.LOAN_CREATE.name,
+                operation=StatisticDescription.LOAN_CREATE.name
+                if request.data["status"] == ProductStatusOrData.LOAN.name
+                else StatisticDescription.OFFER_BUY.name,
                 user=1,  # TODO: change to user: response.user.id
                 product=response.data["id"],
             )

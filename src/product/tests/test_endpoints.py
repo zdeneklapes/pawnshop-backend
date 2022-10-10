@@ -139,39 +139,3 @@ def test_create_product(login_client, payload_data, exp_status_post, exp_status_
 def test_update_status(login_client, load_all_fixtures_for_module, product_id, payload, exp_status_patch):
     response_update = login_client.patch(path=f"/product/{product_id}/", data=payload, format="json")
     assert response_update.status_code == exp_status_patch
-
-
-@pytest.mark.parametrize(
-    "",
-    [
-        pytest.param(),
-    ],
-)
-@pytest.mark.django_db
-@pytest.mark.xfail
-def test_loan_response_data_for_product(login_client, load_all_fixtures_for_module):
-    pass
-
-
-@pytest.mark.parametrize(
-    "",
-    [
-        pytest.param(),
-    ],
-)
-@pytest.mark.django_db
-@pytest.mark.xfail
-def test_after_maturity_response_data_for_product(login_client, load_all_fixtures_for_module):
-    pass
-
-
-@pytest.mark.parametrize(
-    "",
-    [
-        pytest.param(),
-    ],
-)
-@pytest.mark.django_db
-@pytest.mark.xfail
-def test_offer_response_data_for_product(login_client, load_all_fixtures_for_module):
-    pass

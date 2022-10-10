@@ -6,67 +6,181 @@ from rest_framework import status
 
 
 @pytest.mark.parametrize(
-    "",
+    "payload",
     [
-        pytest.param(),
+        pytest.param(
+            {
+                "user": 1,
+                "status": "LOAN",
+                "customer": {
+                    "full_name": "a b",
+                    "residence": "Cejl 222",
+                    "sex": "F",
+                    "nationality": "SK",
+                    "personal_id": "0000000000",
+                    "personal_id_expiration_date": "2023-02-02",
+                    "birthplace": "Prha",
+                    "id_birth": "000000/0001",
+                },
+                "interest_rate_or_quantity": "3.0",
+                "inventory_id": 3,
+                "product_name": "prod1",
+                "buy_price": 11000,
+                "sell_price": 11330,
+            },
+        ),
     ],
 )
 @pytest.mark.django_db
-@pytest.mark.xfail
-def test_loan_create(login_client):
-    assert False
+def test_loan_create(login_client, load_all_fixtures_for_module, payload):
+    response_get = login_client.get(path="/statistic/")
+    response_update = login_client.post(path="/product/", data=payload, format="json")
+    response_get_2 = login_client.get(path="/statistic/")
+
+    product = response_update.data
+    old_stat = response_get.data[-1]
+    new_stat = response_get_2.data[-1]
+
+    assert len(response_get.data) == len(response_get_2.data) - 1
+    assert new_stat["amount"] == old_stat["amount"] - product["buy_price"]
+    assert new_stat["profit"] == old_stat["profit"] - product["buy_price"]
+    assert str(datetime.date.today()) in new_stat["datetime"]
+    assert new_stat["description"] == StatisticDescription.LOAN_CREATE.name
+    assert new_stat["price"] == -product["buy_price"]
+    assert new_stat["product"] == response_update.data["id"]
 
 
 @pytest.mark.parametrize(
-    "",
+    "product_id, payload",
     [
-        pytest.param(),
+        pytest.param(
+            6,
+            {"update": StatisticDescription.LOAN_TO_OFFER.name, "sell_price": 1200},
+        ),
     ],
 )
 @pytest.mark.django_db
-@pytest.mark.xfail
-def test_loan_extend(login_client):
-    assert False
+def test_loan_to_offer(login_client, load_all_fixtures_for_function, product_id, payload):
+    response_get = login_client.get(path="/statistic/")
+    response_update = login_client.patch(path=f"/product/{product_id}/", data=payload, format="json")
+    response_get_2 = login_client.get(path="/statistic/")
+
+    old_stat = response_get.data[-1]
+    new_stat = response_get_2.data[-1]
+
+    assert len(response_get.data) == len(response_get_2.data) - 1
+    assert new_stat["amount"] == old_stat["amount"]
+    assert new_stat["profit"] == old_stat["profit"]
+    assert str(datetime.date.today()) in new_stat["datetime"]
+    assert new_stat["description"] == StatisticDescription.LOAN_TO_OFFER.name
+    assert new_stat["price"] == 0
+    assert new_stat["product"] == response_update.data["id"]
 
 
 @pytest.mark.parametrize(
-    "",
+    "product_id, payload",
     [
-        pytest.param(),
+        pytest.param(
+            1,
+            {"update": StatisticDescription.LOAN_EXTEND.name},
+        ),
+        # pytest.param(6, {"update": StatisticDescription.LOAN_TO_OFFER.name, "sell_price": 1200}, ),
     ],
 )
 @pytest.mark.django_db
-@pytest.mark.xfail
-def test_loan_return(login_client):
-    assert False
+def test_loan_extend(login_client, load_all_fixtures_for_function, product_id, payload):
+    response_get = login_client.get(path="/statistic/")
+    response_update = login_client.patch(path=f"/product/{product_id}/", data=payload, format="json")
+    response_get_2 = login_client.get(path="/statistic/")
+
+    product = response_update.data
+    old_stat = response_get.data[-1]
+    new_stat = response_get_2.data[-1]
+
+    assert len(response_get.data) == len(response_get_2.data) - 1
+    assert new_stat["amount"] == old_stat["amount"] + (product["sell_price"] - product["buy_price"])
+    assert new_stat["profit"] == old_stat["profit"] + (product["sell_price"] - product["buy_price"])
+    assert str(datetime.date.today()) in new_stat["datetime"]
+    assert new_stat["description"] == StatisticDescription.LOAN_EXTEND.name
+    assert new_stat["price"] == (product["sell_price"] - product["buy_price"])
+    assert new_stat["product"] == response_update.data["id"]
 
 
 @pytest.mark.parametrize(
-    "",
+    "product_id, payload",
     [
-        pytest.param(),
+        pytest.param(
+            1,
+            {"update": StatisticDescription.LOAN_RETURN.name},
+        ),
     ],
 )
 @pytest.mark.django_db
-@pytest.mark.xfail
-def test_after_maturity_return(login_client):
-    assert False
+def test_loan_return(login_client, load_all_fixtures_for_function, product_id, payload):
+    response_get = login_client.get(path="/statistic/")
+    response_update = login_client.patch(path=f"/product/{product_id}/", data=payload, format="json")
+    response_get_2 = login_client.get(path="/statistic/")
+
+    product = response_update.data
+    old_stat = response_get.data[-1]
+    new_stat = response_get_2.data[-1]
+
+    assert len(response_get.data) == len(response_get_2.data) - 1
+    assert new_stat["amount"] == old_stat["amount"] + product["sell_price"]
+    assert new_stat["profit"] == old_stat["profit"] + product["sell_price"]
+    assert str(datetime.date.today()) in new_stat["datetime"]
+    assert new_stat["description"] == StatisticDescription.LOAN_RETURN.name
+    assert new_stat["price"] == product["sell_price"]
+    assert new_stat["product"] == response_update.data["id"]
 
 
 @pytest.mark.parametrize(
-    "",
+    "payload",
     [
-        pytest.param(),
+        pytest.param(
+            {
+                "user": 1,
+                "status": "OFFER",
+                "customer": {
+                    "full_name": "a b",
+                    "residence": "Cejl 222",
+                    "sex": "F",
+                    "nationality": "SK",
+                    "personal_id": "0000000000",
+                    "personal_id_expiration_date": "2023-02-02",
+                    "birthplace": "Prha",
+                    "id_birth": "000000/0001",
+                },
+                "interest_rate_or_quantity": "1.0",
+                "inventory_id": 3,
+                "product_name": "prod1",
+                "buy_price": 100,
+                "sell_price": 200,
+            },
+        ),
     ],
 )
 @pytest.mark.django_db
-@pytest.mark.xfail
-def test_after_maturity_extend(login_client):
-    assert False
+def test_offer_create(login_client, load_all_fixtures_for_function, payload):
+    response_get = login_client.get(path="/statistic/")
+    response_update = login_client.post(path="/product/", data=payload, format="json")
+    response_get_2 = login_client.get(path="/statistic/")
+
+    product = response_update.data
+    old_stat = response_get.data[-1]
+    new_stat = response_get_2.data[-1]
+
+    assert len(response_get.data) == len(response_get_2.data) - 1
+    assert new_stat["amount"] == old_stat["amount"] - product["buy_price"]
+    assert new_stat["profit"] == old_stat["profit"] - product["buy_price"]
+    assert str(datetime.date.today()) in new_stat["datetime"]
+    assert new_stat["description"] == StatisticDescription.OFFER_BUY.name
+    assert new_stat["price"] == -product["buy_price"]
+    assert new_stat["product"] == response_update.data["id"]
 
 
 @pytest.mark.parametrize(
-    "product_id, payload_data, exp_status",
+    "product_id, payload, exp_status",
     [
         pytest.param(
             4,
@@ -87,9 +201,9 @@ def test_after_maturity_extend(login_client):
     ],
 )
 @pytest.mark.django_db
-def test_offer_create(login_client, load_all_fixtures_for_function, product_id, payload_data, exp_status):
+def test_offer_buy(login_client, load_all_fixtures_for_function, product_id, payload, exp_status):
     response_get = login_client.get(path="/statistic/")
-    response_update = login_client.patch(path=f"/product/{product_id}/", data=payload_data, format="json")
+    response_update = login_client.patch(path=f"/product/{product_id}/", data=payload, format="json")
     response_get_2 = login_client.get(path="/statistic/")
 
     product = response_update.data
@@ -97,56 +211,16 @@ def test_offer_create(login_client, load_all_fixtures_for_function, product_id, 
     new_stat = response_get_2.data[-1]
 
     assert len(response_get.data) == len(response_get_2.data) - 1
-    assert new_stat["amount"] == old_stat["amount"] - (payload_data["quantity"] * product["buy_price"])
-    assert new_stat["profit"] == old_stat["profit"] - (payload_data["quantity"] * product["buy_price"])
+    assert new_stat["amount"] == old_stat["amount"] - (payload["quantity"] * product["buy_price"])
+    assert new_stat["profit"] == old_stat["profit"] - (payload["quantity"] * product["buy_price"])
     assert str(datetime.date.today()) in new_stat["datetime"]
     assert new_stat["description"] == StatisticDescription.OFFER_BUY.name
-    assert new_stat["price"] == -product["buy_price"] * payload_data["quantity"]
+    assert new_stat["price"] == -product["buy_price"] * payload["quantity"]
     assert new_stat["product"] == product_id
 
 
 @pytest.mark.parametrize(
-    "product_id, payload_data, exp_status",
-    [
-        pytest.param(
-            4,
-            {
-                "update": f"{StatisticDescription.OFFER_BUY.name}",
-                "quantity": 1,
-            },
-            status.HTTP_200_OK,
-        ),
-        pytest.param(
-            5,
-            {
-                "update": f"{StatisticDescription.OFFER_BUY.name}",
-                "quantity": 2,
-            },
-            status.HTTP_200_OK,
-        ),
-    ],
-)
-@pytest.mark.django_db
-def test_offer_buy(login_client, load_all_fixtures_for_function, product_id, payload_data, exp_status):
-    response_get = login_client.get(path="/statistic/")
-    response_update = login_client.patch(path=f"/product/{product_id}/", data=payload_data, format="json")
-    response_get_2 = login_client.get(path="/statistic/")
-
-    product = response_update.data
-    old_stat = response_get.data[-1]
-    new_stat = response_get_2.data[-1]
-
-    assert len(response_get.data) == len(response_get_2.data) - 1
-    assert new_stat["amount"] == old_stat["amount"] - (payload_data["quantity"] * product["buy_price"])
-    assert new_stat["profit"] == old_stat["profit"] - (payload_data["quantity"] * product["buy_price"])
-    assert str(datetime.date.today()) in new_stat["datetime"]
-    assert new_stat["description"] == StatisticDescription.OFFER_BUY.name
-    assert new_stat["price"] == -product["buy_price"] * payload_data["quantity"]
-    assert new_stat["product"] == product_id
-
-
-@pytest.mark.parametrize(
-    "product_id, payload_data, exp_status",
+    "product_id, payload, exp_status",
     [
         pytest.param(
             4,
@@ -167,9 +241,9 @@ def test_offer_buy(login_client, load_all_fixtures_for_function, product_id, pay
     ],
 )
 @pytest.mark.django_db
-def test_offer_sell(login_client, load_all_fixtures_for_function, product_id, payload_data, exp_status):
+def test_offer_sell(login_client, load_all_fixtures_for_function, product_id, payload, exp_status):
     response_get = login_client.get(path="/statistic/")
-    response_update = login_client.patch(path=f"/product/{product_id}/", data=payload_data, format="json")
+    response_update = login_client.patch(path=f"/product/{product_id}/", data=payload, format="json")
     response_get_2 = login_client.get(path="/statistic/")
 
     product = response_update.data
@@ -178,16 +252,16 @@ def test_offer_sell(login_client, load_all_fixtures_for_function, product_id, pa
 
     assert len(response_get.data) == len(response_get_2.data) - 1
     assert new_stat["description"] == StatisticDescription.OFFER_SELL.name
-    assert new_stat["amount"] == old_stat["amount"] + (payload_data["quantity"] * product["sell_price"])
-    assert new_stat["profit"] == old_stat["profit"] + (payload_data["quantity"] * product["sell_price"])
+    assert new_stat["amount"] == old_stat["amount"] + (payload["quantity"] * product["sell_price"])
+    assert new_stat["profit"] == old_stat["profit"] + (payload["quantity"] * product["sell_price"])
     assert str(datetime.date.today()) in new_stat["datetime"]
     assert new_stat["description"] == StatisticDescription.OFFER_SELL.name
-    assert new_stat["price"] == product["sell_price"] * payload_data["quantity"]
+    assert new_stat["price"] == product["sell_price"] * payload["quantity"]
     assert new_stat["product"] == product_id
 
 
 @pytest.mark.parametrize(
-    "product_id, payload_data, exp_status",
+    "product_id, payload, exp_status",
     [
         pytest.param(
             4,
@@ -204,7 +278,7 @@ def test_offer_sell(login_client, load_all_fixtures_for_function, product_id, pa
     ],
 )
 @pytest.mark.django_db
-def test_offer_update_not_in_db(login_client, load_all_fixtures_for_function, product_id, payload_data, exp_status):
+def test_offer_update_not_in_db(login_client, load_all_fixtures_for_function, product_id, payload, exp_status):
     response_get = login_client.get(path="/statistic/")
     response_get_2 = login_client.get(path="/statistic/")
 
