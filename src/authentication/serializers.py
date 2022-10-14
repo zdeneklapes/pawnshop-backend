@@ -55,6 +55,12 @@ class TokenUser:
 
 
 class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
+    @classmethod
+    def get_token(cls, user):
+        token = super().get_token(user)
+        token["role"] = user.role
+        return token
+
     def validate(self, attrs):
         data = super().validate(attrs)
         data = TokenUser.add_user_to_data(data, self.user)
