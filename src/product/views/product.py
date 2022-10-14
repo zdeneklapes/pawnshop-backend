@@ -7,7 +7,7 @@ from drf_yasg.utils import swagger_auto_schema
 
 from rest_framework.request import Request
 from rest_framework.response import Response
-from rest_framework import viewsets
+from rest_framework import viewsets, permissions
 
 import django_filters
 
@@ -61,8 +61,7 @@ class ProductViewSet(viewsets.ModelViewSet):
     queryset = Product.objects.all()
     serializer_class = product_serializers.ProductSerializer
     http_method_names = ["get", "post", "patch"]
-
-    # permission_classes = [permissions.IsAuthenticated] # TODO: Uncomment
+    permission_classes = [permissions.IsAuthenticated]  # TODO: Uncomment
 
     def parse_data_request(self):
         var_search = "data"
