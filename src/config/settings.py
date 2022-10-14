@@ -80,8 +80,8 @@ MIDDLEWARE = [
 # CORS
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
-    "https://dev-pawnshop-frontend.vercel.app/",
-    "https://pawnshop-frontend.vercel.app/",
+    "https://dev-pawnshop-frontend.vercel.app",
+    "https://pawnshop-frontend.vercel.app",
 ]
 
 ROOT_URLCONF = "config.urls"
