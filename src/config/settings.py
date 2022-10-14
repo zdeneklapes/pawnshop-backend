@@ -80,6 +80,8 @@ MIDDLEWARE = [
 # CORS
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
+    "https://dev-pawnshop-frontend.vercel.app/",
+    "https://pawnshop-frontend.vercel.app/",
 ]
 
 ROOT_URLCONF = "config.urls"
@@ -156,7 +158,7 @@ SIMPLE_JWT = {
     # 'UPDATE_LAST_LOGIN': False,
     #
     # 'ALGORITHM': 'HS256',
-    # 'SIGNING_KEY': SECRET_KEY,
+    "SIGNING_KEY": SECRET_KEY,
     # 'VERIFYING_KEY': None,
     # 'AUDIENCE': None,
     # 'ISSUER': None,

@@ -1,0 +1,11 @@
+Failed to complete cronjob at ('* * * * *', 'config.cron.update_product_status', '> /app/src/cron_update_product_status.txt 2>&1')
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.9/site-packages/django_crontab/crontab.py", line 145, in run_job
+    func(*job_args, **job_kwargs)
+  File "/app/src/config/cron.py", line 18, in update_product_status
+    if utils.get_week_delta(loan.date_extend) <= loan.rate_times
+  File "/app/src/common/utils.py", line 6, in get_week_delta
+    result = (date.today() - start_date).days // 7 + 1
+TypeError: unsupported operand type(s) for -: 'datetime.date' and 'datetime.datetime'
+ENV: docker
+DB: postgress
