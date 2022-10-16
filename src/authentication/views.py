@@ -10,17 +10,11 @@ class UserViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
     permission_classes = [permissions.IsAuthenticated, permissions.IsAdminUser]  # TODO: Uncomment
 
 
-class AttendantProfileCreateViewSet(
-    mixins.ListModelMixin,
-    mixins.CreateModelMixin,
-    mixins.RetrieveModelMixin,
-    mixins.UpdateModelMixin,
-    mixins.DestroyModelMixin,
-    viewsets.GenericViewSet,
-):
+class AttendantProfileCreateViewSet(viewsets.ModelViewSet):
     queryset = models.AttendantProfile.objects.all()
     serializer_class = serializers.AttendantProfileSerializer
     permission_classes = [permissions.IsAuthenticated, permissions.IsAdminUser]  # TODO: Uncomment
+    http_method_names = ["get", "post", "patch", "delete"]
 
 
 class CustomTokenObtainPairView(TokenObtainPairView):
