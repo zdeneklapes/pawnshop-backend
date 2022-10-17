@@ -8,9 +8,13 @@ User = get_user_model()
 
 
 class UserSerializer(serializers.ModelSerializer):
+    email = serializers.EmailField(max_length=255, required=True)
+    password = serializers.CharField(min_length=8, write_only=True)
+    role = serializers.CharField(max_length=50, required=False)
+
     class Meta:
         model = models.User
-        fields = "__all__"
+        fields = ["id", "email", "password", "role"]
 
 
 class AttendantProfileSerializer(serializers.ModelSerializer):
