@@ -94,19 +94,43 @@ def test_update_attendant_by_myself(client_attendant, client, attendant, test_lo
     assert response_auth.status_code == status.HTTP_200_OK
 
 
+@pytest.mark.parametrize(
+    "payload, exp_status",
+    [
+        pytest.param({"password": "bbbbbbbb", "old_or_verify_password": "badpassword"}, status.HTTP_400_BAD_REQUEST),
+    ],
+)
 @pytest.mark.django_db
-@pytest.mark.skip
-def test_password_validator():
-    pass
+def test_password_validator_update(
+    client_admin, test_login_required, load_all_fixtures_for_function, payload, exp_status
+):
+    response_update = client_admin.patch(path="/authentication/attendant/2/", data=payload, format="json")
+    assert response_update.status_code == status.HTTP_400_BAD_REQUEST
 
 
+@pytest.mark.parametrize(
+    "payload, exp_status",
+    [
+        pytest.param({"password": "a", "old_or_verify_password": "a"}, status.HTTP_400_BAD_REQUEST),
+        pytest.param({"password": "a", "old_or_verify_password": "aa"}, status.HTTP_400_BAD_REQUEST),
+    ],
+)
 @pytest.mark.django_db
-@pytest.mark.skip
-def test_password_and_old_or_verify_password_create():
-    pass
+def test_password_validator_create(client_admin, test_login_required, payload, exp_status):
+    response_update = client_admin.post(path="/authentication/attendant/", data=payload, format="json")
+    assert response_update.status_code == exp_status
 
 
+@pytest.mark.parametrize(
+    "user_id, body, exp_status",
+    [
+        pytest.param(1, ["detail"], status.HTTP_400_BAD_REQUEST),
+        pytest.param(2, None, status.HTTP_204_NO_CONTENT),
+    ],
+)
 @pytest.mark.django_db
-@pytest.mark.skip
-def test_password_and_old_or_verify_password_update():
-    pass
+def test_delete_user(client_admin, test_login_required, load_all_fixtures_for_function, user_id, body, exp_status):
+    response = client_admin.delete(path=f"/authentication/user/{user_id}/", format="json")
+
+    assert body == response.data or all(field in response.data for field in body)
+    assert response.status_code == exp_status
