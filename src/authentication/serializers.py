@@ -20,7 +20,7 @@ class AttendantProfileSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.AttendantProfile
-        fields = ["email", "password", "role"]
+        fields = ["id", "email", "password", "role"]
 
     def validate(self, attrs):
         attrs_new = {}
