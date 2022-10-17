@@ -11,7 +11,7 @@ class UserBaseSerializer(serializers.Serializer):
     def validate_old_password(self, value):
         # if not self.context["request"].user.check_password(value):
         if not self.instance.check_password(value):
-            raise serializers.ValidationError({"old_password": "Old password is not correct"})
+            raise serializers.ValidationError({"old_or_verify_password": "Old password is not correct"})
         return value
 
     def validate_update(self, attrs):
