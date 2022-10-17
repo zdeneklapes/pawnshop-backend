@@ -8,10 +8,12 @@ from customer.serializers import CustomerProfileSerializer
 from product.models import Product, ProductStatusOrData
 from common import utils
 from statistic.models.choices import StatisticDescription
+from config.settings import AUTH
+from authentication.models import User
 
 
 class ProductSerializer(WritableNestedModelSerializer):
-    # user = serializers.PrimaryKeyRelatedField(U)
+    user = serializers.PrimaryKeyRelatedField(queryset=User.objects.all())
     customer = CustomerProfileSerializer()
     sell_price = serializers.IntegerField(required=False)
 
@@ -56,7 +58,7 @@ class ProductSerializer(WritableNestedModelSerializer):
 
         data.update(
             {
-                "user": data["user"],  # TODO: Change to - data.user.id
+                "user": 1 if not AUTH else self.context["request"].user.id,
                 "customer": {
                     "id_birth": data["customer"]["id_birth"],
                     "full_name": data["customer"]["full_name"],

@@ -4,6 +4,8 @@ from drf_yasg import openapi
 from drf_yasg.views import get_schema_view
 from rest_framework import permissions
 
+from config.settings import AUTH
+
 schema_view = get_schema_view(
     openapi.Info(
         title="Pawnshop API",
@@ -13,7 +15,7 @@ schema_view = get_schema_view(
         license=openapi.License(name="BSD License"),
     ),
     public=True,
-    permission_classes=[permissions.AllowAny],
+    permission_classes=[permissions.IsAuthenticated] if AUTH else [permissions.AllowAny],
 )
 
 urlpatterns = [

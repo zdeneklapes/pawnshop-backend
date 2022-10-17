@@ -107,7 +107,6 @@ def test_is_update_possible(login_client, load_all_fixtures_for_module, product_
         # OFFER
         pytest.param(
             {
-                "user": 1,
                 "status": "OFFER",
                 "customer": {
                     "full_name": "a b",
@@ -129,7 +128,6 @@ def test_is_update_possible(login_client, load_all_fixtures_for_module, product_
         ),
         pytest.param(
             {
-                "user": 1,
                 "status": "OFFER",
                 "customer": {
                     "full_name": "a b",
@@ -152,7 +150,7 @@ def test_is_update_possible(login_client, load_all_fixtures_for_module, product_
     ],
 )
 @pytest.mark.django_db
-def test_offer_create_calc(login_client, load_all_fixtures_for_module, payload, exp_status):
+def test_offer_create_calc(login_client, user, load_all_fixtures_for_module, payload, exp_status):
     response_update = login_client.post(path="/product/", data=payload, format="json")
     assert response_update.status_code == exp_status
 
@@ -161,7 +159,7 @@ def test_offer_create_calc(login_client, load_all_fixtures_for_module, payload, 
         payload["date_extend"] = datetime.date.today()
         payload["date_end"] = None
 
-        assert payload["user"] == response_update.data["user"]
+        assert user[0].id == response_update.data["user"]
         assert payload["status"] == response_update.data["status"]
         assert payload["customer"] == response_update.data["customer"]
         assert payload["interest_rate_or_quantity"] == response_update.data["interest_rate_or_quantity"]
@@ -221,7 +219,6 @@ def test_offer_update_quantity_calculations(
         # OFFER
         pytest.param(
             {
-                "user": 1,
                 "status": "LOAN",
                 "customer": {
                     "full_name": "a b",
@@ -243,7 +240,6 @@ def test_offer_update_quantity_calculations(
         ),
         pytest.param(
             {
-                "user": 1,
                 "status": "LOAN",
                 "customer": {
                     "full_name": "a b",
@@ -266,7 +262,7 @@ def test_offer_update_quantity_calculations(
     ],
 )
 @pytest.mark.django_db
-def test_loan_create_calc(login_client, load_all_fixtures_for_module, payload, exp_status):
+def test_loan_create_calc(login_client, user, load_all_fixtures_for_module, payload, exp_status):
     response_update = login_client.post(path="/product/", data=payload, format="json")
     assert response_update.status_code == exp_status
 
@@ -275,7 +271,7 @@ def test_loan_create_calc(login_client, load_all_fixtures_for_module, payload, e
         payload["date_extend"] = datetime.date.today()
         payload["date_end"] = datetime.date.today() + datetime.timedelta(weeks=4)
 
-        assert payload["user"] == response_update.data["user"]
+        assert user[0].id == response_update.data["user"]
         assert payload["status"] == response_update.data["status"]
         assert payload["customer"] == response_update.data["customer"]
         assert payload["interest_rate_or_quantity"] == response_update.data["interest_rate_or_quantity"]

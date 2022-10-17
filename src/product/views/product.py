@@ -16,6 +16,7 @@ from product.models import Product, ProductStatusOrData, ProductShopData
 from statistic.serializers.statistic import StatisticDefaultSerializer
 from statistic.models.choices import StatisticDescription
 from common.exceptions import BadQueryParam
+from config.settings import AUTH
 
 
 class ProductQPSwagger(django_filters.FilterSet):
@@ -61,7 +62,7 @@ class ProductViewSet(viewsets.ModelViewSet):
     queryset = Product.objects.all()
     serializer_class = product_serializers.ProductSerializer
     http_method_names = ["get", "post", "patch"]
-    permission_classes = [permissions.IsAuthenticated]  # TODO: Uncomment
+    permission_classes = [permissions.IsAuthenticated] if AUTH else [permissions.AllowAny]
 
     def parse_data_request(self):
         var_search = "data"
@@ -128,7 +129,7 @@ class ProductViewSet(viewsets.ModelViewSet):
                 operation=StatisticDescription.LOAN_CREATE.name
                 if request.data["status"] == ProductStatusOrData.LOAN.name
                 else StatisticDescription.OFFER_BUY.name,
-                user=1,  # TODO: change to user: response.user.id
+                user=1 if not AUTH else request.user.id,
                 product=response.data["id"],
             )
         except AssertionError as e:

@@ -6,6 +6,16 @@ from authentication.models import User
 from config.settings import SIMPLE_JWT
 
 
+@pytest.fixture(autouse=True)
+def test_login_required(settings):
+    settings.AUTH = True
+
+
+@pytest.fixture(autouse=True)
+def test_login_not_required(settings):
+    settings.AUTH = False
+
+
 @pytest.fixture(scope="function")
 def user():
     payload = {"email": "super1@a.com", "password": "a"}
@@ -31,7 +41,7 @@ def load_all_fixtures_for_function(django_db_setup, django_db_blocker):
 
 
 @pytest.fixture()
-def login_client(client, user):
+def login_client(client, user, test_login_required):
     response = client.post("http://localhost:8000/authentication/token/create/", data=user[1])
     client.credentials(HTTP_AUTHORIZATION=f"{SIMPLE_JWT['AUTH_HEADER_TYPES'][0]} {response.data['access']}")
     return client
