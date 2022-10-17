@@ -10,6 +10,8 @@ from config.settings import AUTH
 from authentication.views.swaggers.user import AttendantQPSwagger
 
 
+@method_decorator(name="create", decorator=swagger_auto_schema(request_body=AttendantQPSwagger.create))
+@method_decorator(name="partial_update", decorator=swagger_auto_schema(request_body=AttendantQPSwagger.update))
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
