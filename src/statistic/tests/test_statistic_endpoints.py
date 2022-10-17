@@ -14,6 +14,6 @@ from statistic.models.choices import StatisticQPData
         pytest.param(StatisticQPData.RESET.name, status.HTTP_200_OK),
     ],
 )
-def test_get(login_client, data, status_code):
-    response = login_client.get(path=f"/statistic/?data={data}")
+def test_get(client_admin, data, status_code):
+    response = client_admin.get(path=f"/statistic/?data={data}")
     assert response.status_code == status_code

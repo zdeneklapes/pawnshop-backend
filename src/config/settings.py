@@ -127,11 +127,12 @@ else:
         }
     }
 
-# Users
+# AUTH
 ACCOUNT_USER_MODEL_USERNAME_FIELD = None
 ACCOUNT_USERNAME_REQUIRED = False
 ACCOUNT_EMAIL_REQUIRED = True
 
+AUTH = False  # Required token
 AUTH_USER_MODEL = "authentication.User"
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -151,8 +152,8 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(days=10),
-    "REFRESH_TOKEN_LIFETIME": timedelta(days=10),
+    "ACCESS_TOKEN_LIFETIME": timedelta(hours=2),
+    "REFRESH_TOKEN_LIFETIME": timedelta(hours=3),
     # 'ROTATE_REFRESH_TOKENS': False,
     "BLACKLIST_AFTER_ROTATION": False,
     # 'UPDATE_LAST_LOGIN': False,
@@ -226,12 +227,12 @@ LOGGING = {
 # Cron
 CRONJOBS = [
     # ("* * * * *", "django.core.management.call_command", ["update_product_status"]),
-    ("* * * * *", "config.cron.fun", f"> {path.join(BASE_DIR, 'cron_fun.txt')} 2>&1"),  # To see errors
-    (
-        "* * * * *",
-        "config.cron.update_product_status",
-        f"> {path.join(BASE_DIR, 'cron_update_product_status.txt')} 2>&1",
-    ),  # To see errors
+    # ("* * * * *", "config.cron.fun", f"> {path.join(BASE_DIR, 'cron_fun.txt')} 2>&1"),  # To see errors
+    # (
+    #     "* * * * *",
+    #     "config.cron.update_product_status",
+    #     f"> {path.join(BASE_DIR, 'cron_update_product_status.txt')} 2>&1",
+    # ),  # To see errors
 ]
 # Note: I think this is a bug in crontab package, because it doesn't take env vars from docker .env file while building
 CRONTAB_COMMAND_PREFIX = (

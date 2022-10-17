@@ -7,6 +7,7 @@ from rest_framework.request import Request
 from statistic.models import Statistic
 from statistic.models.choices import StatisticQPData, StatisticDescription
 from common.exceptions import BadQueryParam
+from config.settings import AUTH
 
 
 class StatisticDefaultSerializer(WritableNestedModelSerializer):
@@ -73,7 +74,7 @@ class StatisticDefaultSerializer(WritableNestedModelSerializer):
         if data["update"] in [StatisticQPData.RESET.name]:
             data.update(
                 {
-                    "user": 1,  # TODO: Change to - self.request.user.id
+                    "user": 1 if not AUTH else self.context["request"].user.id,
                     "description": StatisticQPData.RESET.name,
                 }
             )

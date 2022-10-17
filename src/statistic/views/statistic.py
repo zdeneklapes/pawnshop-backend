@@ -1,6 +1,6 @@
 from rest_framework.request import Request
 from rest_framework.response import Response
-from rest_framework import mixins, viewsets, status
+from rest_framework import mixins, viewsets, status, permissions
 from django.utils.decorators import method_decorator
 from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
@@ -9,6 +9,7 @@ import django_filters
 from statistic.models.models import Statistic
 from statistic.serializers import statistic as statistic_serializer
 from statistic.models.choices import StatisticQPData
+from config.settings import AUTH
 
 
 class StatisticQPSwagger(django_filters.FilterSet):
@@ -35,8 +36,7 @@ class StatisticQPSwagger(django_filters.FilterSet):
 class StatisticViewSet(mixins.ListModelMixin, mixins.CreateModelMixin, viewsets.GenericViewSet):
     queryset = Statistic.objects.all()
     serializer_class = statistic_serializer.StatisticDefaultSerializer
-
-    # permission_classes = [permissions.IsAuthenticated] # TODO: Uncomment
+    permission_classes = [permissions.IsAuthenticated] if AUTH else [permissions.AllowAny]
 
     def parse_data_request(self):
         var_search = "data"
