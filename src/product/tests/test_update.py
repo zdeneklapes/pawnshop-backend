@@ -96,8 +96,8 @@ from common import utils
     ],
 )
 @pytest.mark.django_db
-def test_is_update_possible(login_client, load_all_fixtures_for_module, product_id, payload, exp_status):
-    response_update = login_client.patch(path=f"/product/{product_id}/", data=payload, format="json")
+def test_is_update_possible(client_admin, load_all_fixtures_for_module, product_id, payload, exp_status):
+    response_update = client_admin.patch(path=f"/product/{product_id}/", data=payload, format="json")
     assert response_update.status_code == exp_status
 
 
@@ -150,8 +150,8 @@ def test_is_update_possible(login_client, load_all_fixtures_for_module, product_
     ],
 )
 @pytest.mark.django_db
-def test_offer_create_calc(login_client, user, load_all_fixtures_for_module, payload, exp_status):
-    response_update = login_client.post(path="/product/", data=payload, format="json")
+def test_offer_create_calc(client_admin, admin, load_all_fixtures_for_module, payload, exp_status):
+    response_update = client_admin.post(path="/product/", data=payload, format="json")
     assert response_update.status_code == exp_status
 
     if exp_status == status.HTTP_201_CREATED:
@@ -159,7 +159,7 @@ def test_offer_create_calc(login_client, user, load_all_fixtures_for_module, pay
         payload["date_extend"] = datetime.date.today()
         payload["date_end"] = None
 
-        assert user[0].id == response_update.data["user"]
+        assert admin[0].id == response_update.data["user"]
         assert payload["status"] == response_update.data["status"]
         assert payload["customer"] == response_update.data["customer"]
         assert payload["interest_rate_or_quantity"] == response_update.data["interest_rate_or_quantity"]
@@ -201,9 +201,9 @@ def test_offer_create_calc(login_client, user, load_all_fixtures_for_module, pay
 )
 @pytest.mark.django_db
 def test_offer_update_quantity_calculations(
-    login_client, load_all_fixtures_for_function, product_id, payload, exp_offer_status, exp_quantity, exp_status
+    client_admin, load_all_fixtures_for_function, product_id, payload, exp_offer_status, exp_quantity, exp_status
 ):
-    response_update = login_client.patch(path=f"/product/{product_id}/", data=payload, format="json")
+    response_update = client_admin.patch(path=f"/product/{product_id}/", data=payload, format="json")
 
     if exp_status == status.HTTP_200_OK:
         assert not response_update.data["interest_rate_or_quantity"].isdecimal()
@@ -262,8 +262,8 @@ def test_offer_update_quantity_calculations(
     ],
 )
 @pytest.mark.django_db
-def test_loan_create_calc(login_client, user, load_all_fixtures_for_module, payload, exp_status):
-    response_update = login_client.post(path="/product/", data=payload, format="json")
+def test_loan_create_calc(client_admin, admin, load_all_fixtures_for_module, payload, exp_status):
+    response_update = client_admin.post(path="/product/", data=payload, format="json")
     assert response_update.status_code == exp_status
 
     if exp_status == status.HTTP_201_CREATED:
@@ -271,7 +271,7 @@ def test_loan_create_calc(login_client, user, load_all_fixtures_for_module, payl
         payload["date_extend"] = datetime.date.today()
         payload["date_end"] = datetime.date.today() + datetime.timedelta(weeks=4)
 
-        assert user[0].id == response_update.data["user"]
+        assert admin[0].id == response_update.data["user"]
         assert payload["status"] == response_update.data["status"]
         assert payload["customer"] == response_update.data["customer"]
         assert payload["interest_rate_or_quantity"] == response_update.data["interest_rate_or_quantity"]
@@ -295,9 +295,9 @@ def test_loan_create_calc(login_client, user, load_all_fixtures_for_module, payl
     ],
 )
 @pytest.mark.django_db
-def test_loan_extend_calc(login_client, load_all_fixtures_for_module, product_id, payload, exp_status):
-    response_get = login_client.get(path=f"/product/{product_id}/", data=payload, format="json")
-    response_update = login_client.patch(path=f"/product/{product_id}/", data=payload, format="json")
+def test_loan_extend_calc(client_admin, load_all_fixtures_for_module, product_id, payload, exp_status):
+    response_get = client_admin.get(path=f"/product/{product_id}/", data=payload, format="json")
+    response_update = client_admin.patch(path=f"/product/{product_id}/", data=payload, format="json")
     assert response_update.status_code == exp_status
 
     # Check update
@@ -334,9 +334,9 @@ def test_loan_extend_calc(login_client, load_all_fixtures_for_module, product_id
     ],
 )
 @pytest.mark.django_db
-def test_loan_return_calc(login_client, load_all_fixtures_for_module, product_id, payload, exp_status):
-    response_get = login_client.get(path=f"/product/{product_id}/", data=payload, format="json")
-    response_update = login_client.patch(path=f"/product/{product_id}/", data=payload, format="json")
+def test_loan_return_calc(client_admin, load_all_fixtures_for_module, product_id, payload, exp_status):
+    response_get = client_admin.get(path=f"/product/{product_id}/", data=payload, format="json")
+    response_update = client_admin.patch(path=f"/product/{product_id}/", data=payload, format="json")
     assert response_update.status_code == exp_status
 
     # Check update
@@ -374,10 +374,10 @@ def test_loan_return_calc(login_client, load_all_fixtures_for_module, product_id
     ],
 )
 def test_update_loan(
-    login_client, load_all_fixtures_for_function, product_id, payload_data, exp_status_patch, exp_status_get
+    client_admin, load_all_fixtures_for_function, product_id, payload_data, exp_status_patch, exp_status_get
 ):
-    response_update = login_client.patch(path=f"/product/{product_id}/", data=payload_data, format="json")
-    response_get = login_client.get(path=f"/product/{product_id}/")
+    response_update = client_admin.patch(path=f"/product/{product_id}/", data=payload_data, format="json")
+    response_get = client_admin.get(path=f"/product/{product_id}/")
     assert response_update.status_code == exp_status_patch
     assert response_update.status_code == exp_status_get
     assert response_get.data["product_name"] == payload_data["product_name"]
@@ -407,10 +407,10 @@ def test_update_loan(
     ],
 )
 def test_update_offer(
-    login_client, load_all_fixtures_for_function, product_id, payload_data, exp_status_patch, exp_status_get
+    client_admin, load_all_fixtures_for_function, product_id, payload_data, exp_status_patch, exp_status_get
 ):
-    response_update = login_client.patch(path=f"/product/{product_id}/", data=payload_data, format="json")
-    response_get = login_client.get(path=f"/product/{product_id}/")
+    response_update = client_admin.patch(path=f"/product/{product_id}/", data=payload_data, format="json")
+    response_get = client_admin.get(path=f"/product/{product_id}/")
     assert response_update.status_code == exp_status_patch
     assert response_update.status_code == exp_status_get
     assert response_get.data["product_name"] == payload_data["product_name"]

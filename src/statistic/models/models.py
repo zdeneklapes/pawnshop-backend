@@ -1,7 +1,7 @@
 # pylint: disable=E1101
 from django.db import models
 
-from authentication.models import User
+from authentication.models.models import User
 from product.models.models import Product
 
 from .choices import StatisticDescription

@@ -9,7 +9,7 @@ from product.models import Product, ProductStatusOrData
 from common import utils
 from statistic.models.choices import StatisticDescription
 from config.settings import AUTH
-from authentication.models import User
+from authentication.models.models import User
 
 
 class ProductSerializer(WritableNestedModelSerializer):

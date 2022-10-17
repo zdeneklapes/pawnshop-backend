@@ -17,7 +17,6 @@ else:  # Docker, because env folder nto available
     print("ENV: docker")
 
 # Django Settings
-AUTH = False
 SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY", "development")
 DEBUG = os.environ.get("DJANGO_DEBUG") == "True"
 try:
@@ -128,11 +127,12 @@ else:
         }
     }
 
-# Users
+# AUTH
 ACCOUNT_USER_MODEL_USERNAME_FIELD = None
 ACCOUNT_USERNAME_REQUIRED = False
 ACCOUNT_EMAIL_REQUIRED = True
 
+AUTH = True  # Required token
 AUTH_USER_MODEL = "authentication.User"
 AUTH_PASSWORD_VALIDATORS = [
     {

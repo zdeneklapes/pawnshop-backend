@@ -2,7 +2,7 @@
 import datetime
 from django.db import models
 
-from authentication.models import User
+from authentication.models.models import User
 from customer.models import CustomerProfile
 from .choices import ProductStatusOrData, RateFrequency
 from .managers import ProductManager

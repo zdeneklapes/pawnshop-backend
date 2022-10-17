@@ -2,14 +2,11 @@
 from typing import Optional
 
 from django.utils.decorators import method_decorator
-from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
 
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework import viewsets, permissions
-
-import django_filters
 
 from product.serializers import product as product_serializers
 from product.models import Product, ProductStatusOrData, ProductShopData
@@ -17,47 +14,13 @@ from statistic.serializers.statistic import StatisticDefaultSerializer
 from statistic.models.choices import StatisticDescription
 from common.exceptions import BadQueryParam
 from config.settings import AUTH
-
-
-class ProductQPSwagger(django_filters.FilterSet):
-    data = openapi.Parameter(
-        name="data",
-        in_=openapi.IN_QUERY,
-        description=f"Operation Type: "
-        f"{ProductShopData.SHOP_STATS.name}, "
-        f"{ProductStatusOrData.LOAN.name}, "
-        f"{ProductStatusOrData.OFFER.name}, "
-        f"{ProductStatusOrData.AFTER_MATURITY.name}",
-        type=openapi.TYPE_STRING,
-    )
-    update = openapi.Schema(
-        type=openapi.TYPE_OBJECT,
-        in_=openapi.IN_BODY,
-        properties={
-            "update": openapi.Schema(
-                type=openapi.TYPE_STRING,
-                default=f"{StatisticDescription.LOAN_RETURN.name} | "
-                f"{StatisticDescription.LOAN_EXTEND.name} | "
-                f"{StatisticDescription.LOAN_TO_OFFER.name} | "
-                f"{StatisticDescription.OFFER_SELL.name} | "
-                f"{StatisticDescription.OFFER_BUY.name} | "
-                f"{StatisticDescription.UPDATE_DATA.name}",
-            ),
-            "product_name": openapi.Schema(type=openapi.TYPE_STRING),
-            "sell_price": openapi.Schema(type=openapi.TYPE_STRING),
-            "date_create": openapi.Schema(type=openapi.TYPE_STRING),
-            "date_extend": openapi.Schema(type=openapi.TYPE_STRING),
-            "inventory_id": openapi.Schema(type=openapi.TYPE_STRING),
-        },
-    )
+from .swaggers.product import ProductQPSwagger
 
 
 @method_decorator(name="list", decorator=swagger_auto_schema(manual_parameters=[ProductQPSwagger.data]))
 @method_decorator(name="create", decorator=swagger_auto_schema(manual_parameters=[]))
 @method_decorator(name="retrieve", decorator=swagger_auto_schema(manual_parameters=[]))
 @method_decorator(name="partial_update", decorator=swagger_auto_schema(request_body=ProductQPSwagger.update))
-# @method_decorator(name="partial_update", decorator=swagger_auto_schema(manual_parameters=[ProductQPSwagger.update]))
-# @method_decorator(name="partial_update", decorator=swagger_auto_schema(request_body=))
 class ProductViewSet(viewsets.ModelViewSet):
     queryset = Product.objects.all()
     serializer_class = product_serializers.ProductSerializer
