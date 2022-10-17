@@ -1,13 +1,12 @@
 from rest_framework import permissions, viewsets, status
 from rest_framework.response import Response
-from rest_framework_simplejwt.views import TokenObtainPairView
 from django.utils.decorators import method_decorator
 from drf_yasg.utils import swagger_auto_schema
 
-from authentication.models import AttendantProfile, User, UserRoleChoice
-from authentication.serializers.user import UserSerializer, AttendantProfileSerializer, CustomTokenObtainPairSerializer
+from authentication.models import User, UserRoleChoice
+from authentication.serializers.admin import UserSerializer
 from config.settings import AUTH
-from authentication.views.swaggers.user import AttendantQPSwagger
+from authentication.views.swaggers.base import AttendantQPSwagger
 
 
 @method_decorator(name="create", decorator=swagger_auto_schema(request_body=AttendantQPSwagger.create))
@@ -26,16 +25,3 @@ class UserViewSet(viewsets.ModelViewSet):
 
         self.perform_destroy(instance)
         return Response(status=status.HTTP_204_NO_CONTENT)
-
-
-@method_decorator(name="create", decorator=swagger_auto_schema(request_body=AttendantQPSwagger.create))
-@method_decorator(name="partial_update", decorator=swagger_auto_schema(request_body=AttendantQPSwagger.update))
-class AttendantProfileViewSet(viewsets.ModelViewSet):
-    queryset = AttendantProfile.objects.all()
-    serializer_class = AttendantProfileSerializer
-    permission_classes = [permissions.IsAuthenticated] if AUTH else [permissions.AllowAny]
-    http_method_names = ["get", "post", "patch"]
-
-
-class CustomTokenObtainPairView(TokenObtainPairView):
-    serializer_class = CustomTokenObtainPairSerializer
