@@ -46,7 +46,7 @@ def client_admin(client, admin, test_login_required):
 
 @pytest.fixture()
 def client_attendant(client, attendant, test_login_required):
-    response = client.post("http://localhost:8000/authentication/token/create/", data=admin[1])
+    response = client.post("http://localhost:8000/authentication/token/create/", data=attendant[1])
     client.credentials(HTTP_AUTHORIZATION=f"{SIMPLE_JWT['AUTH_HEADER_TYPES'][0]} {response.data['access']}")
     return client
 
