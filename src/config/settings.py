@@ -17,7 +17,7 @@ else:  # Docker, because env folder nto available
     print("ENV: docker")
 
 # Django Settings
-AUTH = True
+AUTH = False
 SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY", "development")
 DEBUG = os.environ.get("DJANGO_DEBUG") == "True"
 try:

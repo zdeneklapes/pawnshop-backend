@@ -7,7 +7,8 @@ from . import views
 # Automatically find all url based on ViewSet (all?)
 router = routers.DefaultRouter()
 router.register(prefix=r"user", viewset=views.UserViewSet)
-router.register(prefix=r"attendant", viewset=views.AttendantProfileCreateViewSet)
+# router.register(prefix=r"attendant/create", viewset=views.AttendantProfileCreateViewSet)
+router.register(prefix=r"attendant", viewset=views.AttendantProfileViewSet)
 
 urlpatterns = [
     # Authentication
