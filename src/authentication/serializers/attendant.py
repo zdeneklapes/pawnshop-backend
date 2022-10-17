@@ -1,36 +1,19 @@
 from rest_framework import serializers
 
-from authentication.models import User, AttendantProfile
+from authentication.models import AttendantProfile
 from .base import UserBaseSerializer
 
 
 class AttendantProfileSerializer(serializers.ModelSerializer, UserBaseSerializer):
     email = serializers.EmailField(max_length=255, required=True)
     password = serializers.CharField(min_length=8, write_only=True)
-    old_or_verify_password = serializers.CharField(write_only=True)
+    verify_password = serializers.CharField(min_length=8, write_only=True, required=False)
+    old_password = serializers.CharField(write_only=True, required=False)
     role = serializers.CharField(max_length=50, required=False)
 
     class Meta:
         model = AttendantProfile
-        fields = ["id", "email", "password", "old_or_verify_password", "role"]
-
-    def validate_create(self, attrs):
-        if User.objects.filter(email=attrs["email"]).exists():
-            raise serializers.ValidationError(detail="User with email exists")
-
-        if attrs["password"] != attrs["old_or_verify_password"]:
-            raise serializers.ValidationError({"password": "Password fields didn't match."})
-
-        self.validate_new_password(attrs)
-
-    def validate(self, attrs):
-        if self.context["request"].stream.method == "POST":  # Create
-            self.validate_create(attrs)
-
-        if self.context["request"].stream.method == "PATCH":  # Update
-            self.validate_update(attrs)
-
-        return super().validate(attrs)
+        fields = ["id", "email", "password", "verify_password", "old_password", "role"]
 
     def create(self, validated_data):
         user = AttendantProfile.objects.create_user(email=validated_data["email"], password=validated_data["password"])

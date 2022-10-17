@@ -36,12 +36,12 @@ def test_get_data_users_by_id(client_admin, load_all_fixtures_for_module, url, r
     [
         pytest.param(
             "/authentication/attendant/",
-            {"email": "a@a.com", "password": "aaaaaaaa", "old_or_verify_password": "aaaaaaaa"},
+            {"email": "a@a.com", "password": "aaaaaaaa", "verify_password": "aaaaaaaa"},
             status.HTTP_201_CREATED,
         ),
         pytest.param(
             "/authentication/attendant/",
-            {"email": "c@c.com", "password": "aaaaaaaa", "old_or_verify_password": "cccccccc"},
+            {"email": "c@c.com", "password": "aaaaaaaa", "verify_password": "cccccccc"},
             status.HTTP_400_BAD_REQUEST,
         ),
     ],
@@ -58,19 +58,18 @@ def test_create_user(client_admin, url, payload, exp_status):
 
 @pytest.mark.django_db
 def test_update_admin_by_admin(client_admin, load_all_fixtures_for_function):
-    payload = {"password": "bbbbbbbb", "old_or_verify_password": "a"}
+    payload = {"password": "bbbbbbbb", "verify_password": "bbbbbbbb", "old_password": "a"}
     response_update = client_admin.patch(path="/authentication/user/1/", data=payload, format="json")
+    assert response_update.status_code == status.HTTP_200_OK
 
     payload_auth = {"email": response_update.data["email"], "password": "bbbbbbbb"}
     response_auth = client_admin.post("/authentication/token/create/", data=payload_auth)
-
-    assert response_update.status_code == status.HTTP_200_OK
     assert response_auth.status_code == status.HTTP_200_OK
 
 
 @pytest.mark.django_db
 def test_update_attendant_by_admin(client_admin, client, test_login_required, load_all_fixtures_for_function):
-    payload = {"password": "bbbbbbbb", "old_or_verify_password": "a"}
+    payload = {"password": "bbbbbbbb", "verify_password": "bbbbbbbb", "old_password": "a"}
     response_update = client_admin.patch(path="/authentication/attendant/2/", data=payload, format="json")
 
     payload_auth = {"email": response_update.data["email"], "password": "bbbbbbbb"}
@@ -82,7 +81,7 @@ def test_update_attendant_by_admin(client_admin, client, test_login_required, lo
 
 @pytest.mark.django_db
 def test_update_attendant_by_myself(client_attendant, client, attendant, test_login_required):
-    payload = {"password": "bbbbbbbb", "old_or_verify_password": attendant[1]["password"]}
+    payload = {"password": "bbbbbbbb", "verify_password": "bbbbbbbb", "old_password": attendant[1]["password"]}
     response_update = client_attendant.patch(
         path=f"/authentication/attendant/{attendant[0].id}/", data=payload, format="json"
     )
@@ -97,7 +96,15 @@ def test_update_attendant_by_myself(client_attendant, client, attendant, test_lo
 @pytest.mark.parametrize(
     "payload, exp_status",
     [
-        pytest.param({"password": "bbbbbbbb", "old_or_verify_password": "badpassword"}, status.HTTP_400_BAD_REQUEST),
+        # bad password
+        pytest.param(
+            {"password": "bbbbbbbb", "verify_password": "bbbbbbbb", "old_password": "badpassword"},
+            status.HTTP_400_BAD_REQUEST,
+        ),
+        # passwords does nto match
+        pytest.param(
+            {"password": "bbbbbbbb", "verify_password": "bbbbbbbba", "old_password": "a"}, status.HTTP_400_BAD_REQUEST
+        ),
     ],
 )
 @pytest.mark.django_db
@@ -111,8 +118,15 @@ def test_password_validator_update(
 @pytest.mark.parametrize(
     "payload, exp_status",
     [
-        pytest.param({"password": "a", "old_or_verify_password": "a"}, status.HTTP_400_BAD_REQUEST),
-        pytest.param({"password": "a", "old_or_verify_password": "aa"}, status.HTTP_400_BAD_REQUEST),
+        pytest.param({"password": "a", "verify_password": "a"}, status.HTTP_400_BAD_REQUEST),
+        # email
+        pytest.param({"email": "t1@a.com", "password": "a", "verify_password": "a"}, status.HTTP_400_BAD_REQUEST),
+        # at least 8 char password
+        pytest.param({"email": "t2@a.com", "password": "a", "verify_password": "ab"}, status.HTTP_400_BAD_REQUEST),
+        pytest.param(
+            {"email": "t3@a.com", "password": "aaaaaaaa", "verify_password": "aaaaaaaaab"}, status.HTTP_400_BAD_REQUEST
+        ),
+        # password does not match
     ],
 )
 @pytest.mark.django_db

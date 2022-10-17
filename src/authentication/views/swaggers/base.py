@@ -11,7 +11,8 @@ class AuthBaseSwagger(django_filters.FilterSet):
         properties={
             "email": openapi.Schema(type=openapi.TYPE_STRING),
             "password": openapi.Schema(type=openapi.TYPE_STRING),
-            "old_or_verify_password": openapi.Schema(type=openapi.TYPE_STRING),
+            "verify_password": openapi.Schema(type=openapi.TYPE_STRING),
+            "old_password": openapi.Schema(type=openapi.TYPE_STRING),
         },
     )
     update = openapi.Schema(
@@ -20,7 +21,8 @@ class AuthBaseSwagger(django_filters.FilterSet):
         properties={
             "email": openapi.Schema(type=openapi.TYPE_STRING),
             "password": openapi.Schema(type=openapi.TYPE_STRING),
-            "old_or_verify_password": openapi.Schema(type=openapi.TYPE_STRING),
+            "verify_password": openapi.Schema(type=openapi.TYPE_STRING),
+            "old_password": openapi.Schema(type=openapi.TYPE_STRING),
         },
     )
 

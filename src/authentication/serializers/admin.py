@@ -4,15 +4,16 @@ from authentication.models import User, AttendantProfile
 from .base import UserBaseSerializer
 
 
-class UserSerializer(serializers.ModelSerializer, UserBaseSerializer):
+class AdminSerializer(serializers.ModelSerializer, UserBaseSerializer):
     email = serializers.EmailField(max_length=255, required=True)
     password = serializers.CharField(min_length=8, write_only=True)
-    old_or_verify_password = serializers.CharField(write_only=True)
+    verify_password = serializers.CharField(min_length=8, write_only=True, required=False)
+    old_password = serializers.CharField(write_only=True, required=False)
     role = serializers.CharField(max_length=50, required=False)
 
     class Meta:
         model = User
-        fields = ["id", "email", "password", "old_or_verify_password", "role"]
+        fields = ["id", "email", "password", "verify_password", "old_password", "role"]
 
     def validate(self, attrs):
         if self.context["request"].stream.method == "PATCH":  # Update

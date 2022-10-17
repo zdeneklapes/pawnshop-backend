@@ -6,7 +6,7 @@ from authentication import views as user_views
 
 # Automatically find all url based on ViewSet (all?)
 router = routers.DefaultRouter()
-router.register(prefix=r"user", viewset=user_views.UserViewSet)
+router.register(prefix=r"user", viewset=user_views.AdminViewSet)
 router.register(prefix=r"attendant", viewset=user_views.AttendantProfileViewSet)
 
 urlpatterns = [
