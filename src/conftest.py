@@ -6,15 +6,26 @@ from authentication.models import User, AttendantProfile
 from config.settings import SIMPLE_JWT
 
 
+# Cli
+def pytest_addoption(parser):
+    """Source: https://stackoverflow.com/a/42145604/14471542"""
+    parser.addoption("--authentication", action="store_true", default=False)
+
+
+@pytest.fixture(scope="session")
+def cli_args(request):
+    args = {}
+    args["authentication"] = request.config.getoption("--authentication")
+    return args
+
+
 # Settings
-@pytest.fixture(autouse=True)
-def test_login_required(settings):
-    settings.AUTH = True
-
-
-@pytest.fixture(autouse=True)
-def test_login_not_required(settings):
-    settings.AUTH = False
+@pytest.fixture()
+def test_login_required(settings, cli_args):
+    if cli_args["authentication"]:
+        settings.AUTH = True
+    else:
+        settings.AUTH = False
 
 
 # Login
