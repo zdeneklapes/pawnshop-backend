@@ -17,7 +17,7 @@ class StatisticDefaultSerializer(WritableNestedModelSerializer):
 
     class Meta:
         model = Statistic
-        fields = ["id", "amount", "profit", "datetime", "description", "price", "product", "username"]
+        fields = ["id", "amount", "profit", "datetime", "description", "price", "product", "username", "user"]
 
     @staticmethod
     def validate_operation(request: Request, buy_price_prev: int, sell_price_prev: int) -> Tuple[str, int]:
