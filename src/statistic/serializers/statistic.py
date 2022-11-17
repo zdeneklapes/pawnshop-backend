@@ -13,10 +13,11 @@ from config.settings import AUTH
 class StatisticDefaultSerializer(WritableNestedModelSerializer):
     amount = serializers.IntegerField(required=False, read_only=True)
     profit = serializers.IntegerField(required=False, read_only=True)
+    username = serializers.CharField(source="user.email", read_only=True)
 
     class Meta:
         model = Statistic
-        fields = "__all__"
+        fields = ["id", "amount", "profit", "datetime", "description", "price", "product", "username"]
 
     @staticmethod
     def validate_operation(request: Request, buy_price_prev: int, sell_price_prev: int) -> Tuple[str, int]:

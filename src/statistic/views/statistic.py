@@ -34,6 +34,7 @@ class StatisticQPSwagger(django_filters.FilterSet):
 @method_decorator(name="list", decorator=swagger_auto_schema(manual_parameters=[StatisticQPSwagger.data]))
 @method_decorator(name="create", decorator=swagger_auto_schema(request_body=StatisticQPSwagger.update))
 class StatisticViewSet(mixins.ListModelMixin, mixins.CreateModelMixin, viewsets.GenericViewSet):
+    # queryset = Statistic.objects.get_all_with_username()
     queryset = Statistic.objects.all()
     serializer_class = statistic_serializer.StatisticDefaultSerializer
     permission_classes = [permissions.IsAuthenticated] if AUTH else [permissions.AllowAny]
