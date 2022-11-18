@@ -2,7 +2,7 @@ from django.db import models
 
 
 class StatisticQPData(models.TextChoices):
-    DEFAULT = "ALL", "Vsechny zaznamy"
+    ALL = "ALL", "Vsechny zaznamy"
     DAILY_STATS = "DAILY_STATS", "Denni statistiky"
     CASH_AMOUNT = "CASH_AMOUNT", "Stav pokladny"
     RESET = "RESET", "Reset profit"
@@ -20,7 +20,7 @@ class StatisticDescription(models.TextChoices):
     # Move
     LOAN_TO_OFFER = "LOAN_TO_OFFER", "Presunuti do bazaru"
     #
-    UPDATE_DATA = "UPDATE_DATA", "Update data"
+    UPDATE_DATA = "UPDATE_DATA", "Produkt aktualizovan"
     # Logins
     LOGIN = "LOGIN", "Prihlaseni"
     LOGOUT = "LOGOUT", "Odhlaseni"

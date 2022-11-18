@@ -10,7 +10,20 @@ from common.exceptions import BadQueryParam
 from config.settings import AUTH
 
 
-class StatisticDefaultSerializer(WritableNestedModelSerializer):
+class StatisticAllSerializer(serializers.ModelSerializer):
+    amount = serializers.IntegerField(required=False, read_only=True)
+    profit = serializers.IntegerField(required=False, read_only=True)
+    username = serializers.CharField(source="user.email", read_only=True)
+    description = serializers.ChoiceField(
+        source="get_description_display", choices=StatisticDescription, read_only=True
+    )
+
+    class Meta:
+        model = Statistic
+        fields = ["id", "amount", "profit", "datetime", "description", "price", "product", "username", "user"]
+
+
+class StatisticSerializer(WritableNestedModelSerializer):
     amount = serializers.IntegerField(required=False, read_only=True)
     profit = serializers.IntegerField(required=False, read_only=True)
 
@@ -47,20 +60,20 @@ class StatisticDefaultSerializer(WritableNestedModelSerializer):
     @staticmethod
     def validate_and_save(request: Request, buy_price_prev: int, sell_price_prev: int) -> None:
         # Validate
-        operation, price = StatisticDefaultSerializer.validate_operation(request, buy_price_prev, sell_price_prev)
+        operation, price = StatisticSerializer.validate_operation(request, buy_price_prev, sell_price_prev)
 
         # Save Statistics
-        StatisticDefaultSerializer.save_statistics(
+        StatisticSerializer.save_statistics(
             price=price,
             operation=operation,
-            user=request.user.id,
+            user=1 if not AUTH else request.user.id,
             product=request.parser_context["kwargs"]["pk"],
         )
 
     @staticmethod
     def save_statistics(price: int, operation: str, user: int, product: int = None) -> None:
-        serializer_stats = StatisticDefaultSerializer(
-            data={"description": operation, "price": price, "product": product, "user": 1}  # TODO: user
+        serializer_stats = StatisticSerializer(
+            data={"description": operation, "price": price, "product": product, "user": user}
         )
         serializer_stats.is_valid()
         serializer_stats.save()
