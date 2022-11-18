@@ -34,9 +34,8 @@ class StatisticQPSwagger(django_filters.FilterSet):
 @method_decorator(name="list", decorator=swagger_auto_schema(manual_parameters=[StatisticQPSwagger.data]))
 @method_decorator(name="create", decorator=swagger_auto_schema(request_body=StatisticQPSwagger.update))
 class StatisticViewSet(mixins.ListModelMixin, mixins.CreateModelMixin, viewsets.GenericViewSet):
-    # queryset = Statistic.objects.get_all_with_username()
     queryset = Statistic.objects.all()
-    serializer_class = statistic_serializer.StatisticDefaultSerializer
+    serializer_class = statistic_serializer.StatisticSerializer
     permission_classes = [permissions.IsAuthenticated] if AUTH else [permissions.AllowAny]
 
     def parse_data_request(self):
@@ -77,6 +76,9 @@ class StatisticViewSet(mixins.ListModelMixin, mixins.CreateModelMixin, viewsets.
         data_req = self.parse_data_request()
         update_req = self.parse_update_request()
 
+        if data_req == StatisticQPData.DEFAULT.name:
+            return statistic_serializer.StatisticAllSerializer  # pylint: disable=E1120
+
         if data_req == StatisticQPData.CASH_AMOUNT.name:
             return statistic_serializer.StatisticCashAmountSerializer  # pylint: disable=E1120
 
@@ -84,7 +86,7 @@ class StatisticViewSet(mixins.ListModelMixin, mixins.CreateModelMixin, viewsets.
             return statistic_serializer.StatisticDailyStatsSerializer  # pylint: disable=E1120
 
         if update_req == StatisticQPData.RESET.name:
-            return statistic_serializer.StatisticDefaultSerializer  # pylint: disable=E1120
+            return statistic_serializer.StatisticSerializer  # pylint: disable=E1120
 
         return super(StatisticViewSet, self).get_serializer_class()  # default
 

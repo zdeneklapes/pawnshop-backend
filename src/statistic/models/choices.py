@@ -20,7 +20,7 @@ class StatisticDescription(models.TextChoices):
     # Move
     LOAN_TO_OFFER = "LOAN_TO_OFFER", "Presunuti do bazaru"
     #
-    UPDATE_DATA = "UPDATE_DATA", "Update data"
+    UPDATE_DATA = "UPDATE_DATA", "Produkt aktualizovan"
     # Logins
     LOGIN = "LOGIN", "Prihlaseni"
     LOGOUT = "LOGOUT", "Odhlaseni"

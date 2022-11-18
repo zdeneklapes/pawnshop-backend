@@ -10,7 +10,7 @@ from rest_framework import viewsets, permissions
 
 from product.serializers import product as product_serializers
 from product.models import Product, ProductStatusOrData, ProductShopData
-from statistic.serializers.statistic import StatisticDefaultSerializer
+from statistic.serializers.statistic import StatisticSerializer
 from statistic.models.choices import StatisticDescription
 from common.exceptions import BadQueryParam
 from config.settings import AUTH
@@ -87,7 +87,7 @@ class ProductViewSet(viewsets.ModelViewSet):
         response: Response = super().create(request)  # to internal_repre -> to to_repre
 
         try:
-            StatisticDefaultSerializer.save_statistics(
+            StatisticSerializer.save_statistics(
                 price=-response.data["buy_price"],
                 operation=StatisticDescription.LOAN_CREATE.name
                 if request.data["status"] == ProductStatusOrData.LOAN.name
@@ -110,7 +110,7 @@ class ProductViewSet(viewsets.ModelViewSet):
 
         response = super().partial_update(request)
         try:
-            StatisticDefaultSerializer.validate_and_save(request, buy_price_prev, sell_price_prev)
+            StatisticSerializer.validate_and_save(request, buy_price_prev, sell_price_prev)
         except BadQueryParam as e:
             return Response(data={"details": f"Statistic - {e}"}, status=BadQueryParam.status_code, exception=True)
         return response
