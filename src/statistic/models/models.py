@@ -97,10 +97,6 @@ class StatisticManager(models.Manager):
         )
         return qs
 
-    def get_all(self):
-        qs = Statistic.objects.all().get_status_display()
-        return qs
-
 
 class Statistic(models.Model):
     objects = StatisticManager()
