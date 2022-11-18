@@ -17,7 +17,7 @@ class StatisticQPSwagger(django_filters.FilterSet):
         name="data",
         in_=openapi.IN_QUERY,
         description=f"What data you need: "
-        f"{StatisticQPData.DEFAULT.name}, "  # pylint: disable=E1101
+        f"{StatisticQPData.ALL.name}, "  # pylint: disable=E1101
         f"{StatisticQPData.DAILY_STATS.name}, "  # pylint: disable=E1101
         f"{StatisticQPData.CASH_AMOUNT.name}",  # pylint: disable=E1101
         type=openapi.TYPE_STRING,
@@ -42,10 +42,10 @@ class StatisticViewSet(mixins.ListModelMixin, mixins.CreateModelMixin, viewsets.
         var_search = "data"
 
         if var_search not in self.request.query_params:
-            return StatisticQPData.DEFAULT.name
+            return StatisticQPData.ALL.name
 
         if self.request.query_params[var_search] not in StatisticQPData.values:  # pylint: disable=E1101:
-            return StatisticQPData.DEFAULT.name
+            return StatisticQPData.ALL.name
 
         return self.request.query_params[var_search]
 
@@ -53,10 +53,10 @@ class StatisticViewSet(mixins.ListModelMixin, mixins.CreateModelMixin, viewsets.
         var_search = "update"
 
         if var_search not in self.request.data:
-            return StatisticQPData.DEFAULT.name
+            return StatisticQPData.ALL.name
 
         if self.request.data[var_search] not in StatisticQPData.values:  # pylint: disable=E1101:
-            return StatisticQPData.DEFAULT.name
+            return StatisticQPData.ALL.name
 
         return self.request.data[var_search]
 
@@ -76,7 +76,7 @@ class StatisticViewSet(mixins.ListModelMixin, mixins.CreateModelMixin, viewsets.
         data_req = self.parse_data_request()
         update_req = self.parse_update_request()
 
-        if data_req == StatisticQPData.DEFAULT.name:
+        if data_req == StatisticQPData.ALL.name:
             return statistic_serializer.StatisticAllSerializer  # pylint: disable=E1120
 
         if data_req == StatisticQPData.CASH_AMOUNT.name:

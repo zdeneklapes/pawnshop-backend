@@ -66,14 +66,14 @@ class StatisticSerializer(WritableNestedModelSerializer):
         StatisticSerializer.save_statistics(
             price=price,
             operation=operation,
-            user=request.user.id,
+            user=1 if not AUTH else request.user.id,
             product=request.parser_context["kwargs"]["pk"],
         )
 
     @staticmethod
     def save_statistics(price: int, operation: str, user: int, product: int = None) -> None:
         serializer_stats = StatisticSerializer(
-            data={"description": operation, "price": price, "product": product, "user": 1}  # TODO: user
+            data={"description": operation, "price": price, "product": product, "user": user}
         )
         serializer_stats.is_valid()
         serializer_stats.save()

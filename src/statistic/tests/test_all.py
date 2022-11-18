@@ -45,7 +45,7 @@ def test_loan_create(client_admin, load_all_fixtures_for_module, payload):
     assert new_stat["amount"] == old_stat["amount"] - product["buy_price"]
     assert new_stat["profit"] == old_stat["profit"] - product["buy_price"]
     assert str(datetime.date.today()) in new_stat["datetime"]
-    assert new_stat["description"] == StatisticDescription.LOAN_CREATE.value
+    assert new_stat["description"] == StatisticDescription.LOAN_CREATE.label
     assert new_stat["price"] == -product["buy_price"]
     assert new_stat["product"] == response_update.data["id"]
 
@@ -55,7 +55,7 @@ def test_loan_create(client_admin, load_all_fixtures_for_module, payload):
     [
         pytest.param(
             6,
-            {"update": StatisticDescription.LOAN_TO_OFFER.value, "sell_price": 1200},
+            {"update": StatisticDescription.LOAN_TO_OFFER.name, "sell_price": 1200},
         ),
     ],
 )
@@ -72,7 +72,7 @@ def test_loan_to_offer(client_admin, load_all_fixtures_for_function, product_id,
     assert new_stat["amount"] == old_stat["amount"]
     assert new_stat["profit"] == old_stat["profit"]
     assert str(datetime.date.today()) in new_stat["datetime"]
-    assert new_stat["description"] == StatisticDescription.LOAN_TO_OFFER.value
+    assert new_stat["description"] == StatisticDescription.LOAN_TO_OFFER.label
     assert new_stat["price"] == 0
     assert new_stat["product"] == response_update.data["id"]
 
@@ -82,9 +82,9 @@ def test_loan_to_offer(client_admin, load_all_fixtures_for_function, product_id,
     [
         pytest.param(
             1,
-            {"update": StatisticDescription.LOAN_EXTEND.value},
+            {"update": StatisticDescription.LOAN_EXTEND.name},
         ),
-        # pytest.param(6, {"update": StatisticDescription.LOAN_TO_OFFER.value, "sell_price": 1200}, ),
+        # pytest.param(6, {"update": StatisticDescription.LOAN_TO_OFFER.label, "sell_price": 1200}, ),
     ],
 )
 @pytest.mark.django_db
@@ -101,7 +101,7 @@ def test_loan_extend(client_admin, load_all_fixtures_for_function, product_id, p
     assert new_stat["amount"] == old_stat["amount"] + (product["sell_price"] - product["buy_price"])
     assert new_stat["profit"] == old_stat["profit"] + (product["sell_price"] - product["buy_price"])
     assert str(datetime.date.today()) in new_stat["datetime"]
-    assert new_stat["description"] == StatisticDescription.LOAN_EXTEND.value
+    assert new_stat["description"] == StatisticDescription.LOAN_EXTEND.label
     assert new_stat["price"] == (product["sell_price"] - product["buy_price"])
     assert new_stat["product"] == response_update.data["id"]
 
@@ -111,7 +111,7 @@ def test_loan_extend(client_admin, load_all_fixtures_for_function, product_id, p
     [
         pytest.param(
             1,
-            {"update": StatisticDescription.LOAN_RETURN.value},
+            {"update": StatisticDescription.LOAN_RETURN.name},
         ),
     ],
 )
@@ -129,7 +129,7 @@ def test_loan_return(client_admin, load_all_fixtures_for_function, product_id, p
     assert new_stat["amount"] == old_stat["amount"] + product["sell_price"]
     assert new_stat["profit"] == old_stat["profit"] + product["sell_price"]
     assert str(datetime.date.today()) in new_stat["datetime"]
-    assert new_stat["description"] == StatisticDescription.LOAN_RETURN.value
+    assert new_stat["description"] == StatisticDescription.LOAN_RETURN.label
     assert new_stat["price"] == product["sell_price"]
     assert new_stat["product"] == response_update.data["id"]
 
@@ -174,7 +174,7 @@ def test_offer_create(client_admin, load_all_fixtures_for_function, payload):
     assert new_stat["amount"] == old_stat["amount"] - product["buy_price"]
     assert new_stat["profit"] == old_stat["profit"] - product["buy_price"]
     assert str(datetime.date.today()) in new_stat["datetime"]
-    assert new_stat["description"] == StatisticDescription.OFFER_BUY.value
+    assert new_stat["description"] == StatisticDescription.OFFER_BUY.label
     assert new_stat["price"] == -product["buy_price"]
     assert new_stat["product"] == response_update.data["id"]
 
@@ -185,7 +185,7 @@ def test_offer_create(client_admin, load_all_fixtures_for_function, payload):
         pytest.param(
             4,
             {
-                "update": f"{StatisticDescription.OFFER_BUY.value}",
+                "update": f"{StatisticDescription.OFFER_BUY.name}",
                 "quantity": 1,
             },
             status.HTTP_200_OK,
@@ -193,7 +193,7 @@ def test_offer_create(client_admin, load_all_fixtures_for_function, payload):
         pytest.param(
             5,
             {
-                "update": f"{StatisticDescription.OFFER_BUY.value}",
+                "update": f"{StatisticDescription.OFFER_BUY.name}",
                 "quantity": 2,
             },
             status.HTTP_200_OK,
@@ -214,7 +214,7 @@ def test_offer_buy(client_admin, load_all_fixtures_for_function, product_id, pay
     assert new_stat["amount"] == old_stat["amount"] - (payload["quantity"] * product["buy_price"])
     assert new_stat["profit"] == old_stat["profit"] - (payload["quantity"] * product["buy_price"])
     assert str(datetime.date.today()) in new_stat["datetime"]
-    assert new_stat["description"] == StatisticDescription.OFFER_BUY.value
+    assert new_stat["description"] == StatisticDescription.OFFER_BUY.label
     assert new_stat["price"] == -product["buy_price"] * payload["quantity"]
     assert new_stat["product"] == product_id
 
@@ -225,7 +225,7 @@ def test_offer_buy(client_admin, load_all_fixtures_for_function, product_id, pay
         pytest.param(
             4,
             {
-                "update": f"{StatisticDescription.OFFER_SELL.value}",
+                "update": f"{StatisticDescription.OFFER_SELL.name}",
                 "quantity": 1,
             },
             status.HTTP_200_OK,
@@ -233,7 +233,7 @@ def test_offer_buy(client_admin, load_all_fixtures_for_function, product_id, pay
         pytest.param(
             5,
             {
-                "update": f"{StatisticDescription.OFFER_SELL.value}",
+                "update": f"{StatisticDescription.OFFER_SELL.name}",
                 "quantity": 2,
             },
             status.HTTP_200_OK,
@@ -251,11 +251,11 @@ def test_offer_sell(client_admin, load_all_fixtures_for_function, product_id, pa
     new_stat = response_get_2.data[-1]
 
     assert len(response_get.data) == len(response_get_2.data) - 1
-    assert new_stat["description"] == StatisticDescription.OFFER_SELL.value
+    assert new_stat["description"] == StatisticDescription.OFFER_SELL.label
     assert new_stat["amount"] == old_stat["amount"] + (payload["quantity"] * product["sell_price"])
     assert new_stat["profit"] == old_stat["profit"] + (payload["quantity"] * product["sell_price"])
     assert str(datetime.date.today()) in new_stat["datetime"]
-    assert new_stat["description"] == StatisticDescription.OFFER_SELL.value
+    assert new_stat["description"] == StatisticDescription.OFFER_SELL.label
     assert new_stat["price"] == product["sell_price"] * payload["quantity"]
     assert new_stat["product"] == product_id
 
@@ -266,7 +266,7 @@ def test_offer_sell(client_admin, load_all_fixtures_for_function, product_id, pa
         pytest.param(
             4,
             {
-                "update": f"{StatisticDescription.UPDATE_DATA.value}",
+                "update": f"{StatisticDescription.UPDATE_DATA.name}",
                 "product_name": "Telefon Samsung 1",
                 "sell_price": 100,
                 "date_create": "2022-09-01T14:31:47.080000Z",
@@ -315,7 +315,7 @@ def test_statistic_default_data(client_admin, load_all_fixtures_for_function):
 )
 @pytest.mark.django_db
 def test_statistic_cash_amount_data(client_admin, load_all_fixtures_for_function):
-    response_get = client_admin.get(path=f"/statistic/?data={StatisticQPData.CASH_AMOUNT.value}")
+    response_get = client_admin.get(path=f"/statistic/?data={StatisticQPData.CASH_AMOUNT.name}")
     response_get_all = client_admin.get(path="/statistic/")
     assert len(response_get.data) == 1
     assert response_get.data[0]["amount"] == response_get_all.data[-1]["amount"]
@@ -366,7 +366,7 @@ def test_statistic_cash_amount_data(client_admin, load_all_fixtures_for_function
 )
 @pytest.mark.django_db
 def test_statistic_daily_stats_data(client_admin, load_all_fixtures_for_function, exp_data):
-    response_get = client_admin.get(path=f"/statistic/?data={StatisticQPData.DAILY_STATS.value}")
+    response_get = client_admin.get(path=f"/statistic/?data={StatisticQPData.DAILY_STATS.name}")
     assert len(response_get.data) == 2
     assert response_get.data == exp_data
 
@@ -374,7 +374,7 @@ def test_statistic_daily_stats_data(client_admin, load_all_fixtures_for_function
 @pytest.mark.parametrize(
     "payload, exp_status",
     [
-        pytest.param({"update": f"{StatisticDescription.RESET.value}"}, status.HTTP_201_CREATED),
+        pytest.param({"update": f"{StatisticDescription.RESET.name}"}, status.HTTP_201_CREATED),
     ],
 )
 @pytest.mark.django_db
@@ -383,5 +383,5 @@ def test_statistic_reset_profit(client_admin, load_all_fixtures_for_module, payl
     response_get = client_admin.get(path="/statistic/")
     assert response.status_code == exp_status
     assert len(response_get.data) == 19
-    assert response_get.data[-1]["description"] == StatisticDescription.RESET.value
+    assert response_get.data[-1]["description"] == StatisticDescription.RESET.label
     assert response_get.data[-1]["profit"] == 0

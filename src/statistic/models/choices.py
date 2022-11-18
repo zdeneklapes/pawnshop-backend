@@ -2,7 +2,7 @@ from django.db import models
 
 
 class StatisticQPData(models.TextChoices):
-    DEFAULT = "ALL", "Vsechny zaznamy"
+    ALL = "ALL", "Vsechny zaznamy"
     DAILY_STATS = "DAILY_STATS", "Denni statistiky"
     CASH_AMOUNT = "CASH_AMOUNT", "Stav pokladny"
     RESET = "RESET", "Reset profit"
