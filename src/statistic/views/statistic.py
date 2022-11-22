@@ -2,33 +2,27 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework import mixins, viewsets, status, permissions
 from django.utils.decorators import method_decorator
-from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
-import django_filters
 
 from statistic.models.models import Statistic
 from statistic.serializers import statistic as statistic_serializer
 from statistic.models.choices import StatisticQPData
 from config.settings import AUTH
+from statistic.views.swagger import StatisticQPSwagger
 
 
-class StatisticQPSwagger(django_filters.FilterSet):
-    data = openapi.Parameter(
-        name="data",
-        in_=openapi.IN_QUERY,
-        description=f"What data you need: "
-        f"{StatisticQPData.ALL.name}, "  # pylint: disable=E1101
-        f"{StatisticQPData.DAILY_STATS.name}, "  # pylint: disable=E1101
-        f"{StatisticQPData.CASH_AMOUNT.name}",  # pylint: disable=E1101
-        type=openapi.TYPE_STRING,
-    )
-    update = openapi.Schema(
-        type=openapi.TYPE_OBJECT,
-        in_=openapi.IN_BODY,
-        properties={
-            "update": openapi.Schema(type=openapi.TYPE_STRING, default=f"{StatisticQPData.RESET.name}"),
-        },
-    )
+# TODO: where to handle user permissions?
+# TODO: where to set permissions for each user?
+# TODO: groups vs. permissions?
+
+
+class StatisticPermission(permissions.BasePermission):
+    def has_permission(self, request: Request, view: "StatisticViewSet") -> bool:
+        # foo = request.user.groups.filter(name="Member").exists()
+
+        if request.method in permissions.SAFE_METHODS:
+            return request.user.has_perm("statistic.view_statistic")
+        return request.user.has_perm("statistic.reset_daily_stats")
 
 
 @method_decorator(name="list", decorator=swagger_auto_schema(manual_parameters=[StatisticQPSwagger.data]))
@@ -36,7 +30,16 @@ class StatisticQPSwagger(django_filters.FilterSet):
 class StatisticViewSet(mixins.ListModelMixin, mixins.CreateModelMixin, viewsets.GenericViewSet):
     queryset = Statistic.objects.all()
     serializer_class = statistic_serializer.StatisticSerializer
-    permission_classes = [permissions.IsAuthenticated] if AUTH else [permissions.AllowAny]
+    permission_classes = (
+        [
+            permissions.IsAuthenticated,
+            permissions.DjangoObjectPermissions,
+            permissions.DjangoModelPermissions,
+            StatisticPermission,
+        ]
+        if AUTH
+        else [permissions.AllowAny]
+    )
 
     def parse_data_request(self):
         var_search = "data"

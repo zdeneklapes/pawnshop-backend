@@ -385,3 +385,28 @@ def test_statistic_reset_profit(client_admin, load_all_fixtures_for_module, payl
     assert len(response_get.data) == 19
     assert response_get.data[-1]["description"] == StatisticDescription.RESET.label
     assert response_get.data[-1]["profit"] == 0
+
+
+@pytest.mark.skip("Not implemented")
+def test_user_login():
+    pass
+
+
+@pytest.mark.skip("Not implemented")
+def test_user_logout():
+    pass
+
+
+@pytest.mark.skip("Not implemented")
+def test_user_created():
+    pass
+
+
+@pytest.mark.skip("Not implemented")
+def test_user_deleted():
+    pass
+
+
+@pytest.mark.skip("Not implemented")
+def test_user_updated():
+    pass

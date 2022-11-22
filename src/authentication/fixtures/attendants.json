@@ -1,7 +1,7 @@
 [
   {
     "model": "authentication.attendantprofile",
-    "pk": 2,
+    "pk": 3,
     "fields": {
       "perm_edit_custom_user": false,
       "perm_edit_cash_desk": false,

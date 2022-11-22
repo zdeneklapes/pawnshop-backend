@@ -3,4 +3,8 @@ from django.contrib import admin
 
 from . import models
 
-admin.site.register(models.Shop)
+
+@admin.register(models.Shop)
+class ShopAdmin(admin.ModelAdmin):
+    pass
+    # list_display = ("name", "owner", "location", "phone_number")

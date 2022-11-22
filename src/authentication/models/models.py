@@ -1,5 +1,7 @@
+# pylint: disable=E1101
 from django.contrib.auth.models import AbstractUser
 from django.db import models
+from django.contrib.auth.models import Group
 
 from shop.models import Shop
 from .choices import UserRoleChoice
@@ -7,6 +9,10 @@ from .managers import CustomUserManager
 
 
 class User(AbstractUser):
+    class Meta:
+        verbose_name = "User"
+        verbose_name_plural = "Users"
+
     objects = CustomUserManager()
 
     base_role = UserRoleChoice.ADMIN
@@ -32,10 +38,27 @@ class User(AbstractUser):
 
     def save(self, *args, **kwargs):
         self.role = self.base_role
+
+        if self.role == UserRoleChoice.ATTENDANT.name:
+            my_group = Group.objects.get(name="attendant")
+            my_group.user_set.add(self)
+
+        if self.role == UserRoleChoice.ADMIN.name and self.is_superuser:
+            my_group = Group.objects.get(name="admin")
+            my_group.user_set.add(self)
+
+        if self.role == UserRoleChoice.ATTENDANT.name and not self.is_superuser:
+            my_group = Group.objects.get(name="admin_user")
+            my_group.user_set.add(self)
+
         return super().save(*args, **kwargs)
 
 
 class AttendantProfile(User):
+    class Meta:
+        verbose_name = "Attendant"
+        verbose_name_plural = "Attendants"
+
     base_role = UserRoleChoice.ATTENDANT
 
     # Customer

@@ -1,7 +1,27 @@
 from django.contrib import admin
+from django.contrib.auth.models import Permission
 
 from . import models
 
-# Note all Usertypes must be registered, otherwise error
-admin.site.register(models.User)
-admin.site.register(models.AttendantProfile)
+
+# ######################################################################################################################
+# Authentication
+# ######################################################################################################################
+@admin.register(models.User)
+class UserAdmin(admin.ModelAdmin):
+    pass
+
+
+@admin.register(models.AttendantProfile)
+class AttendantProfileAdmin(admin.ModelAdmin):
+    pass
+
+
+# ######################################################################################################################
+# Permissions
+# ######################################################################################################################
+
+
+@admin.register(Permission)
+class PermissionAdmin(admin.ModelAdmin):
+    pass
