@@ -16,13 +16,13 @@ from statistic.views.swagger import StatisticQPSwagger
 # TODO: groups vs. permissions?
 
 
-class StatisticPermission(permissions.BasePermission):
-    def has_permission(self, request: Request, view: "StatisticViewSet") -> bool:
-        # foo = request.user.groups.filter(name="Member").exists()
-
-        if request.method in permissions.SAFE_METHODS:
-            return request.user.has_perm("statistic.view_statistic")
-        return request.user.has_perm("statistic.reset_daily_stats")
+# class StatisticPermission(permissions.BasePermission):
+#     def has_permission(self, request: Request, view: "StatisticViewSet") -> bool:
+#         # foo = request.user.groups.filter(name="Member").exists()
+#
+#         if request.method in permissions.SAFE_METHODS:
+#             return request.user.has_perm("statistic.view_statistic")
+#         return request.user.has_perm("statistic.reset_daily_stats")
 
 
 @method_decorator(name="list", decorator=swagger_auto_schema(manual_parameters=[StatisticQPSwagger.data]))
@@ -30,16 +30,7 @@ class StatisticPermission(permissions.BasePermission):
 class StatisticViewSet(mixins.ListModelMixin, mixins.CreateModelMixin, viewsets.GenericViewSet):
     queryset = Statistic.objects.all()
     serializer_class = statistic_serializer.StatisticSerializer
-    permission_classes = (
-        [
-            permissions.IsAuthenticated,
-            # permissions.DjangoObjectPermissions,
-            # permissions.DjangoModelPermissions,
-            # StatisticPermission,
-        ]
-        if AUTH
-        else [permissions.AllowAny]
-    )
+    permission_classes = [permissions.IsAuthenticated] if AUTH else [permissions.AllowAny]
 
     def parse_data_request(self):
         var_search = "data"

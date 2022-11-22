@@ -6,6 +6,32 @@ from authentication.models import User, AttendantProfile
 from config.settings import SIMPLE_JWT
 import config.settings as django_settings
 
+# ######################################################################################################################
+# Global Variables
+# ######################################################################################################################
+FIXTURES = ["groups", "users.json", "attendants.json", "customers.json", "products.json", "statistics.json"]
+
+
+# ######################################################################################################################
+# Data
+# ######################################################################################################################
+@pytest.fixture(scope="module")
+def load_all_fixtures_for_module(django_db_setup, django_db_blocker):
+    with django_db_blocker.unblock():
+        call_command("loaddata", FIXTURES)
+
+
+@pytest.fixture(scope="function")
+def load_all_fixtures_for_function(django_db_setup, django_db_blocker):
+    with django_db_blocker.unblock():
+        call_command("loaddata", FIXTURES)
+
+
+@pytest.fixture(scope="function")
+def load_groups_fixture_for_function(django_db_setup, django_db_blocker):
+    with django_db_blocker.unblock():
+        call_command("loaddata", "groups")
+
 
 # ######################################################################################################################
 # Cli
@@ -40,14 +66,14 @@ def test_login_required_2(cli_args):
 # Login
 # ######################################################################################################################
 @pytest.fixture(scope="function")
-def admin():
+def admin(load_groups_fixture_for_function):
     payload = {"email": "admin_test1@a.com", "password": "admin_test1"}
     user = User.objects.create_superuser(**payload)
     return user, payload
 
 
 @pytest.fixture(scope="function")
-def attendant():
+def attendant(load_groups_fixture_for_function):
     payload = {"email": "atendant_test1@a.com", "password": "attendant_test1"}
     user = AttendantProfile.objects.create_user(**payload)
     return user, payload
@@ -70,18 +96,3 @@ def client_attendant(client, attendant, test_login_required):
     response = client.post("http://localhost:8000/authentication/token/create/", data=attendant[1])
     client.credentials(HTTP_AUTHORIZATION=f"{SIMPLE_JWT['AUTH_HEADER_TYPES'][0]} {response.data['access']}")
     return client
-
-
-# ######################################################################################################################
-# Data
-# ######################################################################################################################
-@pytest.fixture(scope="module")
-def load_all_fixtures_for_module(django_db_setup, django_db_blocker):
-    with django_db_blocker.unblock():
-        call_command("loaddata", "users.json", "attendants.json", "customers.json", "products.json", "statistics.json")
-
-
-@pytest.fixture(scope="function")
-def load_all_fixtures_for_function(django_db_setup, django_db_blocker):
-    with django_db_blocker.unblock():
-        call_command("loaddata", "users.json", "attendants.json", "customers.json", "products.json", "statistics.json")

@@ -91,7 +91,7 @@ function django_loaddata() {
     python3 manage.py makemigrations
     python3 manage.py migrate
     python3 manage.py loaddata \
-        "./config/groups/fixtures/groups.json" \
+        "./authentication/fixtures/groups.json" \
         "./authentication/fixtures/users.json" \
         "./authentication/fixtures/attendants.json" \
         "./customer/fixtures/customers.json" \

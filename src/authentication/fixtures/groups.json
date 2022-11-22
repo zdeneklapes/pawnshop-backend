@@ -3,7 +3,7 @@
     "model": "auth.group",
     "pk": 1,
     "fields": {
-      "name": "admin",
+      "name": "admin_admin",
       "permissions": [
         1,
         2,
@@ -59,7 +59,7 @@
     "model": "auth.group",
     "pk": 2,
     "fields": {
-      "name": "admin_user",
+      "name": "ADMIN",
       "permissions": [
         4,
         25,
@@ -97,7 +97,7 @@
     "model": "auth.group",
     "pk": 3,
     "fields": {
-      "name": "attendant",
+      "name": "ATTENDANT",
       "permissions": [
         1,
         2,

@@ -38,20 +38,11 @@ class User(AbstractUser):
 
     def save(self, *args, **kwargs):
         self.role = self.base_role
-
-        if self.role == UserRoleChoice.ATTENDANT.name:
-            my_group = Group.objects.get(name="attendant")
-            my_group.user_set.add(self)
-
-        if self.role == UserRoleChoice.ADMIN.name and self.is_superuser:
-            my_group = Group.objects.get(name="admin")
-            my_group.user_set.add(self)
-
-        if self.role == UserRoleChoice.ATTENDANT.name and not self.is_superuser:
-            my_group = Group.objects.get(name="admin_user")
-            my_group.user_set.add(self)
-
-        return super().save(*args, **kwargs)
+        my_group = Group.objects.get(name=self.role)
+        super().save(*args, **kwargs)
+        self.refresh_from_db()
+        if my_group:
+            my_group.user_set.remove(self)
 
 
 class AttendantProfile(User):
