@@ -33,9 +33,9 @@ class StatisticViewSet(mixins.ListModelMixin, mixins.CreateModelMixin, viewsets.
     permission_classes = (
         [
             permissions.IsAuthenticated,
-            permissions.DjangoObjectPermissions,
-            permissions.DjangoModelPermissions,
-            StatisticPermission,
+            # permissions.DjangoObjectPermissions,
+            # permissions.DjangoModelPermissions,
+            # StatisticPermission,
         ]
         if AUTH
         else [permissions.AllowAny]
