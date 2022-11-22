@@ -4,9 +4,12 @@ from rest_framework.test import APIClient
 
 from authentication.models import User, AttendantProfile
 from config.settings import SIMPLE_JWT
+import config.settings as django_settings
 
 
+# ######################################################################################################################
 # Cli
+# ######################################################################################################################
 def pytest_addoption(parser):
     """Source: https://stackoverflow.com/a/42145604/14471542"""
     parser.addoption("--authentication", action="store_true", default=False)
@@ -28,7 +31,14 @@ def test_login_required(settings, cli_args):
         settings.AUTH = False
 
 
+@pytest.fixture()
+def test_login_required_2(cli_args):
+    django_settings.__dict__["AUTH"] = True
+
+
+# ######################################################################################################################
 # Login
+# ######################################################################################################################
 @pytest.fixture(scope="function")
 def admin():
     payload = {"email": "admin_test1@a.com", "password": "admin_test1"}
@@ -62,7 +72,9 @@ def client_attendant(client, attendant, test_login_required):
     return client
 
 
+# ######################################################################################################################
 # Data
+# ######################################################################################################################
 @pytest.fixture(scope="module")
 def load_all_fixtures_for_module(django_db_setup, django_db_blocker):
     with django_db_blocker.unblock():
