@@ -2,7 +2,7 @@
 #  python: python3.9
 default_stages: [ commit, push ]
 files: ''
-exclude: ^$
+exclude: '(venv/)|(.pytest_caches/)|(src/third_party/)|(env/)|(src/staticfiles/)'
 fail_fast: false
 minimum_pre_commit_version: '0'
 repos:
@@ -14,6 +14,14 @@ repos:
         language: system
         pass_filenames: true
         types: [ python ]
+
+  - repo: meta
+    hooks:
+      #      - id: check-hooks-apply
+      - id: check-useless-excludes
+      - id: identity
+
+
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v3.4.0
     hooks:
@@ -91,6 +99,7 @@ repos:
     rev: pylint-2.6.0
     hooks:
       - id: pylint
-        args:
-          - --rcfile=./.pylintrc
+        args: [ "--rcfile=./.pylintrc" ]
         files: src/
+        language_version: python3.10.8
+        additional_dependencies: [ "pylint==2.6.0" ]
