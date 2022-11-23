@@ -1,6 +1,5 @@
 import pytest
 from rest_framework import status
-from statistic.models import StatisticDescription
 from deepdiff import DeepDiff
 
 
@@ -10,27 +9,7 @@ from deepdiff import DeepDiff
     [
         pytest.param(
             4,
-            {
-                "update": f"{StatisticDescription.UPDATE_DATA.name}",
-                "product_name": "Telefon Samsung 111",
-                "date_create": "2022-09-05T14:31:47.080000Z",
-                "date_extend": "2022-09-05T14:31:47.080000Z",
-                "status": "OFFER",
-                "customer": {
-                    "full_name": "a b",
-                    "residence": "Cejl 222",
-                    "sex": "F",
-                    "nationality": "SK",
-                    "personal_id": "0000000000",
-                    "personal_id_expiration_date": "2023-02-02",
-                    "birthplace": "Prha",
-                    "id_birth": "000000/0001",
-                },
-                "interest_rate_or_quantity": "1.0",
-                "inventory_id": 111,
-                "buy_price": 100,
-                "sell_price": 11111,
-            },
+            pytest.UpdateProductData.data_update,
             status.HTTP_200_OK,
             status.HTTP_200_OK,
         ),
