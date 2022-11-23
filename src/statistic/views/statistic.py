@@ -10,26 +10,13 @@ from statistic.models.models import Statistic
 from statistic.serializers import statistic as statistic_serializer
 from statistic.models.choices import StatisticQueryParams
 from config.settings import AUTH
+from statistic.views.permissions import StatisticPermission
 from statistic.views.swagger import StatisticQPSwagger
 
 
 # TODO: where to handle user permissions?
 # TODO: where to set permissions for each user?
 # TODO: groups vs. permissions?
-
-
-class StatisticPermission(permissions.BasePermission):
-    def has_permission(self, request: Request, view: "StatisticViewSet") -> bool:
-        if request.method == "GET" and request.query_params.get("data") == StatisticQueryParams.ALL.name:
-            return request.user.has_perm("statistic.view_statistic")
-        if request.method == "GET" and request.query_params.get("data") == StatisticQueryParams.CASH_AMOUNT.name:
-            return request.user.has_perm("statistic.data_cash_amount")
-        if request.method == "GET" and request.query_params.get("data") == StatisticQueryParams.DAILY_STATS.name:
-            return request.user.has_perm("statistic.data_daily_stats")
-        if request.method == "POST" and request.data.get("update") == StatisticQueryParams.RESET.name:
-            return request.user.has_perm("statistic.update_reset")
-
-        return False
 
 
 @method_decorator(name="list", decorator=swagger_auto_schema(manual_parameters=[StatisticQPSwagger.data]))
