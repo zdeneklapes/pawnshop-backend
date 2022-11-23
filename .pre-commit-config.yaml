@@ -6,15 +6,6 @@ exclude: '(venv/)|(.pytest_caches/)|(src/third_party/)|(env/)|(src/staticfiles/)
 fail_fast: false
 minimum_pre_commit_version: '0'
 repos:
-  - repo: local
-    hooks:
-      - id: pytest-check
-        name: pytest-check
-        entry: bash -c "export PYTHONPATH='$PWD/venv/bin/python3'"
-        language: system
-        pass_filenames: true
-        types: [ python ]
-
   - repo: meta
     hooks:
       #      - id: check-hooks-apply
@@ -40,11 +31,7 @@ repos:
       - id: detect-aws-credentials
         args: [ --allow-missing-credentials ]
       - id: detect-private-key
-  #  - repo: https://github.com/pycqa/isort
-  #    rev: 5.8.0
-  #    hooks:
-  #      - id: isort
-  #        args: [ ]
+
   - repo: https://github.com/psf/black
     rev: 22.6.0
     hooks:
@@ -103,3 +90,12 @@ repos:
         files: src/
         language_version: python3.10.8
         additional_dependencies: [ "pylint==2.6.0" ]
+#
+#  - repo: local
+#    hooks:
+#      - id: pytest-check
+#        name: pytest
+#        entry: pytest --no-summary -q -n 7
+#        language: system
+#        pass_filenames: false
+#        always_run: true

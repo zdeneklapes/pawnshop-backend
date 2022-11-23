@@ -71,7 +71,7 @@ def test_create_user(client_admin, payload, exp_status):
     ],
 )
 @pytest.mark.django_db
-def test_update_admin_by_admin(client_admin, load_all_fixtures_for_function, user_id, payload, exp_status):
+def test_update_admin_by_admin(load_all_fixtures_for_function, client_admin, user_id, payload, exp_status):
     response_update = client_admin.patch(path=f"/authentication/user/{user_id}/", data=payload, format="json")
     assert response_update.status_code == exp_status
 
@@ -192,3 +192,8 @@ def test_delete_user(client_admin, test_login_required, load_all_fixtures_for_fu
 
     assert body == response.data or all(field in response.data for field in body)
     assert response.status_code == exp_status
+
+
+@pytest.mark.skip(reason="not implemented")
+def test_logout():
+    pass

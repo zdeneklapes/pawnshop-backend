@@ -90,17 +90,10 @@ class ProductViewSet(viewsets.ModelViewSet):
         response: Response = super().create(request)  # to internal_repre -> to to_repre
 
         try:
-            StatisticSerializer.save_statistics(
-                price=-response.data["buy_price"],
-                operation=StatisticDescription.LOAN_CREATE.name
-                if request.data["status"] == ProductStatusOrData.LOAN.name
-                else StatisticDescription.OFFER_BUY.name,
-                user=1 if not AUTH else request.user.id,
-                product=response.data["id"],
-            )
+            StatisticSerializer.save_statistic_product_create(request, response)
         except AssertionError as e:
             return Response(
-                data={"error": f"{ProductViewSet.create.__qualname__} - {e} - statistics"}, status=response.status_code
+                {"error": f"{ProductViewSet.create.__qualname__} - {e} - statistics"}, status=response.status_code
             )
 
         return response

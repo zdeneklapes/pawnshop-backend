@@ -1,4 +1,4 @@
-from typing import Tuple
+from typing import Optional, Tuple
 
 from rest_framework import serializers
 from drf_writable_nested import WritableNestedModelSerializer
@@ -8,6 +8,7 @@ from statistic.models import Statistic
 from statistic.models.choices import StatisticQueryParams, StatisticDescription
 from common.exceptions import BadQueryParam
 from config.settings import AUTH
+from product.models.choices import ProductStatusOrData
 
 
 class StatisticAllSerializer(serializers.ModelSerializer):
@@ -62,20 +63,31 @@ class StatisticSerializer(WritableNestedModelSerializer):
         # Validate
         operation, price = StatisticSerializer.validate_operation(request, buy_price_prev, sell_price_prev)
 
-        # Save Statistics
         StatisticSerializer.save_statistics(
-            price=price,
             operation=operation,
             user=1 if not AUTH else request.user.id,
+            price=price,
             product=request.parser_context["kwargs"]["pk"],
         )
 
     @staticmethod
-    def save_statistics(price: int, operation: str, user: int, product: int = None) -> None:
+    def save_statistic_product_create(request, response) -> None:
+        StatisticSerializer.save_statistics(
+            operation=StatisticDescription.LOAN_CREATE.name
+            if request.data["status"] == ProductStatusOrData.LOAN.name
+            else StatisticDescription.OFFER_BUY.name,
+            user=1 if not AUTH else request.user.id,
+            price=-response.data["buy_price"],
+            product=response.data["id"],
+        )
+
+    @staticmethod
+    def save_statistics(operation: str, user: int, price: Optional[int] = None, product: Optional[int] = None) -> None:
         serializer_stats = StatisticSerializer(
             data={"description": operation, "price": price, "product": product, "user": user}
         )
-        serializer_stats.is_valid()
+        if not serializer_stats.is_valid():
+            raise serializers.ValidationError(serializer_stats.errors)
         serializer_stats.save()
 
     def to_internal_value(self, data):
