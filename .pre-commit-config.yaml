@@ -94,7 +94,7 @@ repos:
   - repo: local
     hooks:
       - id: pytest-check
-        stages: [push]
+        stages: [ push ]
         name: pytest
         entry: pytest --no-summary -q -n 7
         language: system
