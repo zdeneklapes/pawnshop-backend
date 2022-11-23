@@ -4,6 +4,9 @@ import pytest
 from statistic.models import StatisticDescription, StatisticQPData
 from rest_framework import status
 
+statistic_urls = {key: f"/statistic/?data={key}" for key in StatisticQPData.names if key != StatisticQPData.RESET.name}
+statistic_urls[StatisticQPData.RESET.name] = "/statistic/"
+
 
 @pytest.mark.parametrize(
     "payload",
@@ -33,9 +36,9 @@ from rest_framework import status
 )
 @pytest.mark.django_db
 def test_loan_create(client_admin, load_all_fixtures_for_module, payload):
-    response_get = client_admin.get(path="/statistic/")
+    response_get = client_admin.get(path=statistic_urls[StatisticQPData.ALL.name])
     response_update = client_admin.post(path="/product/", data=payload, format="json")
-    response_get_2 = client_admin.get(path="/statistic/")
+    response_get_2 = client_admin.get(path=statistic_urls[StatisticQPData.ALL.name])
 
     product = response_update.data
     old_stat = response_get.data[-1]
@@ -61,9 +64,9 @@ def test_loan_create(client_admin, load_all_fixtures_for_module, payload):
 )
 @pytest.mark.django_db
 def test_loan_to_offer(client_admin, load_all_fixtures_for_function, product_id, payload):
-    response_get = client_admin.get(path="/statistic/")
+    response_get = client_admin.get(path=statistic_urls[StatisticQPData.ALL.name])
     response_update = client_admin.patch(path=f"/product/{product_id}/", data=payload, format="json")
-    response_get_2 = client_admin.get(path="/statistic/")
+    response_get_2 = client_admin.get(path=statistic_urls[StatisticQPData.ALL.name])
 
     old_stat = response_get.data[-1]
     new_stat = response_get_2.data[-1]
@@ -89,9 +92,9 @@ def test_loan_to_offer(client_admin, load_all_fixtures_for_function, product_id,
 )
 @pytest.mark.django_db
 def test_loan_extend(client_admin, load_all_fixtures_for_function, product_id, payload):
-    response_get = client_admin.get(path="/statistic/")
+    response_get = client_admin.get(path=statistic_urls[StatisticQPData.ALL.name])
     response_update = client_admin.patch(path=f"/product/{product_id}/", data=payload, format="json")
-    response_get_2 = client_admin.get(path="/statistic/")
+    response_get_2 = client_admin.get(path=statistic_urls[StatisticQPData.ALL.name])
 
     product = response_update.data
     old_stat = response_get.data[-1]
@@ -117,9 +120,9 @@ def test_loan_extend(client_admin, load_all_fixtures_for_function, product_id, p
 )
 @pytest.mark.django_db
 def test_loan_return(client_admin, load_all_fixtures_for_function, product_id, payload):
-    response_get = client_admin.get(path="/statistic/")
+    response_get = client_admin.get(path=statistic_urls[StatisticQPData.ALL.name])
     response_update = client_admin.patch(path=f"/product/{product_id}/", data=payload, format="json")
-    response_get_2 = client_admin.get(path="/statistic/")
+    response_get_2 = client_admin.get(path=statistic_urls[StatisticQPData.ALL.name])
 
     product = response_update.data
     old_stat = response_get.data[-1]
@@ -162,9 +165,9 @@ def test_loan_return(client_admin, load_all_fixtures_for_function, product_id, p
 )
 @pytest.mark.django_db
 def test_offer_create(client_admin, load_all_fixtures_for_function, payload):
-    response_get = client_admin.get(path="/statistic/")
+    response_get = client_admin.get(path=statistic_urls[StatisticQPData.ALL.name])
     response_update = client_admin.post(path="/product/", data=payload, format="json")
-    response_get_2 = client_admin.get(path="/statistic/")
+    response_get_2 = client_admin.get(path=statistic_urls[StatisticQPData.ALL.name])
 
     product = response_update.data
     old_stat = response_get.data[-1]
@@ -202,9 +205,9 @@ def test_offer_create(client_admin, load_all_fixtures_for_function, payload):
 )
 @pytest.mark.django_db
 def test_offer_buy(client_admin, load_all_fixtures_for_function, product_id, payload, exp_status):
-    response_get = client_admin.get(path="/statistic/")
+    response_get = client_admin.get(path=statistic_urls[StatisticQPData.ALL.name])
     response_update = client_admin.patch(path=f"/product/{product_id}/", data=payload, format="json")
-    response_get_2 = client_admin.get(path="/statistic/")
+    response_get_2 = client_admin.get(path=statistic_urls[StatisticQPData.ALL.name])
 
     product = response_update.data
     old_stat = response_get.data[-1]
@@ -242,9 +245,9 @@ def test_offer_buy(client_admin, load_all_fixtures_for_function, product_id, pay
 )
 @pytest.mark.django_db
 def test_offer_sell(client_admin, load_all_fixtures_for_function, product_id, payload, exp_status):
-    response_get = client_admin.get(path="/statistic/")
+    response_get = client_admin.get(path=statistic_urls[StatisticQPData.ALL.name])
     response_update = client_admin.patch(path=f"/product/{product_id}/", data=payload, format="json")
-    response_get_2 = client_admin.get(path="/statistic/")
+    response_get_2 = client_admin.get(path=statistic_urls[StatisticQPData.ALL.name])
 
     product = response_update.data
     old_stat = response_get.data[-1]
@@ -279,8 +282,8 @@ def test_offer_sell(client_admin, load_all_fixtures_for_function, product_id, pa
 )
 @pytest.mark.django_db
 def test_offer_update_not_in_db(client_admin, load_all_fixtures_for_function, product_id, payload, exp_status):
-    response_get = client_admin.get(path="/statistic/")
-    response_get_2 = client_admin.get(path="/statistic/")
+    response_get = client_admin.get(path=statistic_urls[StatisticQPData.ALL.name])
+    response_get_2 = client_admin.get(path=statistic_urls[StatisticQPData.ALL.name])
 
     old_stat = response_get.data[-1]
     new_stat = response_get_2.data[-1]
@@ -302,8 +305,8 @@ def test_offer_update_not_in_db(client_admin, load_all_fixtures_for_function, pr
     ],
 )
 @pytest.mark.django_db
-def test_statistic_default_data(client_admin, load_all_fixtures_for_function):
-    response_get = client_admin.get(path="/statistic/")
+def test_statistic_all_data(client_admin, load_all_fixtures_for_function):
+    response_get = client_admin.get(path=statistic_urls[StatisticQPData.ALL.name])
     assert len(response_get.data) == 18
 
 
@@ -315,8 +318,8 @@ def test_statistic_default_data(client_admin, load_all_fixtures_for_function):
 )
 @pytest.mark.django_db
 def test_statistic_cash_amount_data(client_admin, load_all_fixtures_for_function):
-    response_get = client_admin.get(path=f"/statistic/?data={StatisticQPData.CASH_AMOUNT.name}")
-    response_get_all = client_admin.get(path="/statistic/")
+    response_get = client_admin.get(path=statistic_urls[StatisticQPData.CASH_AMOUNT.name])
+    response_get_all = client_admin.get(path=statistic_urls[StatisticQPData.ALL.name])
     assert len(response_get.data) == 1
     assert response_get.data[0]["amount"] == response_get_all.data[-1]["amount"]
 
@@ -366,7 +369,7 @@ def test_statistic_cash_amount_data(client_admin, load_all_fixtures_for_function
 )
 @pytest.mark.django_db
 def test_statistic_daily_stats_data(client_admin, load_all_fixtures_for_function, exp_data):
-    response_get = client_admin.get(path=f"/statistic/?data={StatisticQPData.DAILY_STATS.name}")
+    response_get = client_admin.get(path=statistic_urls[StatisticQPData.DAILY_STATS.name])
     assert len(response_get.data) == 2
     assert response_get.data == exp_data
 
@@ -379,8 +382,8 @@ def test_statistic_daily_stats_data(client_admin, load_all_fixtures_for_function
 )
 @pytest.mark.django_db
 def test_statistic_reset_profit(client_admin, load_all_fixtures_for_module, payload, exp_status):
-    response = client_admin.post(path="/statistic/", data=payload, format="json")
-    response_get = client_admin.get(path="/statistic/")
+    response = client_admin.post(path=statistic_urls[StatisticQPData.RESET.name], data=payload, format="json")
+    response_get = client_admin.get(path=statistic_urls[StatisticQPData.ALL.name])
     assert response.status_code == exp_status
     assert len(response_get.data) == 19
     assert response_get.data[-1]["description"] == StatisticDescription.RESET.label
