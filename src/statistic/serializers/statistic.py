@@ -5,7 +5,7 @@ from drf_writable_nested import WritableNestedModelSerializer
 from rest_framework.request import Request
 
 from statistic.models import Statistic
-from statistic.models.choices import StatisticQPData, StatisticDescription
+from statistic.models.choices import StatisticQueryParams, StatisticDescription
 from common.exceptions import BadQueryParam
 from config.settings import AUTH
 
@@ -84,11 +84,11 @@ class StatisticSerializer(WritableNestedModelSerializer):
         if var_search not in data:
             return super().to_internal_value(data)
 
-        if data["update"] in [StatisticQPData.RESET.name]:
+        if data["update"] in [StatisticQueryParams.RESET.name]:
             data.update(
                 {
                     "user": 1 if not AUTH else self.context["request"].user.id,
-                    "description": StatisticQPData.RESET.name,
+                    "description": StatisticQueryParams.RESET.name,
                 }
             )
             return super().to_internal_value(data)

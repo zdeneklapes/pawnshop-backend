@@ -8,7 +8,7 @@ from drf_yasg.utils import swagger_auto_schema
 
 from statistic.models.models import Statistic
 from statistic.serializers import statistic as statistic_serializer
-from statistic.models.choices import StatisticQPData
+from statistic.models.choices import StatisticQueryParams
 from config.settings import AUTH
 from statistic.views.swagger import StatisticQPSwagger
 
@@ -20,10 +20,16 @@ from statistic.views.swagger import StatisticQPSwagger
 
 class StatisticPermission(permissions.BasePermission):
     def has_permission(self, request: Request, view: "StatisticViewSet") -> bool:
-        # foo = request.user.groups.filter(name=).exists()
-        if request.method == "GET" and request.query_params.get("data") == StatisticQPData.ALL:
+        if request.method == "GET" and request.query_params.get("data") == StatisticQueryParams.ALL.name:
             return request.user.has_perm("statistic.view_statistic")
-        return request.user.has_perm("statistic.reset_daily_stats")
+        if request.method == "GET" and request.query_params.get("data") == StatisticQueryParams.CASH_AMOUNT.name:
+            return request.user.has_perm("statistic.data_cash_amount")
+        if request.method == "GET" and request.query_params.get("data") == StatisticQueryParams.DAILY_STATS.name:
+            return request.user.has_perm("statistic.data_daily_stats")
+        if request.method == "POST" and request.data.get("update") == StatisticQueryParams.RESET.name:
+            return request.user.has_perm("statistic.update_reset")
+
+        return False
 
 
 @method_decorator(name="list", decorator=swagger_auto_schema(manual_parameters=[StatisticQPSwagger.data]))
@@ -33,8 +39,8 @@ class StatisticViewSet(mixins.ListModelMixin, mixins.CreateModelMixin, viewsets.
     serializer_class = statistic_serializer.StatisticSerializer
     permission_classes = (
         [
+            StatisticPermission,
             permissions.IsAuthenticated,
-            # StatisticPermission
         ]
         if AUTH
         else [permissions.AllowAny]
@@ -45,44 +51,46 @@ class StatisticViewSet(mixins.ListModelMixin, mixins.CreateModelMixin, viewsets.
 
         if (
             var_search not in self.request.query_params
-            or self.request.query_params[var_search] not in StatisticQPData.names
+            or self.request.query_params[var_search] not in StatisticQueryParams.names
         ):  # pylint: disable=E1101:
             return None
         else:
             return self.request.query_params[var_search]
 
-    def parse_update_request(self) -> tp.Literal[StatisticQPData.names]:
+    def parse_update_request(self) -> tp.Literal[StatisticQueryParams.names]:
         var_search = "update"
 
         if var_search not in self.request.data:
             return None  # StatisticQPData.ALL.name
 
-        if self.request.data[var_search] not in StatisticQPData.values:  # pylint: disable=E1101:
-            return StatisticQPData.ALL.name
+        if self.request.data[var_search] not in StatisticQueryParams.values:  # pylint: disable=E1101:
+            return StatisticQueryParams.ALL.name
 
         return self.request.data[var_search]
 
     def get_queryset(self):
         data_choice = self.parse_data_request()
 
-        if data_choice == StatisticQPData.CASH_AMOUNT.name:
-            # TODO: Return object and not array of one object
-            return Statistic.objects.get_cash_amount()  # pylint: disable=E1120
+        query_sets = {
+            StatisticQueryParams.ALL.name: Statistic.objects.all(),
+            StatisticQueryParams.CASH_AMOUNT.name: Statistic.objects.get_cash_amount(),
+            StatisticQueryParams.DAILY_STATS.name: Statistic.objects.get_daily_stats(),
+        }
 
-        if data_choice == StatisticQPData.DAILY_STATS.name:
-            return Statistic.objects.get_daily_stats()
-
-        return super(StatisticViewSet, self).get_queryset()  # default
+        try:
+            return query_sets[data_choice]
+        except KeyError as e:
+            raise exceptions.ValidationError({"error": "Bad query"}) from e
 
     def get_serializer_class(self):
         data_req = self.parse_data_request()
         update_req = self.parse_update_request()
 
         _map = {
-            StatisticQPData.ALL.name: statistic_serializer.StatisticAllSerializer,
-            StatisticQPData.CASH_AMOUNT.name: statistic_serializer.StatisticCashAmountSerializer,
-            StatisticQPData.DAILY_STATS.name: statistic_serializer.StatisticDailyStatsSerializer,
-            StatisticQPData.RESET.name: statistic_serializer.StatisticSerializer,
+            StatisticQueryParams.ALL.name: statistic_serializer.StatisticAllSerializer,
+            StatisticQueryParams.CASH_AMOUNT.name: statistic_serializer.StatisticCashAmountSerializer,
+            StatisticQueryParams.DAILY_STATS.name: statistic_serializer.StatisticDailyStatsSerializer,
+            StatisticQueryParams.RESET.name: statistic_serializer.StatisticSerializer,
         }
 
         requested_data = {data_req, update_req} & set(_map)  # check if at least one key is in _map
@@ -97,7 +105,7 @@ class StatisticViewSet(mixins.ListModelMixin, mixins.CreateModelMixin, viewsets.
     def create(self, request: Request, *args, **kwargs):
         update_req = self.parse_update_request()
 
-        if update_req == StatisticQPData.RESET.name:
+        if update_req == StatisticQueryParams.RESET.name:
             return super().create(request)
 
         # Error

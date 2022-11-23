@@ -42,7 +42,7 @@ class User(AbstractUser):
         super().save(*args, **kwargs)
         self.refresh_from_db()
         if my_group:
-            my_group.user_set.remove(self)
+            my_group.user_set.add(self)
 
 
 class AttendantProfile(User):
