@@ -7,6 +7,7 @@ from rest_framework import serializers
 from common import utils
 from product.models import Product, ProductStatusOrData
 from statistic.models import StatisticDescription
+from authentication.models.choices import UserRoleChoice
 
 
 class ProductUpdateSerializer(WritableNestedModelSerializer):
@@ -141,10 +142,55 @@ class ProductUpdateSerializer(WritableNestedModelSerializer):
         )
         return data
 
+    def set_data_update_loan(self, data: dict) -> dict:
+        if self.context["request"].user.role == UserRoleChoice.ADMIN.name:
+            return {
+                "update": data["update"],
+                "product_name": data["product_name"],
+                "inventory_id": data["inventory_id"],
+                "sell_price": data["sell_price"],
+                "date_create": data["date_create"],
+                "date_extend": data["date_extend"],
+            }
+
+        if self.context["request"].user.role == UserRoleChoice.ATTENDANT.name:
+            return {
+                "update": data["update"],
+                "product_name": data["product_name"],
+                "inventory_id": data["inventory_id"],
+            }
+
+        raise serializers.ValidationError({"error": "You don't have permission to update this product"})
+
+    def set_data_update_offer(self, data: dict) -> dict:
+        if self.context["request"].user.role == UserRoleChoice.ADMIN.name:
+            return {
+                "update": data["update"],
+                "product_name": data["product_name"],
+                "inventory_id": data["inventory_id"],
+                "sell_price": data["sell_price"],
+                "date_create": data["date_create"],
+                "date_extend": data["date_extend"],
+            }
+
+        if self.context["request"].user.role == UserRoleChoice.ATTENDANT.name:
+            return {
+                "update": data["update"],
+                "product_name": data["product_name"],
+                "inventory_id": data["inventory_id"],
+            }
+
+        raise serializers.ValidationError({"error": "You don't have permission to update this product"})
+
     def set_data_update(self, data: dict) -> dict:
-        # TODO
-        # product = Product.objects.get(id=self.context["view"].kwargs["pk"])
-        return data
+        product = Product.objects.get(id=self.context["view"].kwargs["pk"])
+
+        if product.status == ProductStatusOrData.LOAN.name:
+            return self.set_data_update_loan(data)
+        if product.status == ProductStatusOrData.OFFER.name:
+            return self.set_data_update_offer(data)
+
+        raise serializers.ValidationError({"error": "You can't update this product"})
 
     # ######################################################################
     # Inherited methods
