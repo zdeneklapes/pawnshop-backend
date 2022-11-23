@@ -14,6 +14,9 @@ from statistic.views.permissions import StatisticPermission
 from statistic.views.swagger import StatisticQPSwagger
 
 
+# TODO: Statistic offer create
+# TODO: Statistic product name
+
 # TODO: where to handle user permissions?
 # TODO: where to set permissions for each user?
 # TODO: groups vs. permissions?

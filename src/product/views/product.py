@@ -8,6 +8,8 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework import viewsets, permissions
 
+import product.serializers.product_shop_state
+import product.serializers.product_update
 from product.serializers import product as product_serializers
 from product.models import Product, ProductStatusOrData, ProductShopData
 from statistic.serializers.statistic import StatisticSerializer
@@ -65,7 +67,7 @@ class ProductViewSet(viewsets.ModelViewSet):
         status_or_data = self.parse_data_request()
 
         if status_or_data == ProductShopData.SHOP_STATS.name:
-            return product_serializers.ProductShopStateSerializer
+            return product.serializers.product_shop_state.ProductShopStateSerializer
 
         if update_req in [
             StatisticDescription.LOAN_EXTEND.name,
@@ -75,8 +77,9 @@ class ProductViewSet(viewsets.ModelViewSet):
             StatisticDescription.OFFER_BUY.name,
             StatisticDescription.UPDATE_DATA.name,
         ]:
-            return product_serializers.ProductUpdateSerializer
+            return product.serializers.product_update.ProductUpdateSerializer
 
+        # TODO: if not GET method raise error
         return super().get_serializer_class()
 
     # Request Handlers
