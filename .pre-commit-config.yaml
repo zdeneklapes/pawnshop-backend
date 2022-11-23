@@ -1,6 +1,6 @@
 #default_language_version:
 #  python: python3.9
-default_stages: [ commit, push ]
+default_stages: [ commit ]
 files: ''
 exclude: '(venv/)|(.pytest_caches/)|(src/third_party/)|(env/)|(src/staticfiles/)'
 fail_fast: false
