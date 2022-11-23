@@ -90,12 +90,13 @@ repos:
         files: src/
         language_version: python3.10.8
         additional_dependencies: [ "pylint==2.6.0" ]
-#
-#  - repo: local
-#    hooks:
-#      - id: pytest-check
-#        name: pytest
-#        entry: pytest --no-summary -q -n 7
-#        language: system
-#        pass_filenames: false
-#        always_run: true
+  #
+  - repo: local
+    hooks:
+      - id: pytest-check
+        stages: [push]
+        name: pytest
+        entry: pytest --no-summary -q -n 7
+        language: system
+        pass_filenames: false
+        always_run: true
