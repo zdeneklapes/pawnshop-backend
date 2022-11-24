@@ -324,6 +324,17 @@ def test_statistic_cash_amount_data(client_admin, load_all_scope_function):
 
 
 @pytest.mark.parametrize(
+    "",
+    [pytest.param([])],
+)
+@pytest.mark.django_db
+def test_statistic_daily_stats_data_count(client_admin, load_all_scope_function):
+    response_get = client_admin.get(path=pytest.statistic_urls[StatisticQueryParams.DAILY_STATS.name])
+    _ = response_get.data.pop(2)  # because AuthUser is created in the middle of the test
+    assert len(response_get.data) == 2
+
+
+@pytest.mark.parametrize(
     "exp_data",
     [
         pytest.param(
@@ -367,12 +378,6 @@ def test_statistic_cash_amount_data(client_admin, load_all_scope_function):
     ],
 )
 @pytest.mark.django_db
-def test_statistic_daily_stats_data_count(client_admin, load_all_scope_function, exp_data):
-    response_get = client_admin.get(path=pytest.statistic_urls[StatisticQueryParams.DAILY_STATS.name])
-    _ = response_get.data.pop(2)  # because AuthUser is created in the middle of the test
-    assert len(response_get.data) == 2
-
-
 @pytest.mark.skip(reason="Not implemented yet")
 def test_statistic_daily_stats_data_values(client_admin, load_all_scope_function):
     pass
