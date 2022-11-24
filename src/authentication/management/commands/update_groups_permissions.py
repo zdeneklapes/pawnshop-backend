@@ -6,7 +6,9 @@ import logging
 
 from django.core.management.base import BaseCommand
 from django.contrib.auth.models import Group, Permission
-from authentication.models.groups import CustomGroup
+
+# from authentication.models.groups import CustomGroup
+from authentication.models.choices import UserRoleChoice
 from django.contrib import auth
 from django.contrib.auth import get_user_model
 
@@ -33,8 +35,8 @@ def all_available_permissions():
 
 
 group_permission = {
-    CustomGroup.ADMIN_ADMIN: [*all_available_permissions()],
-    CustomGroup.ADMIN: [
+    UserRoleChoice.ADMIN_ADMIN: [*all_available_permissions()],
+    UserRoleChoice.ADMIN: [
         #
         "authentication.add_attendantprofile",
         "authentication.change_attendantprofile",
@@ -58,7 +60,7 @@ group_permission = {
         "statistic.view_daily_stats",
         "statistic.view_statistic",
     ],
-    CustomGroup.ATTENDANT: [
+    UserRoleChoice.ATTENDANT: [
         #
         "authentication.change_attendantprofile",
         #
@@ -83,7 +85,7 @@ class Command(BaseCommand):
         )
 
     def handle(self, *args, **options):
-        for group in CustomGroup.names:
+        for group in UserRoleChoice.names:
             new_group, _ = Group.objects.get_or_create(name=group)
             for permission in group_permission[group]:
                 if options["print"]:
