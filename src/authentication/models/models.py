@@ -32,8 +32,7 @@ class User(AbstractUser):
     USERNAME_FIELD = "email"
     EMAIL_FIELD = "email"
 
-    # Note: Must be here, otherwise produce error
-    REQUIRED_FIELDS = []
+    REQUIRED_FIELDS = []  # Note: Must be here, otherwise produce error
 
     def save(self, *args, **kwargs):
         self.role = self.base_role

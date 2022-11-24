@@ -15,14 +15,6 @@ from statistic.views.permissions import StatisticPermission
 from statistic.views.swagger import StatisticQPSwagger
 
 
-# TODO: Statistic offer create
-# TODO: Statistic product name
-
-# TODO: where to handle user permissions?
-# TODO: where to set permissions for each user?
-# TODO: groups vs. permissions?
-
-
 @method_decorator(name="list", decorator=swagger_auto_schema(manual_parameters=[StatisticQPSwagger.data]))
 @method_decorator(name="create", decorator=swagger_auto_schema(request_body=StatisticQPSwagger.update))
 class StatisticViewSet(mixins.ListModelMixin, mixins.CreateModelMixin, viewsets.GenericViewSet):

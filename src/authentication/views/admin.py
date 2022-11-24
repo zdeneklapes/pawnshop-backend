@@ -10,9 +10,6 @@ from authentication.views.swaggers.base import AttendantQPSwagger
 from authentication.views.permissions import AuthenticationPermission
 
 
-# TODO: Attendant Login/Logout Statistics Record
-
-
 @method_decorator(name="create", decorator=swagger_auto_schema(request_body=AttendantQPSwagger.create))
 @method_decorator(name="partial_update", decorator=swagger_auto_schema(request_body=AttendantQPSwagger.update))
 class AdminViewSet(viewsets.ModelViewSet):

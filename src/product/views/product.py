@@ -79,7 +79,6 @@ class ProductViewSet(viewsets.ModelViewSet):
         ]:
             return product.serializers.product_update.ProductUpdateSerializer
 
-        # TODO: if not GET method raise error
         return super().get_serializer_class()
 
     # Request Handlers

@@ -33,7 +33,8 @@ class Statistic(models.Model):
         statistic_prev = Statistic.objects.last()
         statistic_amount_prev = statistic_prev.amount if statistic_prev else 0
         statistic_profit_prev = statistic_prev.profit if statistic_prev else 0
-        # Note: if first occurrence (therefore if statement)
+
+        # Note: need to check for null if first statistic is created
 
         # Amount
         if self.price:

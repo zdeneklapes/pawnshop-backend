@@ -57,7 +57,6 @@ from common import utils
     ],
 )
 @pytest.mark.django_db
-# @pytest.mark.xfail  # TODO: Solve conf.settings.AUTH = True settings.AUTH = True
 def test_loan_create_calc(client_admin, admin, load_all_scope_module, payload, exp_status):
     response_update = client_admin.post(path="/product/", data=payload, format="json")
     assert response_update.status_code == exp_status
