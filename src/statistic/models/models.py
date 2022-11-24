@@ -12,7 +12,7 @@ class Statistic(models.Model):
         permissions = (
             ("view_cash_amount", "Can view cash amount"),
             ("view_daily_stats", "Can view daily stats"),
-            ("reset_daily_stats", "Can reset daily stats"),
+            ("reset_profit", "Can reset profit"),
         )
 
     objects = StatisticManager()

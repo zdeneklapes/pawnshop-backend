@@ -7,6 +7,7 @@ from authentication.models import User, UserRoleChoice
 from authentication.serializers.admin import AdminSerializer
 from config.settings import AUTH
 from authentication.views.swaggers.base import AttendantQPSwagger
+from authentication.views.permissions import AuthenticationPermission
 
 
 # TODO: Attendant Login/Logout Statistics Record
@@ -17,7 +18,7 @@ from authentication.views.swaggers.base import AttendantQPSwagger
 class AdminViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = AdminSerializer
-    permission_classes = [permissions.IsAuthenticated, permissions.IsAdminUser] if AUTH else [permissions.AllowAny]
+    permission_classes = [permissions.IsAuthenticated, AuthenticationPermission] if AUTH else [permissions.AllowAny]
     http_method_names = ["get", "patch", "delete"]
 
     def destroy(self, request, *args, **kwargs):

@@ -4,16 +4,15 @@ from authentication import models
 
 
 @pytest.mark.parametrize(
-    "url, num_records, exp_status",
+    "url, exp_status",
     [
-        pytest.param("/authentication/user/", 3, status.HTTP_200_OK),
-        pytest.param("/authentication/attendant/", 1, status.HTTP_200_OK),
+        pytest.param("/authentication/user/", status.HTTP_200_OK),
+        pytest.param("/authentication/attendant/", status.HTTP_200_OK),
     ],
 )
 @pytest.mark.django_db
-def test_get_data_users(client_admin, load_all_scope_function, url, num_records, exp_status):
+def test_get_data_users(client_admin, url, exp_status):
     response = client_admin.get(path=url)
-    assert response.data.__len__() == num_records
     assert response.status_code == exp_status
 
 

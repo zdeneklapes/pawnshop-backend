@@ -35,35 +35,42 @@ def all_available_permissions():
 group_permission = {
     CustomGroup.ADMIN_ADMIN: [*all_available_permissions()],
     CustomGroup.ADMIN: [
-        *all_available_permissions()
-        # "authentication.add_attendantprofile",
-        # "authentication.change_attendantprofile",
-        # "authentication.change_user",
-        # "authentication.delete_attendantprofile",
-        # "authentication.view_attendantprofile",
-        # "authentication.view_user",
-        # "customer.add_customerprofile",
-        # "customer.change_customerprofile",
-        # "customer.delete_customerprofile",
-        # "customer.view_customerprofile",
-        # "product.add_product",
-        # "product.change_product",
-        # "product.view_product",
-        # "statistic.add_statistic",
-        # "statistic.reset_daily_stats",
-        # "statistic.view_cash_amount",
-        # "statistic.view_daily_stats",
-        # "statistic.view_statistic",
-    ],
-    CustomGroup.ATTENDANT: [
+        #
+        "authentication.add_attendantprofile",
         "authentication.change_attendantprofile",
+        "authentication.change_user",
+        "authentication.delete_attendantprofile",
+        "authentication.view_attendantprofile",
+        "authentication.view_user",
+        #
         "customer.add_customerprofile",
         "customer.change_customerprofile",
         "customer.delete_customerprofile",
         "customer.view_customerprofile",
+        #
         "product.add_product",
         "product.change_product",
         "product.view_product",
+        #
+        "statistic.add_statistic",
+        "statistic.reset_profit",
+        "statistic.view_cash_amount",
+        "statistic.view_daily_stats",
+        "statistic.view_statistic",
+    ],
+    CustomGroup.ATTENDANT: [
+        #
+        "authentication.change_attendantprofile",
+        #
+        "customer.add_customerprofile",
+        "customer.change_customerprofile",
+        "customer.delete_customerprofile",
+        "customer.view_customerprofile",
+        #
+        "product.add_product",
+        "product.change_product",
+        "product.view_product",
+        #
         "statistic.view_statistic",
     ],
 }
