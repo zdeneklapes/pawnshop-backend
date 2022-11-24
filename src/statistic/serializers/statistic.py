@@ -110,6 +110,7 @@ class StatisticSerializer(WritableNestedModelSerializer):
         if var_search not in data:
             return super().to_internal_value(data)
 
+        # TODO: reset with product=Null
         if data["update"] in [StatisticQueryParams.RESET.name]:
             data.update(
                 {

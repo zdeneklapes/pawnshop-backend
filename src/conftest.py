@@ -4,12 +4,18 @@ from rest_framework.test import APIClient
 
 from authentication.models import User, AttendantProfile
 from config.settings import SIMPLE_JWT
-import config.settings as django_settings
 
 # ######################################################################################################################
 # Global Variables
 # ######################################################################################################################
-FIXTURES = ["groups.json", "users.json", "attendants.json", "customers.json", "products.json", "statistics.json"]
+FIXTURES = [
+    "tests/test_groups.json",
+    "tests/test_users.json",
+    "tests/test_attendants.json",
+    "test_customers.json",
+    "test_products.json",
+    "test_statistics.json",
+]
 
 
 # ######################################################################################################################
@@ -37,36 +43,7 @@ def load_groups_scope_function(django_db_setup, django_db_blocker):
 
 
 # ######################################################################################################################
-# Cli
-# ######################################################################################################################
-def pytest_addoption(parser):
-    """Source: https://stackoverflow.com/a/42145604/14471542"""
-    parser.addoption("--authentication", action="store_true", default=False)
-
-
-@pytest.fixture(scope="session")
-def cli_args(request):
-    args = {}
-    args["authentication"] = request.config.getoption("--authentication")
-    return args
-
-
-# Settings
-@pytest.fixture()
-def test_login_required(settings, cli_args):
-    if cli_args["authentication"]:
-        settings.AUTH = True
-    else:
-        settings.AUTH = False
-
-
-@pytest.fixture()
-def test_login_required_2(cli_args):
-    django_settings.__dict__["AUTH"] = True
-
-
-# ######################################################################################################################
-# Login
+# Users
 # ######################################################################################################################
 @pytest.fixture(scope="function")
 def admin(load_groups_scope_function):
@@ -82,20 +59,23 @@ def attendant(load_groups_scope_function):
     return user, payload
 
 
+# ######################################################################################################################
+# Clients
+# ######################################################################################################################
 @pytest.fixture()
 def client():
     return APIClient()
 
 
 @pytest.fixture()
-def client_admin(client, admin, test_login_required):
+def client_admin(client, admin):
     response = client.post("http://localhost:8000/authentication/token/create/", data=admin[1])
     client.credentials(HTTP_AUTHORIZATION=f"{SIMPLE_JWT['AUTH_HEADER_TYPES'][0]} {response.data['access']}")
     return client
 
 
 @pytest.fixture()
-def client_attendant(client, attendant, test_login_required):
+def client_attendant(client, attendant):
     response = client.post("http://localhost:8000/authentication/token/create/", data=attendant[1])
     client.credentials(HTTP_AUTHORIZATION=f"{SIMPLE_JWT['AUTH_HEADER_TYPES'][0]} {response.data['access']}")
     return client
