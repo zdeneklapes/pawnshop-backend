@@ -1,0 +1,6 @@
+[
+  { "model": "customer.customerprofile", "pk": "000000/0000", "fields": { "full_name": "Jana Nova", "personal_id": "0000000000", "personal_id_expiration_date": "2023-01-01", "residence": "Cejl 111", "nationality": "CZ", "birthplace": "Brno", "sex": "M" } },
+  { "model": "customer.customerprofile", "pk": "000000/1111", "fields": { "full_name": "Karel Chudy", "personal_id": "1111111111", "personal_id_expiration_date": "2023-02-01", "residence": "Cejl 222", "nationality": "SK", "birthplace": "Praha", "sex": "M" } },
+  { "model": "customer.customerprofile", "pk": "000000/2222", "fields": { "full_name": "Jan Guls", "personal_id": "1111111111", "personal_id_expiration_date": "2023-03-01", "residence": "Cejl 333", "nationality": "RU", "birthplace": "Bratislava", "sex": "F" } },
+  { "model": "customer.customerprofile", "pk": "000000/3333", "fields": { "full_name": "Zdenek Klum", "personal_id": "1111111111", "personal_id_expiration_date": "2023-04-01", "residence": "Cejl 444", "nationality": "UKR", "birthplace": "Znojmo", "sex": "F" } }
+]

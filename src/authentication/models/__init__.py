@@ -1,10 +1,11 @@
 from .models import User, AttendantProfile
-from .choices import UserRoleChoice
+from .choices import UserGroupChoice
 from .managers import CustomUserManager
+
 
 __all__ = [
     "User",
     "AttendantProfile",
-    "UserRoleChoice",
+    "UserGroupChoice",
     "CustomUserManager",
 ]

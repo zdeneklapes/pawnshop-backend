@@ -1,26 +1,14 @@
-from typing import Tuple
+from typing import Tuple, Literal, Optional
 
 from rest_framework import serializers
 from drf_writable_nested import WritableNestedModelSerializer
 from rest_framework.request import Request
 
 from statistic.models import Statistic
-from statistic.models.choices import StatisticQPData, StatisticDescription
+from statistic.models.choices import StatisticQueryParams, StatisticDescription
 from common.exceptions import BadQueryParam
 from config.settings import AUTH
-
-
-class StatisticAllSerializer(serializers.ModelSerializer):
-    amount = serializers.IntegerField(required=False, read_only=True)
-    profit = serializers.IntegerField(required=False, read_only=True)
-    username = serializers.CharField(source="user.email", read_only=True)
-    description = serializers.ChoiceField(
-        source="get_description_display", choices=StatisticDescription, read_only=True
-    )
-
-    class Meta:
-        model = Statistic
-        fields = ["id", "amount", "profit", "datetime", "description", "price", "product", "username", "user"]
+from product.models.choices import ProductStatusOrData
 
 
 class StatisticSerializer(WritableNestedModelSerializer):
@@ -31,6 +19,9 @@ class StatisticSerializer(WritableNestedModelSerializer):
         model = Statistic
         fields = "__all__"
 
+    # ###########################################################################################
+    # Validate
+    # ###########################################################################################
     @staticmethod
     def validate_operation(request: Request, buy_price_prev: int, sell_price_prev: int) -> Tuple[str, int]:
         var_search = "update"
@@ -57,38 +48,61 @@ class StatisticSerializer(WritableNestedModelSerializer):
                 raise BadQueryParam()
         return operation, price
 
+    # ###########################################################################################
+    # Save Helpers
+    # ###########################################################################################
     @staticmethod
-    def validate_and_save(request: Request, buy_price_prev: int, sell_price_prev: int) -> None:
-        # Validate
+    def save_statistic_auth(
+        operation: Literal[StatisticDescription.LOGIN, StatisticDescription.LOGOUT], user_id
+    ) -> None:
+        StatisticSerializer.save_statistics(operation=operation, user=1 if not AUTH else user_id)
+
+    @staticmethod
+    def save_statistic_product_update(request: Request, buy_price_prev: int, sell_price_prev: int) -> None:
         operation, price = StatisticSerializer.validate_operation(request, buy_price_prev, sell_price_prev)
 
-        # Save Statistics
         StatisticSerializer.save_statistics(
-            price=price,
             operation=operation,
             user=1 if not AUTH else request.user.id,
+            price=price,
             product=request.parser_context["kwargs"]["pk"],
         )
 
     @staticmethod
-    def save_statistics(price: int, operation: str, user: int, product: int = None) -> None:
+    def save_statistic_product_create(request, response) -> None:
+        StatisticSerializer.save_statistics(
+            operation=StatisticDescription.LOAN_CREATE.name
+            if request.data["status"] == ProductStatusOrData.LOAN.name
+            else StatisticDescription.OFFER_BUY.name,
+            user=1 if not AUTH else request.user.id,
+            price=-response.data["buy_price"],
+            product=response.data["id"],
+        )
+
+    @staticmethod
+    def save_statistics(operation: str, user: int, price: Optional[int] = None, product: Optional[int] = None) -> None:
         serializer_stats = StatisticSerializer(
             data={"description": operation, "price": price, "product": product, "user": user}
         )
-        serializer_stats.is_valid()
+        if not serializer_stats.is_valid():
+            raise serializers.ValidationError(serializer_stats.errors)
         serializer_stats.save()
 
+    # ###########################################################################################
+    # Inherited
+    # ###########################################################################################
     def to_internal_value(self, data):
         var_search = "update"
 
         if var_search not in data:
             return super().to_internal_value(data)
 
-        if data["update"] in [StatisticQPData.RESET.name]:
+        # TODO: reset with product=Null
+        if data["update"] in [StatisticQueryParams.RESET.name]:
             data.update(
                 {
                     "user": 1 if not AUTH else self.context["request"].user.id,
-                    "description": StatisticQPData.RESET.name,
+                    "description": StatisticQueryParams.RESET.name,
                 }
             )
             return super().to_internal_value(data)

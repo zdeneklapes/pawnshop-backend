@@ -6,6 +6,8 @@ __pycache__/
 # Static files
 src/staticfiles
 
+tags
+
 # C extensions
 *.so
 

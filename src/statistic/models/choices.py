@@ -1,7 +1,7 @@
 from django.db import models
 
 
-class StatisticQPData(models.TextChoices):
+class StatisticQueryParams(models.TextChoices):
     ALL = "ALL", "Vsechny zaznamy"
     DAILY_STATS = "DAILY_STATS", "Denni statistiky"
     CASH_AMOUNT = "CASH_AMOUNT", "Stav pokladny"

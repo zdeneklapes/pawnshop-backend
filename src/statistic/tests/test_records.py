@@ -1,8 +1,10 @@
 import datetime
 
 import pytest
-from statistic.models import StatisticDescription, StatisticQPData
+from statistic.models import StatisticDescription, StatisticQueryParams
 from rest_framework import status
+
+from config.settings import SIMPLE_JWT
 
 
 @pytest.mark.parametrize(
@@ -32,10 +34,10 @@ from rest_framework import status
     ],
 )
 @pytest.mark.django_db
-def test_loan_create(client_admin, load_all_fixtures_for_module, payload):
-    response_get = client_admin.get(path="/statistic/")
+def test_loan_create(client_admin, load_all_scope_module, payload):
+    response_get = client_admin.get(path=pytest.statistic_urls[StatisticQueryParams.ALL.name])
     response_update = client_admin.post(path="/product/", data=payload, format="json")
-    response_get_2 = client_admin.get(path="/statistic/")
+    response_get_2 = client_admin.get(path=pytest.statistic_urls[StatisticQueryParams.ALL.name])
 
     product = response_update.data
     old_stat = response_get.data[-1]
@@ -60,10 +62,10 @@ def test_loan_create(client_admin, load_all_fixtures_for_module, payload):
     ],
 )
 @pytest.mark.django_db
-def test_loan_to_offer(client_admin, load_all_fixtures_for_function, product_id, payload):
-    response_get = client_admin.get(path="/statistic/")
+def test_loan_to_offer(client_admin, load_all_scope_function, product_id, payload):
+    response_get = client_admin.get(path=pytest.statistic_urls[StatisticQueryParams.ALL.name])
     response_update = client_admin.patch(path=f"/product/{product_id}/", data=payload, format="json")
-    response_get_2 = client_admin.get(path="/statistic/")
+    response_get_2 = client_admin.get(path=pytest.statistic_urls[StatisticQueryParams.ALL.name])
 
     old_stat = response_get.data[-1]
     new_stat = response_get_2.data[-1]
@@ -88,10 +90,10 @@ def test_loan_to_offer(client_admin, load_all_fixtures_for_function, product_id,
     ],
 )
 @pytest.mark.django_db
-def test_loan_extend(client_admin, load_all_fixtures_for_function, product_id, payload):
-    response_get = client_admin.get(path="/statistic/")
+def test_loan_extend(client_admin, load_all_scope_function, product_id, payload):
+    response_get = client_admin.get(path=pytest.statistic_urls[StatisticQueryParams.ALL.name])
     response_update = client_admin.patch(path=f"/product/{product_id}/", data=payload, format="json")
-    response_get_2 = client_admin.get(path="/statistic/")
+    response_get_2 = client_admin.get(path=pytest.statistic_urls[StatisticQueryParams.ALL.name])
 
     product = response_update.data
     old_stat = response_get.data[-1]
@@ -116,10 +118,10 @@ def test_loan_extend(client_admin, load_all_fixtures_for_function, product_id, p
     ],
 )
 @pytest.mark.django_db
-def test_loan_return(client_admin, load_all_fixtures_for_function, product_id, payload):
-    response_get = client_admin.get(path="/statistic/")
+def test_loan_return(client_admin, load_all_scope_function, product_id, payload):
+    response_get = client_admin.get(path=pytest.statistic_urls[StatisticQueryParams.ALL.name])
     response_update = client_admin.patch(path=f"/product/{product_id}/", data=payload, format="json")
-    response_get_2 = client_admin.get(path="/statistic/")
+    response_get_2 = client_admin.get(path=pytest.statistic_urls[StatisticQueryParams.ALL.name])
 
     product = response_update.data
     old_stat = response_get.data[-1]
@@ -161,10 +163,10 @@ def test_loan_return(client_admin, load_all_fixtures_for_function, product_id, p
     ],
 )
 @pytest.mark.django_db
-def test_offer_create(client_admin, load_all_fixtures_for_function, payload):
-    response_get = client_admin.get(path="/statistic/")
+def test_offer_create(client_admin, load_all_scope_function, payload):
+    response_get = client_admin.get(path=pytest.statistic_urls[StatisticQueryParams.ALL.name])
     response_update = client_admin.post(path="/product/", data=payload, format="json")
-    response_get_2 = client_admin.get(path="/statistic/")
+    response_get_2 = client_admin.get(path=pytest.statistic_urls[StatisticQueryParams.ALL.name])
 
     product = response_update.data
     old_stat = response_get.data[-1]
@@ -201,10 +203,10 @@ def test_offer_create(client_admin, load_all_fixtures_for_function, payload):
     ],
 )
 @pytest.mark.django_db
-def test_offer_buy(client_admin, load_all_fixtures_for_function, product_id, payload, exp_status):
-    response_get = client_admin.get(path="/statistic/")
+def test_offer_buy(client_admin, load_all_scope_function, product_id, payload, exp_status):
+    response_get = client_admin.get(path=pytest.statistic_urls[StatisticQueryParams.ALL.name])
     response_update = client_admin.patch(path=f"/product/{product_id}/", data=payload, format="json")
-    response_get_2 = client_admin.get(path="/statistic/")
+    response_get_2 = client_admin.get(path=pytest.statistic_urls[StatisticQueryParams.ALL.name])
 
     product = response_update.data
     old_stat = response_get.data[-1]
@@ -241,10 +243,10 @@ def test_offer_buy(client_admin, load_all_fixtures_for_function, product_id, pay
     ],
 )
 @pytest.mark.django_db
-def test_offer_sell(client_admin, load_all_fixtures_for_function, product_id, payload, exp_status):
-    response_get = client_admin.get(path="/statistic/")
+def test_offer_sell(client_admin, load_all_scope_function, product_id, payload, exp_status):
+    response_get = client_admin.get(path=pytest.statistic_urls[StatisticQueryParams.ALL.name])
     response_update = client_admin.patch(path=f"/product/{product_id}/", data=payload, format="json")
-    response_get_2 = client_admin.get(path="/statistic/")
+    response_get_2 = client_admin.get(path=pytest.statistic_urls[StatisticQueryParams.ALL.name])
 
     product = response_update.data
     old_stat = response_get.data[-1]
@@ -278,9 +280,9 @@ def test_offer_sell(client_admin, load_all_fixtures_for_function, product_id, pa
     ],
 )
 @pytest.mark.django_db
-def test_offer_update_not_in_db(client_admin, load_all_fixtures_for_function, product_id, payload, exp_status):
-    response_get = client_admin.get(path="/statistic/")
-    response_get_2 = client_admin.get(path="/statistic/")
+def test_offer_update_not_in_db(client_admin, load_all_scope_function, product_id, payload, exp_status):
+    response_get = client_admin.get(path=pytest.statistic_urls[StatisticQueryParams.ALL.name])
+    response_get_2 = client_admin.get(path=pytest.statistic_urls[StatisticQueryParams.ALL.name])
 
     old_stat = response_get.data[-1]
     new_stat = response_get_2.data[-1]
@@ -302,9 +304,9 @@ def test_offer_update_not_in_db(client_admin, load_all_fixtures_for_function, pr
     ],
 )
 @pytest.mark.django_db
-def test_statistic_default_data(client_admin, load_all_fixtures_for_function):
-    response_get = client_admin.get(path="/statistic/")
-    assert len(response_get.data) == 18
+def test_statistic_all_data(client_admin):
+    response_get = client_admin.get(path=pytest.statistic_urls[StatisticQueryParams.ALL.name])
+    assert len(response_get.data) == 19
 
 
 @pytest.mark.parametrize(
@@ -314,11 +316,18 @@ def test_statistic_default_data(client_admin, load_all_fixtures_for_function):
     ],
 )
 @pytest.mark.django_db
-def test_statistic_cash_amount_data(client_admin, load_all_fixtures_for_function):
-    response_get = client_admin.get(path=f"/statistic/?data={StatisticQPData.CASH_AMOUNT.name}")
-    response_get_all = client_admin.get(path="/statistic/")
+def test_statistic_cash_amount_data(client_admin, load_all_scope_function):
+    response_get = client_admin.get(path=pytest.statistic_urls[StatisticQueryParams.CASH_AMOUNT.name])
+    response_get_all = client_admin.get(path=pytest.statistic_urls[StatisticQueryParams.ALL.name])
     assert len(response_get.data) == 1
     assert response_get.data[0]["amount"] == response_get_all.data[-1]["amount"]
+
+
+@pytest.mark.django_db
+def test_statistic_daily_stats_data_count(client_admin, load_all_scope_function):
+    response_get = client_admin.get(path=pytest.statistic_urls[StatisticQueryParams.DAILY_STATS.name])
+    _ = response_get.data.pop(2)  # because AuthUser is created in the middle of the test
+    assert len(response_get.data) == 2
 
 
 @pytest.mark.parametrize(
@@ -365,10 +374,9 @@ def test_statistic_cash_amount_data(client_admin, load_all_fixtures_for_function
     ],
 )
 @pytest.mark.django_db
-def test_statistic_daily_stats_data(client_admin, load_all_fixtures_for_function, exp_data):
-    response_get = client_admin.get(path=f"/statistic/?data={StatisticQPData.DAILY_STATS.name}")
-    assert len(response_get.data) == 2
-    assert response_get.data == exp_data
+@pytest.mark.skip(reason="Not implemented yet")
+def test_statistic_daily_stats_data_values(client_admin, load_all_scope_function, exp_data):
+    pass
 
 
 @pytest.mark.parametrize(
@@ -378,10 +386,48 @@ def test_statistic_daily_stats_data(client_admin, load_all_fixtures_for_function
     ],
 )
 @pytest.mark.django_db
-def test_statistic_reset_profit(client_admin, load_all_fixtures_for_module, payload, exp_status):
-    response = client_admin.post(path="/statistic/", data=payload, format="json")
-    response_get = client_admin.get(path="/statistic/")
+def test_statistic_reset_profit(client_admin, load_all_scope_module, payload, exp_status):
+    response = client_admin.post(
+        path=pytest.statistic_urls[StatisticQueryParams.RESET.name], data=payload, format="json"
+    )
+    response_get = client_admin.get(path=pytest.statistic_urls[StatisticQueryParams.ALL.name])
     assert response.status_code == exp_status
-    assert len(response_get.data) == 19
+    assert len(response_get.data) == 20
     assert response_get.data[-1]["description"] == StatisticDescription.RESET.label
     assert response_get.data[-1]["profit"] == 0
+
+
+@pytest.mark.django_db
+def test_user_login_and_logout(client, admin, client_attendant):
+    response_get = client_attendant.get(path=pytest.statistic_urls[StatisticQueryParams.ALL.name])
+
+    # Create login/logout records
+    response = client.post("http://localhost:8000/authentication/token/create/", data=admin[1])
+    client.credentials(HTTP_AUTHORIZATION=f"{SIMPLE_JWT['AUTH_HEADER_TYPES'][0]} {response.data['access']}")
+    client.post("http://localhost:8000/authentication/token/logout_all/", data={"refresh": response.data["refresh"]})
+
+    #
+    response_get_new = client.get(path=pytest.statistic_urls[StatisticQueryParams.ALL.name])
+
+    #
+    assert response_get.data.__len__() + 2 == response_get_new.data.__len__(), "Login or Logout records not created"
+
+
+@pytest.mark.skip("Not implemented")
+def test_user_dont_have_access_after_logout():
+    pass
+
+
+@pytest.mark.skip("Not implemented")
+def test_user_created():
+    pass
+
+
+@pytest.mark.skip("Not implemented")
+def test_user_deleted():
+    pass
+
+
+@pytest.mark.skip("Not implemented")
+def test_user_updated():
+    pass

@@ -90,11 +90,14 @@ function django_loaddata() {
     cd src || error_exit "cd"
     python3 manage.py makemigrations
     python3 manage.py migrate
-    python3 manage.py loaddata "./authentication/fixtures/users.json" \
+    python3 manage.py loaddata \
+        "./authentication/fixtures/groups.json" \
+        "./authentication/fixtures/users.json" \
         "./authentication/fixtures/attendants.json" \
         "./customer/fixtures/customers.json" \
         "./product/fixtures/products.json" \
         "./statistic/fixtures/statistics.json"
+    python3 manage.py update_groups_permissions -p
     cd .. || error_exit "cd"
 }
 
@@ -199,7 +202,7 @@ function set_and_run_cron() {
 }
 
 function web_docker() {
-#    set_and_run_cron
+    #    set_and_run_cron
 
     django_loaddata
 

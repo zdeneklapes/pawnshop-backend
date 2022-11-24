@@ -8,6 +8,8 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework import viewsets, permissions
 
+import product.serializers.product_shop_state
+import product.serializers.product_update
 from product.serializers import product as product_serializers
 from product.models import Product, ProductStatusOrData, ProductShopData
 from statistic.serializers.statistic import StatisticSerializer
@@ -65,7 +67,7 @@ class ProductViewSet(viewsets.ModelViewSet):
         status_or_data = self.parse_data_request()
 
         if status_or_data == ProductShopData.SHOP_STATS.name:
-            return product_serializers.ProductShopStateSerializer
+            return product.serializers.product_shop_state.ProductShopStateSerializer
 
         if update_req in [
             StatisticDescription.LOAN_EXTEND.name,
@@ -75,8 +77,9 @@ class ProductViewSet(viewsets.ModelViewSet):
             StatisticDescription.OFFER_BUY.name,
             StatisticDescription.UPDATE_DATA.name,
         ]:
-            return product_serializers.ProductUpdateSerializer
+            return product.serializers.product_update.ProductUpdateSerializer
 
+        # TODO: if not GET method raise error
         return super().get_serializer_class()
 
     # Request Handlers
@@ -87,17 +90,10 @@ class ProductViewSet(viewsets.ModelViewSet):
         response: Response = super().create(request)  # to internal_repre -> to to_repre
 
         try:
-            StatisticSerializer.save_statistics(
-                price=-response.data["buy_price"],
-                operation=StatisticDescription.LOAN_CREATE.name
-                if request.data["status"] == ProductStatusOrData.LOAN.name
-                else StatisticDescription.OFFER_BUY.name,
-                user=1 if not AUTH else request.user.id,
-                product=response.data["id"],
-            )
+            StatisticSerializer.save_statistic_product_create(request, response)
         except AssertionError as e:
             return Response(
-                data={"error": f"{ProductViewSet.create.__qualname__} - {e} - statistics"}, status=response.status_code
+                {"error": f"{ProductViewSet.create.__qualname__} - {e} - statistics"}, status=response.status_code
             )
 
         return response
@@ -110,7 +106,7 @@ class ProductViewSet(viewsets.ModelViewSet):
 
         response = super().partial_update(request)
         try:
-            StatisticSerializer.validate_and_save(request, buy_price_prev, sell_price_prev)
+            StatisticSerializer.save_statistic_product_update(request, buy_price_prev, sell_price_prev)
         except BadQueryParam as e:
             return Response(data={"details": f"Statistic - {e}"}, status=BadQueryParam.status_code, exception=True)
         return response

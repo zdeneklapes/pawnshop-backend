@@ -1,34 +1,26 @@
+import typing as tp
+
 from rest_framework.request import Request
 from rest_framework.response import Response
-from rest_framework import mixins, viewsets, status, permissions
+from rest_framework import mixins, viewsets, status, permissions, exceptions
 from django.utils.decorators import method_decorator
-from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
-import django_filters
 
+import statistic.serializers.all
 from statistic.models.models import Statistic
 from statistic.serializers import statistic as statistic_serializer
-from statistic.models.choices import StatisticQPData
+from statistic.models.choices import StatisticQueryParams
 from config.settings import AUTH
+from statistic.views.permissions import StatisticPermission
+from statistic.views.swagger import StatisticQPSwagger
 
 
-class StatisticQPSwagger(django_filters.FilterSet):
-    data = openapi.Parameter(
-        name="data",
-        in_=openapi.IN_QUERY,
-        description=f"What data you need: "
-        f"{StatisticQPData.ALL.name}, "  # pylint: disable=E1101
-        f"{StatisticQPData.DAILY_STATS.name}, "  # pylint: disable=E1101
-        f"{StatisticQPData.CASH_AMOUNT.name}",  # pylint: disable=E1101
-        type=openapi.TYPE_STRING,
-    )
-    update = openapi.Schema(
-        type=openapi.TYPE_OBJECT,
-        in_=openapi.IN_BODY,
-        properties={
-            "update": openapi.Schema(type=openapi.TYPE_STRING, default=f"{StatisticQPData.RESET.name}"),
-        },
-    )
+# TODO: Statistic offer create
+# TODO: Statistic product name
+
+# TODO: where to handle user permissions?
+# TODO: where to set permissions for each user?
+# TODO: groups vs. permissions?
 
 
 @method_decorator(name="list", decorator=swagger_auto_schema(manual_parameters=[StatisticQPSwagger.data]))
@@ -36,59 +28,67 @@ class StatisticQPSwagger(django_filters.FilterSet):
 class StatisticViewSet(mixins.ListModelMixin, mixins.CreateModelMixin, viewsets.GenericViewSet):
     queryset = Statistic.objects.all()
     serializer_class = statistic_serializer.StatisticSerializer
-    permission_classes = [permissions.IsAuthenticated] if AUTH else [permissions.AllowAny]
+    permission_classes = (
+        [
+            StatisticPermission,
+            permissions.IsAuthenticated,
+        ]
+        if AUTH
+        else [permissions.AllowAny]
+    )
 
     def parse_data_request(self):
         var_search = "data"
 
-        if var_search not in self.request.query_params:
-            return StatisticQPData.ALL.name
+        if (
+            var_search not in self.request.query_params
+            or self.request.query_params[var_search] not in StatisticQueryParams.names
+        ):  # pylint: disable=E1101:
+            return None
+        else:
+            return self.request.query_params[var_search]
 
-        if self.request.query_params[var_search] not in StatisticQPData.values:  # pylint: disable=E1101:
-            return StatisticQPData.ALL.name
-
-        return self.request.query_params[var_search]
-
-    def parse_update_request(self):
+    def parse_update_request(self) -> tp.Literal[StatisticQueryParams.names]:
         var_search = "update"
 
         if var_search not in self.request.data:
-            return StatisticQPData.ALL.name
+            return None  # StatisticQPData.ALL.name
 
-        if self.request.data[var_search] not in StatisticQPData.values:  # pylint: disable=E1101:
-            return StatisticQPData.ALL.name
+        if self.request.data[var_search] not in StatisticQueryParams.values:  # pylint: disable=E1101:
+            return StatisticQueryParams.ALL.name
 
         return self.request.data[var_search]
 
     def get_queryset(self):
         data_choice = self.parse_data_request()
 
-        if data_choice == StatisticQPData.CASH_AMOUNT.name:
-            # TODO: Return object and not array of one object
-            return Statistic.objects.get_cash_amount()  # pylint: disable=E1120
+        query_sets = {
+            StatisticQueryParams.ALL.name: Statistic.objects.all(),
+            StatisticQueryParams.CASH_AMOUNT.name: Statistic.objects.get_cash_amount(),
+            StatisticQueryParams.DAILY_STATS.name: Statistic.objects.get_daily_stats(),
+        }
 
-        if data_choice == StatisticQPData.DAILY_STATS.name:
-            return Statistic.objects.get_daily_stats()
-
-        return super(StatisticViewSet, self).get_queryset()  # default
+        try:
+            return query_sets[data_choice]
+        except KeyError as e:
+            raise exceptions.ValidationError({"error": "Bad query"}) from e
 
     def get_serializer_class(self):
         data_req = self.parse_data_request()
         update_req = self.parse_update_request()
 
-        if update_req == StatisticQPData.RESET.name:
-            return statistic_serializer.StatisticSerializer  # pylint: disable=E1120
+        _map = {
+            StatisticQueryParams.ALL.name: statistic.serializers.all.StatisticAllSerializer,
+            StatisticQueryParams.CASH_AMOUNT.name: statistic_serializer.StatisticCashAmountSerializer,
+            StatisticQueryParams.DAILY_STATS.name: statistic_serializer.StatisticDailyStatsSerializer,
+            StatisticQueryParams.RESET.name: statistic_serializer.StatisticSerializer,
+        }
 
-        if data_req == StatisticQPData.ALL.name:
-            return statistic_serializer.StatisticAllSerializer  # pylint: disable=E1120
-
-        if data_req == StatisticQPData.CASH_AMOUNT.name:
-            return statistic_serializer.StatisticCashAmountSerializer  # pylint: disable=E1120
-
-        if data_req == StatisticQPData.DAILY_STATS.name:
-            return statistic_serializer.StatisticDailyStatsSerializer  # pylint: disable=E1120
-
-        return super(StatisticViewSet, self).get_serializer_class()  # default
+        requested_data = {data_req, update_req} & set(_map)  # check if at least one key is in _map
+        if requested_data.__len__() != 1:
+            raise exceptions.ValidationError({"error": "Expected query parameter: (data) or Data in body (update)"})
+        else:
+            return _map[requested_data.pop()]
 
     def list(self, request, *args, **kwargs):
         return super(StatisticViewSet, self).list(request)
@@ -96,7 +96,7 @@ class StatisticViewSet(mixins.ListModelMixin, mixins.CreateModelMixin, viewsets.
     def create(self, request: Request, *args, **kwargs):
         update_req = self.parse_update_request()
 
-        if update_req == StatisticQPData.RESET.name:
+        if update_req == StatisticQueryParams.RESET.name:
             return super().create(request)
 
         # Error

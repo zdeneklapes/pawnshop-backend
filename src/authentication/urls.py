@@ -16,4 +16,5 @@ urlpatterns = [
     path("token/create/", user_views.CustomTokenObtainPairView.as_view(), name="token_obtain_pair"),
     path("token/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
     path("token/verify/", TokenVerifyView.as_view(), name="token_verify"),
+    path("token/logout_all/", user_views.LogoutAllView.as_view(), name="token_logout_all"),
 ]
