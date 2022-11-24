@@ -27,7 +27,7 @@ def all_available_permissions():
         if hasattr(backend, "get_all_permissions"):
             permissions.update(backend.get_all_permissions(tmp_superuser))
 
-    # Make an unique list of permissions sorted by permission name.
+    # Make a unique list of permissions sorted by permission name.
     sorted_list_of_permissions = sorted(list(permissions))
     return sorted_list_of_permissions
 
