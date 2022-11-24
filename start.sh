@@ -229,18 +229,43 @@ function cron_docker() {
 function pack() {
     cd .. || error_exit "cd"
     zip -r \
-        pawnshop-backend/src \
-        pawnshop-backend/env \
-        pawnshop-backend/requirements.txt \
-        pawnshop-backend/README.md \
-        pawnshop-backend/start.sh \
-        pawnshop-backend/Dockerfile.* \
-        pawnshop-backend/docker-compose.yml \
+        \
+        pawnshop-backend \
         pawnshop-backend/pytest.ini \
-        pawnshop-backend/.dockerignore \
+        pawnshop-backend/requirements.txt \
         pawnshop-backend/pyproject.toml \
-
-        -x *__pycache__/*
+        pawnshop-backend/Dockerfile.web \
+        pawnshop-backend/README.md \
+        pawnshop-backend/env/*.env \
+        pawnshop-backend/Dockerfile.dev \
+        pawnshop-backend/.dockerignore \
+        pawnshop-backend/setup.cfg \
+        pawnshop-backend/docker-compose.yml \
+        pawnshop-backend/start.sh \
+        pawnshop-backend/Dockerfile.worker \
+        pawnshop-backend/src \
+        \
+        pawnshop-frontend/src \
+        pawnshop-frontend/README.md \
+        pawnshop-frontend/package.json \
+        pawnshop-frontend/yarn.lock \
+        pawnshop-frontend/.env.production \
+        pawnshop-frontend/tailwind.config.js \
+        pawnshop-frontend/next.config.js \
+        pawnshop-frontend/.eslintrc.cjs \
+        pawnshop-frontend/next-env.d.ts \
+        pawnshop-frontend/README.md \
+        pawnshop-frontend/yarn.lock \
+        pawnshop-frontend/package-lock.json \
+        pawnshop-frontend/package.json \
+        pawnshop-frontend/tsconfig.json \
+        pawnshop-frontend/.prettierrc.cjs \
+        pawnshop-frontend/postcss.config.js \
+        pawnshop-frontend/.env.development \
+        pawnshop-frontend/src \
+        \
+        -x *__pycache__/* \
+        -x .DS_Store
 
     cd - || error_exit "cd"
 }
