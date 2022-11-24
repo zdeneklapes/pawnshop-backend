@@ -32,7 +32,8 @@ def load_all_scope_function(django_db_setup, django_db_blocker):
 @pytest.fixture(scope="function")
 def load_groups_scope_function(django_db_setup, django_db_blocker):
     with django_db_blocker.unblock():
-        call_command("loaddata", "groups")
+        call_command("loaddata", FIXTURES)
+        call_command("update_groups_permissions")
 
 
 # ######################################################################################################################
@@ -70,7 +71,7 @@ def test_login_required_2(cli_args):
 @pytest.fixture(scope="function")
 def admin(load_groups_scope_function):
     payload = {"email": "admin_test1@a.com", "password": "admin_test1"}
-    user = User.objects.create_superuser(**payload)
+    user = User.objects.create_user(**payload)
     return user, payload
 
 
