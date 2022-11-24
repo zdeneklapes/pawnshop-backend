@@ -81,7 +81,6 @@ def test_offer_create_calc(client_admin, admin, load_all_scope_module, payload, 
 @pytest.mark.parametrize(
     "product_id, payload, exp_offer_status, exp_quantity, exp_status",
     [
-        # OFFER
         pytest.param(
             4,
             {"update": StatisticDescription.OFFER_BUY.name, "quantity": 2},
@@ -96,6 +95,21 @@ def test_offer_create_calc(client_admin, admin, load_all_scope_module, payload, 
             "0.0",
             status.HTTP_200_OK,
         ),
+    ],
+)
+@pytest.mark.django_db
+def test_offer_update_quantity_calculations(
+    client_admin, load_all_scope_function, product_id, payload, exp_offer_status, exp_quantity, exp_status
+):
+    response_update = client_admin.patch(path=f"/product/{product_id}/", data=payload, format="json")
+    assert not response_update.data["interest_rate_or_quantity"].isdecimal()
+    assert response_update.data["interest_rate_or_quantity"] == exp_quantity
+    assert response_update.data["status"] == exp_offer_status
+
+
+@pytest.mark.parametrize(
+    "product_id, payload, exp_offer_status, exp_quantity, exp_status",
+    [
         pytest.param(
             4,
             {"update": StatisticDescription.OFFER_SELL.name, "quantity": 3},
@@ -106,14 +120,8 @@ def test_offer_create_calc(client_admin, admin, load_all_scope_module, payload, 
     ],
 )
 @pytest.mark.django_db
-def test_offer_update_quantity_calculations(
+def test_offer_update_quantity_calculations_fail(
     client_admin, load_all_scope_function, product_id, payload, exp_offer_status, exp_quantity, exp_status
 ):
     response_update = client_admin.patch(path=f"/product/{product_id}/", data=payload, format="json")
-
-    if exp_status == status.HTTP_200_OK:
-        assert not response_update.data["interest_rate_or_quantity"].isdecimal()
-        assert response_update.data["interest_rate_or_quantity"] == exp_quantity
-        assert response_update.data["status"] == exp_offer_status
-
     assert response_update.status_code == exp_status
