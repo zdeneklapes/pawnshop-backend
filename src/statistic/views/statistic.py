@@ -6,6 +6,7 @@ from rest_framework import mixins, viewsets, status, permissions, exceptions
 from django.utils.decorators import method_decorator
 from drf_yasg.utils import swagger_auto_schema
 
+import statistic.serializers.all
 from statistic.models.models import Statistic
 from statistic.serializers import statistic as statistic_serializer
 from statistic.models.choices import StatisticQueryParams
@@ -77,7 +78,7 @@ class StatisticViewSet(mixins.ListModelMixin, mixins.CreateModelMixin, viewsets.
         update_req = self.parse_update_request()
 
         _map = {
-            StatisticQueryParams.ALL.name: statistic_serializer.StatisticAllSerializer,
+            StatisticQueryParams.ALL.name: statistic.serializers.all.StatisticAllSerializer,
             StatisticQueryParams.CASH_AMOUNT.name: statistic_serializer.StatisticCashAmountSerializer,
             StatisticQueryParams.DAILY_STATS.name: statistic_serializer.StatisticDailyStatsSerializer,
             StatisticQueryParams.RESET.name: statistic_serializer.StatisticSerializer,

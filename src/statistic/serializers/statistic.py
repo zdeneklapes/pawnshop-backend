@@ -11,19 +11,6 @@ from config.settings import AUTH
 from product.models.choices import ProductStatusOrData
 
 
-class StatisticAllSerializer(serializers.ModelSerializer):
-    amount = serializers.IntegerField(required=False, read_only=True)
-    profit = serializers.IntegerField(required=False, read_only=True)
-    username = serializers.CharField(source="user.email", read_only=True)
-    description = serializers.ChoiceField(
-        source="get_description_display", choices=StatisticDescription, read_only=True
-    )
-
-    class Meta:
-        model = Statistic
-        fields = ["id", "amount", "profit", "datetime", "description", "price", "product", "username", "user"]
-
-
 class StatisticSerializer(WritableNestedModelSerializer):
     amount = serializers.IntegerField(required=False, read_only=True)
     profit = serializers.IntegerField(required=False, read_only=True)

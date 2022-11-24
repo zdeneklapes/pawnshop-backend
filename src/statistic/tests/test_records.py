@@ -323,10 +323,6 @@ def test_statistic_cash_amount_data(client_admin, load_all_scope_function):
     assert response_get.data[0]["amount"] == response_get_all.data[-1]["amount"]
 
 
-@pytest.mark.parametrize(
-    "",
-    [pytest.param([])],
-)
 @pytest.mark.django_db
 def test_statistic_daily_stats_data_count(client_admin, load_all_scope_function):
     response_get = client_admin.get(path=pytest.statistic_urls[StatisticQueryParams.DAILY_STATS.name])
@@ -379,7 +375,7 @@ def test_statistic_daily_stats_data_count(client_admin, load_all_scope_function)
 )
 @pytest.mark.django_db
 @pytest.mark.skip(reason="Not implemented yet")
-def test_statistic_daily_stats_data_values(client_admin, load_all_scope_function):
+def test_statistic_daily_stats_data_values(client_admin, load_all_scope_function, exp_data):
     pass
 
 

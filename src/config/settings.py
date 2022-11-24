@@ -130,8 +130,7 @@ else:
     }
 
 # AUTH
-AUTH = True  # Required token; TODO: change to True
-AUTH = True  # Required token; TODO: change to True
+AUTH = False  # Required token; TODO: change to True
 AUTH_USER_MODEL = "authentication.User"
 ACCOUNT_USER_MODEL_USERNAME_FIELD = None
 ACCOUNT_USERNAME_REQUIRED = False
