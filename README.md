@@ -6,10 +6,26 @@
 
 ```
 openssl@3
+postgresql@14
 ```
 
 ### RUN
 
+All commands are run from the __pawnshop-backend/__ directory.
+
+#### Docker:
+
+```shell
+# To build the docker images and RUN the containers in the background
+docker-compose -f docker-compose.yml up -d
+
+# To stop pawnshop-backend containers:
+docker stop $(docker ps -a | grep "pawnshop\|postgres" | awk "{print \$1}") # WARN: Could stop some other containers
+```
+
+#### Local:
+
+```
 ```shell
 python3 -m venv venv
 source venv/bin/activate
@@ -26,8 +42,6 @@ Could be found on this address after server starts locally:
 ```shell
 http://localhost:8000/swagger/      # List of all endpoints and their usage(expected data, etc...)
 ```
-
----
 
 ---
 
