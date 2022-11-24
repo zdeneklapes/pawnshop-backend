@@ -106,7 +106,7 @@ class ProductViewSet(viewsets.ModelViewSet):
 
         response = super().partial_update(request)
         try:
-            StatisticSerializer.validate_and_save(request, buy_price_prev, sell_price_prev)
+            StatisticSerializer.save_statistic_product_update(request, buy_price_prev, sell_price_prev)
         except BadQueryParam as e:
             return Response(data={"details": f"Statistic - {e}"}, status=BadQueryParam.status_code, exception=True)
         return response

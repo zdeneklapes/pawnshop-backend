@@ -6,12 +6,21 @@ exclude: '(venv/)|(.pytest_caches/)|(src/third_party/)|(env/)|(src/staticfiles/)
 fail_fast: false
 minimum_pre_commit_version: '0'
 repos:
+  - repo: local
+    hooks:
+      - id: pytest-check
+        stages: [ push ]
+        name: pytest
+        entry: pytest --no-summary -q -n 7
+        language: system
+        pass_filenames: false
+        always_run: true
+
   - repo: meta
     hooks:
       #      - id: check-hooks-apply
       - id: check-useless-excludes
       - id: identity
-
 
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v3.4.0
@@ -90,13 +99,3 @@ repos:
         files: src/
         language_version: python3.10.8
         additional_dependencies: [ "pylint==2.6.0" ]
-  #
-  - repo: local
-    hooks:
-      - id: pytest-check
-        stages: [ push ]
-        name: pytest
-        entry: pytest --no-summary -q -n 7
-        language: system
-        pass_filenames: false
-        always_run: true

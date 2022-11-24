@@ -1,4 +1,4 @@
-from typing import Optional, Tuple
+from typing import Tuple, Literal, Optional
 
 from rest_framework import serializers
 from drf_writable_nested import WritableNestedModelSerializer
@@ -59,8 +59,13 @@ class StatisticSerializer(WritableNestedModelSerializer):
         return operation, price
 
     @staticmethod
-    def validate_and_save(request: Request, buy_price_prev: int, sell_price_prev: int) -> None:
-        # Validate
+    def save_statistic_auth_create(
+        operation: Literal[StatisticDescription.LOGIN, StatisticDescription.LOGOUT], user_id
+    ) -> None:
+        StatisticSerializer.save_statistics(operation=operation, user=1 if not AUTH else user_id)
+
+    @staticmethod
+    def save_statistic_product_update(request: Request, buy_price_prev: int, sell_price_prev: int) -> None:
         operation, price = StatisticSerializer.validate_operation(request, buy_price_prev, sell_price_prev)
 
         StatisticSerializer.save_statistics(
