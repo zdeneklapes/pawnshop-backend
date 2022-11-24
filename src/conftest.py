@@ -9,7 +9,7 @@ import config.settings as django_settings
 # ######################################################################################################################
 # Global Variables
 # ######################################################################################################################
-FIXTURES = ["groups", "users.json", "attendants.json", "customers.json", "products.json", "statistics.json"]
+FIXTURES = ["groups.json", "users.json", "attendants.json", "customers.json", "products.json", "statistics.json"]
 
 
 # ######################################################################################################################
