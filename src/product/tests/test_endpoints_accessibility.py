@@ -15,7 +15,7 @@ from product.models import ProductStatusOrData, ProductShopData
         pytest.param(f"/product/?data={ProductShopData.SHOP_STATS.name}", 3, status.HTTP_200_OK),
     ],
 )
-def test_get_data(client_admin, load_all_fixtures_for_module, path_data, count, exp_status):
+def test_get_data(client_admin, load_all_scope_module, path_data, count, exp_status):
     response = client_admin.get(path=path_data)
     assert response.data.__len__() == count
     assert response.status_code == exp_status
@@ -133,6 +133,6 @@ def test_create_product(client_admin, payload_data, exp_status_post, exp_status_
         ),
     ],
 )
-def test_update_status(client_admin, load_all_fixtures_for_module, product_id, payload, exp_status_patch):
+def test_update_status(client_admin, load_all_scope_module, product_id, payload, exp_status_patch):
     response_update = client_admin.patch(path=f"/product/{product_id}/", data=payload, format="json")
     assert response_update.status_code == exp_status_patch

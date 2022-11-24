@@ -11,7 +11,7 @@ from deepdiff import DeepDiff
     ],
 )
 def test_update_loan(
-    load_all_fixtures_for_function, client_attendant, product_id, payload_data, exp_status_patch, exp_status_get
+    load_all_scope_function, client_attendant, product_id, payload_data, exp_status_patch, exp_status_get
 ):
     response_get_prev = client_attendant.get(path=f"/product/{product_id}/")
     client_attendant.patch(path=f"/product/{product_id}/", data=payload_data, format="json")

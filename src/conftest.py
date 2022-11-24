@@ -16,19 +16,21 @@ FIXTURES = ["groups.json", "users.json", "attendants.json", "customers.json", "p
 # Data
 # ######################################################################################################################
 @pytest.fixture(scope="module")
-def load_all_fixtures_for_module(django_db_setup, django_db_blocker):
+def load_all_scope_module(django_db_setup, django_db_blocker):
     with django_db_blocker.unblock():
         call_command("loaddata", FIXTURES)
+        call_command("update_groups_permissions")
 
 
 @pytest.fixture(scope="function")
-def load_all_fixtures_for_function(django_db_setup, django_db_blocker):
+def load_all_scope_function(django_db_setup, django_db_blocker):
     with django_db_blocker.unblock():
         call_command("loaddata", FIXTURES)
+        call_command("update_groups_permissions")
 
 
 @pytest.fixture(scope="function")
-def load_groups_fixture_for_function(django_db_setup, django_db_blocker):
+def load_groups_scope_function(django_db_setup, django_db_blocker):
     with django_db_blocker.unblock():
         call_command("loaddata", "groups")
 
@@ -66,14 +68,14 @@ def test_login_required_2(cli_args):
 # Login
 # ######################################################################################################################
 @pytest.fixture(scope="function")
-def admin(load_groups_fixture_for_function):
+def admin(load_groups_scope_function):
     payload = {"email": "admin_test1@a.com", "password": "admin_test1"}
     user = User.objects.create_superuser(**payload)
     return user, payload
 
 
 @pytest.fixture(scope="function")
-def attendant(load_groups_fixture_for_function):
+def attendant(load_groups_scope_function):
     payload = {"email": "atendant_test1@a.com", "password": "attendant_test1"}
     user = AttendantProfile.objects.create_user(**payload)
     return user, payload

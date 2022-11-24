@@ -56,7 +56,7 @@ from statistic.models import StatisticDescription
 )
 @pytest.mark.django_db
 # @pytest.mark.xfail  # TODO: Solve conf.settings.AUTH = True settings.AUTH = True
-def test_offer_create_calc(client_admin, admin, test_login_required, load_all_fixtures_for_module, payload, exp_status):
+def test_offer_create_calc(client_admin, admin, test_login_required, load_all_scope_module, payload, exp_status):
     response_update = client_admin.post(path="/product/", data=payload, format="json")
     assert response_update.status_code == exp_status
 
@@ -107,7 +107,7 @@ def test_offer_create_calc(client_admin, admin, test_login_required, load_all_fi
 )
 @pytest.mark.django_db
 def test_offer_update_quantity_calculations(
-    client_admin, load_all_fixtures_for_function, product_id, payload, exp_offer_status, exp_quantity, exp_status
+    client_admin, load_all_scope_function, product_id, payload, exp_offer_status, exp_quantity, exp_status
 ):
     response_update = client_admin.patch(path=f"/product/{product_id}/", data=payload, format="json")
 

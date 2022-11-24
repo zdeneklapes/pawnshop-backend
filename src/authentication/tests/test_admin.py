@@ -11,7 +11,7 @@ from authentication import models
     ],
 )
 @pytest.mark.django_db
-def test_get_data_users(client_admin, load_all_fixtures_for_function, url, num_records, exp_status):
+def test_get_data_users(client_admin, load_all_scope_function, url, num_records, exp_status):
     response = client_admin.get(path=url)
     assert response.data.__len__() == num_records
     assert response.status_code == exp_status
@@ -26,7 +26,7 @@ def test_get_data_users(client_admin, load_all_fixtures_for_function, url, num_r
     ],
 )
 @pytest.mark.django_db
-def test_get_data_users_by_id(client_admin, load_all_fixtures_for_module, url, role, exp_status):
+def test_get_data_users_by_id(client_admin, load_all_scope_module, url, role, exp_status):
     response = client_admin.get(path=url)
     assert response.data["role"] == role
     assert response.status_code == exp_status
@@ -71,7 +71,7 @@ def test_create_user(client_admin, payload, exp_status):
     ],
 )
 @pytest.mark.django_db
-def test_update_admin_by_admin(load_all_fixtures_for_function, client_admin, user_id, payload, exp_status):
+def test_update_admin_by_admin(load_all_scope_function, client_admin, user_id, payload, exp_status):
     response_update = client_admin.patch(path=f"/authentication/user/{user_id}/", data=payload, format="json")
     assert response_update.status_code == exp_status
 
@@ -91,7 +91,7 @@ def test_update_admin_by_admin(load_all_fixtures_for_function, client_admin, use
     ],
 )
 @pytest.mark.django_db
-def test_update_admin_by_admin_error(client_admin, load_all_fixtures_for_function, user_id, payload, exp_status):
+def test_update_admin_by_admin_error(client_admin, load_all_scope_function, user_id, payload, exp_status):
     response_update = client_admin.patch(path=f"/authentication/user/{user_id}/", data=payload, format="json")
     assert response_update.status_code == exp_status
 
@@ -108,7 +108,7 @@ def test_update_admin_by_admin_error(client_admin, load_all_fixtures_for_functio
 )
 @pytest.mark.django_db
 def test_update_attendant_by_admin(
-    client_admin, client, test_login_required, load_all_fixtures_for_function, user_id, payload, exp_status
+    client_admin, client, test_login_required, load_all_scope_function, user_id, payload, exp_status
 ):
     response_update = client_admin.patch(path=f"/authentication/attendant/{user_id}/", data=payload, format="json")
 
@@ -152,7 +152,7 @@ def test_update_attendant_by_myself(client_attendant, client, attendant, test_lo
 )
 @pytest.mark.django_db
 def test_password_validator_update(
-    client_admin, test_login_required, load_all_fixtures_for_function, user_id, payload, exp_status
+    client_admin, test_login_required, load_all_scope_function, user_id, payload, exp_status
 ):
     response_update = client_admin.patch(path=f"/authentication/attendant/{user_id}/", data=payload, format="json")
     assert response_update.status_code == status.HTTP_400_BAD_REQUEST
@@ -187,7 +187,7 @@ def test_password_validator_create(client_admin, test_login_required, payload, e
     ],
 )
 @pytest.mark.django_db
-def test_delete_user(client_admin, test_login_required, load_all_fixtures_for_function, user_id, body, exp_status):
+def test_delete_user(client_admin, test_login_required, load_all_scope_function, user_id, body, exp_status):
     response = client_admin.delete(path=f"/authentication/user/{user_id}/", format="json")
 
     assert body == response.data or all(field in response.data for field in body)

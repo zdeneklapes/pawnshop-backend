@@ -58,7 +58,7 @@ from common import utils
 )
 @pytest.mark.django_db
 # @pytest.mark.xfail  # TODO: Solve conf.settings.AUTH = True settings.AUTH = True
-def test_loan_create_calc(client_admin, admin, load_all_fixtures_for_module, payload, exp_status):
+def test_loan_create_calc(client_admin, admin, load_all_scope_module, payload, exp_status):
     response_update = client_admin.post(path="/product/", data=payload, format="json")
     assert response_update.status_code == exp_status
 
@@ -91,7 +91,7 @@ def test_loan_create_calc(client_admin, admin, load_all_fixtures_for_module, pay
     ],
 )
 @pytest.mark.django_db
-def test_loan_extend_calc(client_admin, load_all_fixtures_for_module, product_id, payload, exp_status):
+def test_loan_extend_calc(client_admin, load_all_scope_module, product_id, payload, exp_status):
     response_get = client_admin.get(path=f"/product/{product_id}/", data=payload, format="json")
     response_update = client_admin.patch(path=f"/product/{product_id}/", data=payload, format="json")
     assert response_update.status_code == exp_status
@@ -130,7 +130,7 @@ def test_loan_extend_calc(client_admin, load_all_fixtures_for_module, product_id
     ],
 )
 @pytest.mark.django_db
-def test_loan_return_calc(client_admin, load_all_fixtures_for_module, product_id, payload, exp_status):
+def test_loan_return_calc(client_admin, load_all_scope_module, product_id, payload, exp_status):
     response_get = client_admin.get(path=f"/product/{product_id}/", data=payload, format="json")
     response_update = client_admin.patch(path=f"/product/{product_id}/", data=payload, format="json")
     assert response_update.status_code == exp_status

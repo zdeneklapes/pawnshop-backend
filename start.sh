@@ -97,6 +97,7 @@ function django_loaddata() {
         "./customer/fixtures/customers.json" \
         "./product/fixtures/products.json" \
         "./statistic/fixtures/statistics.json"
+    python3 manage.py update_groups_permissions -p
     cd .. || error_exit "cd"
 }
 

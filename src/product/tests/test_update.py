@@ -93,6 +93,6 @@ from statistic.models import StatisticDescription
     ],
 )
 @pytest.mark.django_db
-def test_is_update_possible(client_admin, load_all_fixtures_for_module, product_id, payload, exp_status):
+def test_is_update_possible(client_admin, load_all_scope_module, product_id, payload, exp_status):
     response_update = client_admin.patch(path=f"/product/{product_id}/", data=payload, format="json")
     assert response_update.status_code == exp_status

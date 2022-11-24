@@ -16,7 +16,7 @@ from deepdiff import DeepDiff
     ],
 )
 def test_update_offer(
-    load_all_fixtures_for_function, client_admin, product_id, payload_data, exp_status_patch, exp_status_get
+    load_all_scope_function, client_admin, product_id, payload_data, exp_status_patch, exp_status_get
 ):
     response_get_prev = client_admin.get(path=f"/product/{product_id}/")
     client_admin.patch(path=f"/product/{product_id}/", data=payload_data, format="json")

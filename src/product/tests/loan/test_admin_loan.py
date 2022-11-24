@@ -10,9 +10,7 @@ from deepdiff import DeepDiff
         pytest.param(1, pytest.UpdateProductData.data_update, status.HTTP_200_OK, status.HTTP_200_OK),
     ],
 )
-def test_update_loan(
-    load_all_fixtures_for_function, client_admin, product_id, payload_data, exp_status_patch, exp_status_get
-):
+def test_update_loan(load_all_scope_function, client_admin, product_id, payload_data, exp_status_patch, exp_status_get):
     response_get_prev = client_admin.get(path=f"/product/{product_id}/")
     client_admin.patch(path=f"/product/{product_id}/", data=payload_data, format="json")
     response_get = client_admin.get(path=f"/product/{product_id}/")
