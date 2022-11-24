@@ -24,20 +24,31 @@ class Statistic(models.Model):
     #
     datetime = models.DateTimeField(auto_now_add=True)
     description = models.CharField(max_length=255, choices=StatisticDescription.choices)
-    price = models.IntegerField(default=0)
+    price = models.IntegerField(default=None, null=True)
     amount = models.IntegerField()
     profit = models.IntegerField()
 
     def save(self, *args, **kwargs):
         # Amount
-        prev_stat = Statistic.objects.last()
+        statistic_prev = Statistic.objects.last()
+        statistic_amount_prev = statistic_prev.amount if statistic_prev else 0
+        statistic_profit_prev = statistic_prev.profit if statistic_prev else 0
         # Note: if first occurrence (therefore if statement)
-        self.amount = self.price + (prev_stat.amount if prev_stat else 0)
+
+        # Amount
+        if self.price:
+            self.amount = statistic_amount_prev + self.price
+        else:
+            self.amount = statistic_amount_prev
 
         # Profit
         if self.description == StatisticDescription.RESET.name:  # pylint: disable=E1101
             self.profit = 0
         else:
-            self.profit = prev_stat.profit + self.price if prev_stat else self.price
+            if self.price:
+                self.profit = statistic_profit_prev + self.price
+            else:
+                self.profit = statistic_profit_prev
 
+        #
         super().save(*args, **kwargs)

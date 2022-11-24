@@ -32,6 +32,9 @@ class StatisticSerializer(WritableNestedModelSerializer):
         model = Statistic
         fields = "__all__"
 
+    # ###########################################################################################
+    # Validate
+    # ###########################################################################################
     @staticmethod
     def validate_operation(request: Request, buy_price_prev: int, sell_price_prev: int) -> Tuple[str, int]:
         var_search = "update"
@@ -58,6 +61,9 @@ class StatisticSerializer(WritableNestedModelSerializer):
                 raise BadQueryParam()
         return operation, price
 
+    # ###########################################################################################
+    # Save Helpers
+    # ###########################################################################################
     @staticmethod
     def save_statistic_auth_create(
         operation: Literal[StatisticDescription.LOGIN, StatisticDescription.LOGOUT], user_id
@@ -95,6 +101,9 @@ class StatisticSerializer(WritableNestedModelSerializer):
             raise serializers.ValidationError(serializer_stats.errors)
         serializer_stats.save()
 
+    # ###########################################################################################
+    # Inherited
+    # ###########################################################################################
     def to_internal_value(self, data):
         var_search = "update"
 
