@@ -110,7 +110,7 @@ class StatisticSerializer(WritableNestedModelSerializer):
         return super().to_internal_value(data)
 
 
-class StatisticDailyStatsSerializer(serializers.Serializer):
+class StatisticDailyStatsSerializer(serializers.Serializer):  # noqa # pylint: disable=W0223
     date = serializers.DateField()
     loan_create_count = serializers.IntegerField()
     loan_extend_count = serializers.IntegerField()

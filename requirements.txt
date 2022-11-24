@@ -4,6 +4,7 @@ deepdiff
 django-cors-headers
 django-cron
 django-crontab
+django-debug-permissions
 django-environ
 django-filter
 django-phonenumber-field

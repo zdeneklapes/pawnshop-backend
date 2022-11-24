@@ -304,9 +304,17 @@ def test_offer_update_not_in_db(client_admin, load_all_scope_function, product_i
     ],
 )
 @pytest.mark.django_db
-def test_statistic_all_data(client_admin):
+def test_statistic_all(client_admin):
     response_get = client_admin.get(path=pytest.statistic_urls[StatisticQueryParams.ALL.name])
+
+    #
+    keys_all = {"datetime", "description", "price", "product", "product_name", "username", "amount", "profit"}
+    _iter = map(lambda x: keys_all <= set(x), response_get.data[:-1])
+    has_keys = all(_iter)
+
+    #
     assert len(response_get.data) == 19
+    assert has_keys
 
 
 @pytest.mark.parametrize(
@@ -316,7 +324,7 @@ def test_statistic_all_data(client_admin):
     ],
 )
 @pytest.mark.django_db
-def test_statistic_cash_amount_data(client_admin, load_all_scope_function):
+def test_statistic_cash_amount(client_admin, load_all_scope_function):
     response_get = client_admin.get(path=pytest.statistic_urls[StatisticQueryParams.CASH_AMOUNT.name])
     response_get_all = client_admin.get(path=pytest.statistic_urls[StatisticQueryParams.ALL.name])
     assert len(response_get.data) == 1
@@ -324,7 +332,7 @@ def test_statistic_cash_amount_data(client_admin, load_all_scope_function):
 
 
 @pytest.mark.django_db
-def test_statistic_daily_stats_data_count(client_admin, load_all_scope_function):
+def test_statistic_daily_stats_count(client_admin, load_all_scope_function):
     response_get = client_admin.get(path=pytest.statistic_urls[StatisticQueryParams.DAILY_STATS.name])
     _ = response_get.data.pop(2)  # because AuthUser is created in the middle of the test
     assert len(response_get.data) == 2
@@ -392,7 +400,6 @@ def test_statistic_reset_profit(client_admin, load_all_scope_module, payload, ex
     )
     response_get = client_admin.get(path=pytest.statistic_urls[StatisticQueryParams.ALL.name])
     assert response.status_code == exp_status
-    assert len(response_get.data) == 20
     assert response_get.data[-1]["description"] == StatisticDescription.RESET.label
     assert response_get.data[-1]["profit"] == 0
 
