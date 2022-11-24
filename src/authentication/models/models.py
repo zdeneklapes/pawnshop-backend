@@ -3,7 +3,6 @@ from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.contrib.auth.models import Group
 
-from shop.models import Shop
 from .choices import UserRoleChoice
 from .managers import CustomUserManager
 
@@ -46,36 +45,25 @@ class User(AbstractUser):
 
 
 class AttendantProfile(User):
+    base_role = UserRoleChoice.ATTENDANT
+
     class Meta:
         verbose_name = "Attendant"
         verbose_name_plural = "Attendants"
-
-    base_role = UserRoleChoice.ATTENDANT
-
-    # Customer
-    perm_edit_custom_user = models.BooleanField(default=False)
-
-    # Cash desk
-    perm_edit_cash_desk = models.BooleanField(default=False)
-
-    # Loan
-    perm_move_loan_to_offer = models.BooleanField(default=False)
-    perm_sell_offer_without_eet = models.BooleanField(default=False)
-    perm_divide_product = models.BooleanField(default=False)  # TODO: Later
-
-    # Product
-    perm_edit_sell_price = models.BooleanField(default=False)
-    perm_edit_date = models.BooleanField(default=False)
-    perm_edit_subject = models.BooleanField(default=False)
-    perm_edit_all_item = models.BooleanField(default=False)  # TODO: For what?
-
-    # Statistic
-    perm_see_price_in_stats = models.BooleanField(default=False)
-    perm_daily_stats = models.BooleanField(default=False)
-    perm_yield_stats = models.BooleanField(default=False)
-
-    # Shop
-    perm_operate_on_shop = models.ManyToManyField(Shop, blank=True)
-
-    # Others
-    perm_complete_win = models.BooleanField(default=False)  # TODO: For what?
+        permissions = [
+            ("base_role", "Can change role"),
+            ("perm_edit_custom_user", "Can edit custom user"),
+            ("perm_edit_cash_desk", "Can edit cash desk"),
+            ("perm_move_loan_to_offer", "Can move loan to offer"),
+            ("perm_sell_offer_without_eet", "Can sell offer without eet"),
+            ("perm_divide_product", "Can divide product"),
+            ("perm_edit_sell_price", "Can edit sell price"),
+            ("perm_edit_date", "Can edit date"),
+            ("perm_edit_subject", "Can edit subject"),
+            ("perm_edit_all_item", "Can edit all item"),
+            ("perm_see_price_in_stats", "Can see price in stats"),
+            ("perm_daily_stats", "Can see daily stats"),
+            ("perm_yield_stats", "Can see yield stats"),
+            ("perm_operate_on_shop", "Can operate on shop"),
+            ("perm_complete_win", "Can complete win"),
+        ]

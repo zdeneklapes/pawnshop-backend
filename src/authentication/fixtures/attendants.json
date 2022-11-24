@@ -2,21 +2,6 @@
   {
     "model": "authentication.attendantprofile",
     "pk": 3,
-    "fields": {
-      "perm_edit_custom_user": false,
-      "perm_edit_cash_desk": false,
-      "perm_move_loan_to_offer": false,
-      "perm_sell_offer_without_eet": false,
-      "perm_divide_product": false,
-      "perm_edit_sell_price": false,
-      "perm_edit_date": false,
-      "perm_edit_subject": false,
-      "perm_edit_all_item": false,
-      "perm_see_price_in_stats": false,
-      "perm_daily_stats": false,
-      "perm_yield_stats": false,
-      "perm_complete_win": false,
-      "perm_operate_on_shop": []
-    }
+    "fields": { }
   }
 ]
