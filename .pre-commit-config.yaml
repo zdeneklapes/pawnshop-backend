@@ -97,5 +97,5 @@ repos:
       - id: pylint
         args: [ "--rcfile=./.pylintrc" ]
         files: src/
-        language_version: python3.10.8
+        language_version: python3.10
         additional_dependencies: [ "pylint==2.6.0" ]
