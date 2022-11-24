@@ -62,8 +62,9 @@ class StatisticViewSet(mixins.ListModelMixin, mixins.CreateModelMixin, viewsets.
 
         try:
             return query_sets[data_choice]
-        except KeyError as e:
-            raise exceptions.ValidationError({"error": "Bad query"}) from e
+        except KeyError:
+            return self.queryset
+            # raise exceptions.ValidationError({"error": "Bad query"}) from e
 
     def get_serializer_class(self):
         data_req = self.parse_data_request()
@@ -77,7 +78,9 @@ class StatisticViewSet(mixins.ListModelMixin, mixins.CreateModelMixin, viewsets.
         }
 
         requested_data = {data_req, update_req} & set(_map)  # check if at least one key is in _map
-        if requested_data.__len__() != 1:
+        if requested_data.__len__() == 0:
+            return statistic_serializer.StatisticSerializer  # TODO: raise exception
+        elif requested_data.__len__() != 1:
             raise exceptions.ValidationError({"error": "Expected query parameter: (data) or Data in body (update)"})
         else:
             return _map[requested_data.pop()]

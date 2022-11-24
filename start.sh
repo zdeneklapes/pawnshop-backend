@@ -152,7 +152,7 @@ function usage() {
 }
 
 function clean() {
-    #    ${RM} *.zip
+    ${RM} *.zip
 
     # Folders
     for folder in "venv" "__pycache__"; do
@@ -160,7 +160,7 @@ function clean() {
     done
 
     # Files
-    for file in ".DS_Store" "*.log"; do
+    for file in ".DS_Store" "*.log" "db.sqlite3"; do
         find . -type f -iname "${file}" | xargs ${RM}
     done
 
@@ -224,6 +224,25 @@ function cron_docker() {
     cd .. || error_exit "cd"
 
     cron -f
+}
+
+function pack() {
+    cd .. || error_exit "cd"
+    zip -r \
+        pawnshop-backend/src \
+        pawnshop-backend/env \
+        pawnshop-backend/requirements.txt \
+        pawnshop-backend/README.md \
+        pawnshop-backend/start.sh \
+        pawnshop-backend/Dockerfile.* \
+        pawnshop-backend/docker-compose.yml \
+        pawnshop-backend/pytest.ini \
+        pawnshop-backend/.dockerignore \
+        pawnshop-backend/pyproject.toml \
+
+        -x *__pycache__/*
+
+    cd - || error_exit "cd"
 }
 
 # Main arguments loop
