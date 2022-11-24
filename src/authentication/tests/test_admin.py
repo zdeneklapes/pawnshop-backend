@@ -19,9 +19,9 @@ def test_get_data_users(client_admin, url, exp_status):
 @pytest.mark.parametrize(
     "url, role, exp_status",
     [
-        pytest.param("/authentication/user/1/", models.UserRoleChoice.ADMIN.name, status.HTTP_200_OK),
-        pytest.param("/authentication/user/2/", models.UserRoleChoice.ADMIN.name, status.HTTP_200_OK),
-        pytest.param("/authentication/user/3/", models.UserRoleChoice.ATTENDANT.name, status.HTTP_200_OK),
+        pytest.param("/authentication/user/1/", models.UserGroupChoice.ADMIN.name, status.HTTP_200_OK),
+        pytest.param("/authentication/user/2/", models.UserGroupChoice.ADMIN.name, status.HTTP_200_OK),
+        pytest.param("/authentication/user/3/", models.UserGroupChoice.ATTENDANT.name, status.HTTP_200_OK),
     ],
 )
 @pytest.mark.django_db

@@ -3,7 +3,7 @@ from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.contrib.auth.models import Group
 
-from .choices import UserRoleChoice
+from .choices import UserGroupChoice
 from .managers import CustomUserManager
 
 
@@ -14,8 +14,8 @@ class User(AbstractUser):
 
     objects = CustomUserManager()
 
-    base_role = UserRoleChoice.ADMIN
-    role = models.CharField(max_length=50, choices=UserRoleChoice.choices)
+    base_role = UserGroupChoice.ADMIN
+    role = models.CharField(max_length=50, choices=UserGroupChoice.choices)
 
     # Login via email & password (Switch these off)
     username = None
@@ -45,7 +45,7 @@ class User(AbstractUser):
 
 
 class AttendantProfile(User):
-    base_role = UserRoleChoice.ATTENDANT
+    base_role = UserGroupChoice.ATTENDANT
 
     class Meta:
         verbose_name = "Attendant"

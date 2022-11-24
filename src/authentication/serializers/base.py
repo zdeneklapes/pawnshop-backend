@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from authentication.models import UserRoleChoice, User
+from authentication.models import UserGroupChoice, User
 from config.settings import AUTH
 
 
@@ -32,7 +32,7 @@ class UserBaseSerializer(serializers.Serializer):
 
         if (
             AUTH
-            and self.context["request"].user.role != UserRoleChoice.ADMIN.name
+            and self.context["request"].user.role != UserGroupChoice.ADMIN.name
             and self.context["request"].user.id != self.instance.id
         ):
             raise serializers.ValidationError({"authorize": "You dont have permission for this user."})

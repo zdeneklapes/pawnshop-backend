@@ -7,7 +7,7 @@ from rest_framework import serializers
 from common import utils
 from product.models import Product, ProductStatusOrData
 from statistic.models import StatisticDescription
-from authentication.models.choices import UserRoleChoice
+from authentication.models.choices import UserGroupChoice
 
 
 class ProductUpdateSerializer(WritableNestedModelSerializer):
@@ -143,7 +143,7 @@ class ProductUpdateSerializer(WritableNestedModelSerializer):
         return data
 
     def set_data_update_loan(self, data: dict) -> dict:
-        if self.context["request"].user.role == UserRoleChoice.ADMIN.name:
+        if self.context["request"].user.role == UserGroupChoice.ADMIN.name:
             return {
                 "update": data["update"],
                 "product_name": data["product_name"],
@@ -153,7 +153,7 @@ class ProductUpdateSerializer(WritableNestedModelSerializer):
                 "date_extend": data["date_extend"],
             }
 
-        if self.context["request"].user.role == UserRoleChoice.ATTENDANT.name:
+        if self.context["request"].user.role == UserGroupChoice.ATTENDANT.name:
             return {
                 "update": data["update"],
                 "product_name": data["product_name"],
@@ -163,7 +163,7 @@ class ProductUpdateSerializer(WritableNestedModelSerializer):
         raise serializers.ValidationError({"error": "You don't have permission to update this product"})
 
     def set_data_update_offer(self, data: dict) -> dict:
-        if self.context["request"].user.role == UserRoleChoice.ADMIN.name:
+        if self.context["request"].user.role == UserGroupChoice.ADMIN.name:
             return {
                 "update": data["update"],
                 "product_name": data["product_name"],
@@ -173,7 +173,7 @@ class ProductUpdateSerializer(WritableNestedModelSerializer):
                 "date_extend": data["date_extend"],
             }
 
-        if self.context["request"].user.role == UserRoleChoice.ATTENDANT.name:
+        if self.context["request"].user.role == UserGroupChoice.ATTENDANT.name:
             return {
                 "update": data["update"],
                 "product_name": data["product_name"],
