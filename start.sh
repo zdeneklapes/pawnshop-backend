@@ -10,6 +10,7 @@ AUTHOR='Zdenek Lapes'
 EMAIL='lapes.zdenek@gmail.com'
 
 PROJECT_NAME='pawnshop'
+LOGIN='xlapes02_xbinov00_xbuban00'
 
 # Utils
 function error_exit() {
@@ -227,10 +228,11 @@ function cron_docker() {
 }
 
 function pack() {
+    # TODO: Should be migrations folders packet?
+
     cd .. || error_exit "cd"
-    zip -r \
+    zip -r ${LOGIN}.zip \
         \
-        pawnshop-backend \
         pawnshop-backend/pytest.ini \
         pawnshop-backend/requirements.txt \
         pawnshop-backend/pyproject.toml \
@@ -264,8 +266,10 @@ function pack() {
         pawnshop-frontend/.env.development \
         pawnshop-frontend/src \
         \
+        -x *migrations/* \
         -x *__pycache__/* \
-        -x .DS_Store
+        -x .DS_Store \
+        -x *db.sqlite3*
 
     cd - || error_exit "cd"
 }
@@ -298,6 +302,7 @@ while [ "$#" -gt 0 ]; do
     '--venv') create_venv ;;
     '-h' | '--help') usage ;;
     '-c' | '--clean') clean ;;
+    '--pack') pack ;;
     '--tags') tags ;;
     '--cloc') custom_cloc ;;
     esac
