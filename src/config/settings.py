@@ -39,7 +39,7 @@ INSTALLED_APPS = [
     "drf_yasg",
     "rest_framework",
     "rest_framework_simplejwt",
-    # "rest_framework_simplejwt.token_blacklist",
+    "rest_framework_simplejwt.token_blacklist",
     "django_filters",
     "wkhtmltopdf",
     "debug_permissions",
@@ -156,11 +156,11 @@ AUTH_PASSWORD_VALIDATORS = [
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(hours=2),
     "REFRESH_TOKEN_LIFETIME": timedelta(hours=3),
-    # 'ROTATE_REFRESH_TOKENS': False,
-    "BLACKLIST_AFTER_ROTATION": False,
+    "ROTATE_REFRESH_TOKENS": True,
+    "BLACKLIST_AFTER_ROTATION": True,
     # 'UPDATE_LAST_LOGIN': False,
     #
-    # 'ALGORITHM': 'HS256',
+    "ALGORITHM": "HS256",
     "SIGNING_KEY": SECRET_KEY,
     # 'VERIFYING_KEY': None,
     # 'AUDIENCE': None,

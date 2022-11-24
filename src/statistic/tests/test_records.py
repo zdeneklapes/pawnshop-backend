@@ -4,6 +4,8 @@ import pytest
 from statistic.models import StatisticDescription, StatisticQueryParams
 from rest_framework import status
 
+from config.settings import SIMPLE_JWT
+
 
 @pytest.mark.parametrize(
     "payload",
@@ -302,9 +304,9 @@ def test_offer_update_not_in_db(client_admin, load_all_scope_function, product_i
     ],
 )
 @pytest.mark.django_db
-def test_statistic_all_data(client_admin, load_all_scope_function):
+def test_statistic_all_data(client_admin):
     response_get = client_admin.get(path=pytest.statistic_urls[StatisticQueryParams.ALL.name])
-    assert len(response_get.data) == 18
+    assert len(response_get.data) == 19
 
 
 @pytest.mark.parametrize(
@@ -367,7 +369,7 @@ def test_statistic_cash_amount_data(client_admin, load_all_scope_function):
 @pytest.mark.django_db
 def test_statistic_daily_stats_data(client_admin, load_all_scope_function, exp_data):
     response_get = client_admin.get(path=pytest.statistic_urls[StatisticQueryParams.DAILY_STATS.name])
-    assert len(response_get.data) == 2
+    assert len(response_get.data) == 3
     assert response_get.data == exp_data
 
 
@@ -384,18 +386,29 @@ def test_statistic_reset_profit(client_admin, load_all_scope_module, payload, ex
     )
     response_get = client_admin.get(path=pytest.statistic_urls[StatisticQueryParams.ALL.name])
     assert response.status_code == exp_status
-    assert len(response_get.data) == 19
+    assert len(response_get.data) == 20
     assert response_get.data[-1]["description"] == StatisticDescription.RESET.label
     assert response_get.data[-1]["profit"] == 0
 
 
-@pytest.mark.skip("Not implemented")
-def test_user_login():
-    pass
+@pytest.mark.django_db
+def test_user_login_and_logout(client, admin, client_attendant):
+    response_get = client_attendant.get(path=pytest.statistic_urls[StatisticQueryParams.ALL.name])
+
+    # Create login/logout records
+    response = client.post("http://localhost:8000/authentication/token/create/", data=admin[1])
+    client.credentials(HTTP_AUTHORIZATION=f"{SIMPLE_JWT['AUTH_HEADER_TYPES'][0]} {response.data['access']}")
+    client.post("http://localhost:8000/authentication/token/logout_all/", data={"refresh": response.data["refresh"]})
+
+    #
+    response_get_new = client.get(path=pytest.statistic_urls[StatisticQueryParams.ALL.name])
+
+    #
+    assert response_get.data.__len__() + 2 == response_get_new.data.__len__(), "Login or Logout records not created"
 
 
 @pytest.mark.skip("Not implemented")
-def test_user_logout():
+def test_user_dont_have_access_after_logout():
     pass
 
 

@@ -58,7 +58,7 @@
       "product": null,
       "user": 1,
       "datetime": "2022-10-03T19:24:24.773Z",
-      "description": "OFFER_CREATE",
+      "description": "OFFER_BUY",
       "price": -100,
       "amount": -40,
       "profit": -40
@@ -191,7 +191,7 @@
       "product": null,
       "user": 1,
       "datetime": "2022-10-04T19:24:24.773Z",
-      "description": "OFFER_CREATE",
+      "description": "OFFER_BUY",
       "price": -100,
       "amount": 40,
       "profit": -40

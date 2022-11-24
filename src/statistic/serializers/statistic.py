@@ -65,7 +65,7 @@ class StatisticSerializer(WritableNestedModelSerializer):
     # Save Helpers
     # ###########################################################################################
     @staticmethod
-    def save_statistic_auth_create(
+    def save_statistic_auth(
         operation: Literal[StatisticDescription.LOGIN, StatisticDescription.LOGOUT], user_id
     ) -> None:
         StatisticSerializer.save_statistics(operation=operation, user=1 if not AUTH else user_id)

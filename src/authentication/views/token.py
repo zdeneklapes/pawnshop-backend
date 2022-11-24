@@ -3,8 +3,6 @@ from rest_framework import generics, permissions, status
 from rest_framework_simplejwt.views import TokenObtainPairView
 
 from authentication.serializers.token import CustomTokenObtainPairSerializer, LogoutAllSerializer
-from statistic.serializers.statistic import StatisticSerializer
-from statistic.models.models import StatisticDescription
 
 
 class CustomTokenObtainPairView(TokenObtainPairView):
@@ -20,8 +18,7 @@ class LogoutAllView(generics.GenericAPIView):
     serializer_class = LogoutAllSerializer
 
     def post(self, request):
-        StatisticSerializer.save_statistic_auth_create(StatisticDescription.LOGOUT.name, request)
         serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
+        if serializer.is_valid(raise_exception=True):
+            serializer.save()
         return Response(status=status.HTTP_201_CREATED)
