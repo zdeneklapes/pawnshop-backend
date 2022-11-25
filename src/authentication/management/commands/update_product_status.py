@@ -3,7 +3,17 @@ from config.cron import update_product_status
 
 
 class Command(BaseCommand):
+    """
+    Update product status LOAN to AFTER_MATURITY and set sell_price
+    """
+
     def handle(self, *args, **options):
+        """
+        Update product status LOAN to AFTER_MATURITY and set sell_price
+        :param args: None
+        :param options: None
+        :return: None
+        """
         update_product_status()
 
 

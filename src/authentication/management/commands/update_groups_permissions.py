@@ -7,7 +7,6 @@ import logging
 from django.core.management.base import BaseCommand
 from django.contrib.auth.models import Group, Permission
 
-
 from authentication.models.choices import UserGroupChoice
 from django.contrib import auth
 from django.contrib.auth import get_user_model
@@ -79,12 +78,22 @@ group_permission = {
 
 
 class Command(BaseCommand):
+    """
+    Command to create groups and add permissions to them
+    """
+
     def add_arguments(self, parser):
         parser.add_argument(
             "--print", "-p", action="store_true", dest="print", default=False, help="Prints the permissions and groups"
         )
 
     def handle(self, *args, **options):
+        """
+        Create groups and add permissions to them
+        :param args:
+        :param options: print
+        :return: None
+        """
         for group in UserGroupChoice.names:
             new_group, _ = Group.objects.get_or_create(name=group)
             for permission in group_permission[group]:

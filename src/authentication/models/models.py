@@ -8,6 +8,10 @@ from .managers import CustomUserManager
 
 
 class User(AbstractUser):
+    """
+    Custom User model
+    """
+
     class Meta:
         verbose_name = "User"
         verbose_name_plural = "Users"
@@ -35,6 +39,12 @@ class User(AbstractUser):
     REQUIRED_FIELDS = []  # Note: Must be here, otherwise produce error
 
     def save(self, *args, **kwargs):
+        """
+        Save user and add them to group
+        :param args:
+        :param kwargs:
+        :return:
+        """
         self.role = self.base_role
         my_group = Group.objects.get(name=self.role)
         super().save(*args, **kwargs)
@@ -44,6 +54,10 @@ class User(AbstractUser):
 
 
 class AttendantProfile(User):
+    """
+    Attendant Profile - User with role attendant
+    """
+
     base_role = UserGroupChoice.ATTENDANT
 
     class Meta:
