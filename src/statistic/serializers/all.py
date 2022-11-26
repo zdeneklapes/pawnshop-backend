@@ -17,4 +17,4 @@ class StatisticAllSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Statistic
-        fields = ["datetime", "description", "price", "product", "username", "product_name", "amount", "profit"]
+        fields = ["id", "datetime", "description", "price", "product", "username", "product_name", "amount", "profit"]

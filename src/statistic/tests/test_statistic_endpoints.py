@@ -16,3 +16,10 @@ from statistic.models.choices import StatisticQueryParams
 def test_get(client_admin, data, status_code):
     response = client_admin.get(path=f"/statistic/?data={data}")
     assert response.status_code == status_code
+
+
+@pytest.mark.skip(reason="Not implemented")
+def test_get_all_values(client_admin):
+    # TODO: test id, datetime, description, price, product, username, product_name, amount, profit
+    # all fields must be in response.data
+    pass
