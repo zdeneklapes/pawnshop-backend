@@ -8,7 +8,7 @@ from statistic.models.choices import StatisticQueryParams, StatisticDescription
     "url, status_code",
     [
         (f"/statistic/?data={StatisticQueryParams.ALL.name}", status.HTTP_200_OK),
-        (f"/statistic/?data={StatisticQueryParams.CASH_AMOUNT.name}", status.HTTP_403_FORBIDDEN),
+        (f"/statistic/?data={StatisticQueryParams.CASH_AMOUNT.name}", status.HTTP_200_OK),
         (f"/statistic/?data={StatisticQueryParams.DAILY_STATS.name}", status.HTTP_403_FORBIDDEN),
     ],
 )
