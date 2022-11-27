@@ -15,14 +15,14 @@ def update_product_status():
     for loan in qs_after_maturity:
         loan.status = (
             ProductStatusOrData.LOAN.name
-            if utils.get_week_delta(loan.date_extend) <= loan.rate_times
+            if utils.get_week_delta(loan.date_extend.date()) <= loan.rate_times
             else ProductStatusOrData.AFTER_MATURITY.name
         )
 
         loan.sell_price = utils.get_sell_price(
             rate=loan.interest_rate_or_quantity,
             buy_price=loan.buy_price,
-            rate_times=utils.get_week_delta(loan.date_extend),
+            rate_times=utils.get_week_delta(loan.date_extend.date()),
         )
 
         loan.save()
