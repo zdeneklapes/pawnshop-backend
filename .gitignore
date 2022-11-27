@@ -99,9 +99,7 @@ celerybeat-schedule
 # Environments
 *.env*
 !sample.env*
-*.venv
-*venv/
-*venv.bak/
+*venv**
 
 # Spyder project settings
 .spyderproject
