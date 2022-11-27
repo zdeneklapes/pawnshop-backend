@@ -49,6 +49,8 @@ INSTALLED_APPS = [
     "customer",
     "shop",
     "statistic",
+    #
+    "django_extensions",
 ]
 # "rest_framework_swagger",
 # "djoser",
