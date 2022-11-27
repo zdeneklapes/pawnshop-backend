@@ -10,8 +10,8 @@ class RateFrequency(models.TextChoices):
 class ProductStatusOrData(models.TextChoices):
     # Status
     OFFER = "OFFER", "Bazar"
-    LOAN = "LOAN", "Zastava"
-    AFTER_MATURITY = "AFTER_MATURITY", "Po splatnosti"
+    LOAN = "LOAN", "Zastavarna"
+    AFTER_MATURITY = "AFTER_MATURITY", "Po splatnosti (Mezisklad)"
     INACTIVE_LOAN = "INACTIVE_LOAN", "Neaktivni zastava"
     INACTIVE_OFFER = "INACTIVE_OFFER", "Neaktivni bazar"
 

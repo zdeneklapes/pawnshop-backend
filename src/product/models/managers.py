@@ -3,6 +3,7 @@ from typing import Literal
 
 from django.db import models
 
+
 from .choices import ProductStatusOrData
 
 
@@ -31,4 +32,8 @@ class ProductManager(models.Manager):
             .annotate(buy=models.Sum("buy_price"))
             .annotate(sell=models.Sum("sell_price"))
         )
+
+        for entry in qs:
+            entry["status"] = ProductStatusOrData[entry["status"]].label
+
         return qs
