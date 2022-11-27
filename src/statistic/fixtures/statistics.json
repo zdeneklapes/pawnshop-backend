@@ -1,236 +1,58 @@
 [
-  {
-    "model": "statistic.statistic",
-    "pk": 1,
-    "fields": {
-      "product": 1,
-      "user": 1,
-      "datetime": "2022-10-03T15:41:28.904Z",
-      "description": "LOAN_CREATE",
-      "price": -100,
-      "amount": -100,
-      "profit": -100
-    }
-  },
-  {
-    "model": "statistic.statistic",
-    "pk": 2,
-    "fields": {
-      "product": 2,
-      "user": 1,
-      "datetime": "2022-10-03T18:40:37.372Z",
-      "description": "LOAN_EXTEND",
-      "price": 20,
-      "amount": -80,
-      "profit": -80
-    }
-  },
-  {
-    "model": "statistic.statistic",
-    "pk": 3,
-    "fields": {
-      "product": 10,
-      "user": 1,
-      "datetime": "2022-10-03T19:24:24.773Z",
-      "description": "LOAN_EXTEND_AFTER_MATURITY",
-      "price": 20,
-      "amount": -60,
-      "profit": -60
-    }
-  },
-  {
-    "model": "statistic.statistic",
-    "pk": 4,
-    "fields": {
-      "product": 8,
-      "user": 1,
-      "datetime": "2022-10-03T19:24:24.773Z",
-      "description": "LOAN_RETURN",
-      "price": 120,
-      "amount": 60,
-      "profit": 60
-    }
-  },
-  {
-    "model": "statistic.statistic",
-    "pk": 5,
-    "fields": {
-      "product": 4,
-      "user": 1,
-      "datetime": "2022-10-03T19:24:24.773Z",
-      "description": "OFFER_BUY",
-      "price": -100,
-      "amount": -40,
-      "profit": -40
-    }
-  },
-  {
-    "model": "statistic.statistic",
-    "pk": 6,
-    "fields": {
-      "product": 9,
-      "user": 1,
-      "datetime": "2022-10-03T19:24:24.773Z",
-      "description": "OFFER_SELL",
-      "price": 120,
-      "amount": 80,
-      "profit": 80
-    }
-  },
-  {
-    "model": "statistic.statistic",
-    "pk": 7,
-    "fields": {
-      "product": 5,
-      "user": 1,
-      "datetime": "2022-10-03T19:24:24.773Z",
-      "description": "LOAN_TO_OFFER",
-      "price": 0,
-      "amount": 80,
-      "profit": 80
-    }
-  },
-  {
-    "model": "statistic.statistic",
-    "pk": 8,
-    "fields": {
-      "product": null,
-      "user": 1,
-      "datetime": "2022-10-03T19:24:24.773Z",
-      "description": "LOGIN",
-      "price": 0,
-      "amount": 80,
-      "profit": 80
-    }
-  },
-  {
-    "model": "statistic.statistic",
-    "pk": 9,
-    "fields": {
-      "product": null,
-      "user": 1,
-      "datetime": "2022-10-03T19:24:24.773Z",
-      "description": "LOGOUT",
-      "price": 0,
-      "amount": 80,
-      "profit": 80
-    }
-  },
-  {
-    "model": "statistic.statistic",
-    "pk": 10,
-    "fields": {
-      "product": null,
-      "user": 1,
-      "datetime": "2022-10-03T23:22:51.328Z",
-      "description": "RESET",
-      "price": 0,
-      "amount": 80,
-      "profit": 0
-    }
-  },
-  {
-    "model": "statistic.statistic",
-    "pk": 11,
-    "fields": {
-      "product": 2,
-      "user": 1,
-      "datetime": "2022-10-04T15:41:28.904Z",
-      "description": "LOAN_CREATE",
-      "price": -100,
-      "amount": -20,
-      "profit": -100
-    }
-  },
-  {
-    "model": "statistic.statistic",
-    "pk": 12,
-    "fields": {
-      "product": 2,
-      "user": 1,
-      "datetime": "2022-10-04T18:40:37.372Z",
-      "description": "LOAN_EXTEND",
-      "price": 20,
-      "amount": 0,
-      "profit": -80
-    }
-  },
-  {
-    "model": "statistic.statistic",
-    "pk": 13,
-    "fields": {
-      "product": 2,
-      "user": 1,
-      "datetime": "2022-10-04T19:24:24.773Z",
-      "description": "LOAN_EXTEND_AFTER_MATURITY",
-      "price": 20,
-      "amount": 20,
-      "profit": -60
-    }
-  },
-  {
-    "model": "statistic.statistic",
-    "pk": 14,
-    "fields": {
-      "product": 8,
-      "user": 1,
-      "datetime": "2022-10-04T19:24:24.773Z",
-      "description": "LOAN_RETURN",
-      "price": 120,
-      "amount": 140,
-      "profit": 60
-    }
-  },
-  {
-    "model": "statistic.statistic",
-    "pk": 15,
-    "fields": {
-      "product": 5,
-      "user": 1,
-      "datetime": "2022-10-04T19:24:24.773Z",
-      "description": "OFFER_BUY",
-      "price": -100,
-      "amount": 40,
-      "profit": -40
-    }
-  },
-  {
-    "model": "statistic.statistic",
-    "pk": 16,
-    "fields": {
-      "product": 9,
-      "user": 1,
-      "datetime": "2022-10-04T19:24:24.773Z",
-      "description": "OFFER_SELL",
-      "price": 120,
-      "amount": 160,
-      "profit": 80
-    }
-  },
-  {
-    "model": "statistic.statistic",
-    "pk": 17,
-    "fields": {
-      "product": 4,
-      "user": 1,
-      "datetime": "2022-10-04T19:24:24.773Z",
-      "description": "LOAN_TO_OFFER",
-      "price": 0,
-      "amount": 160,
-      "profit": 80
-    }
-  },
-  {
-    "model": "statistic.statistic",
-    "pk": 18,
-    "fields": {
-      "product": 10,
-      "user": 1,
-      "datetime": "2022-10-04T15:41:28.904Z",
-      "description": "LOAN_CREATE",
-      "price": -100,
-      "amount": 60,
-      "profit": -20
-    }
-  }
+  { "model": "statistic.statistic", "pk": 1,  "fields": { "product": 1, "user": 1, "datetime": "2022-10-03T15:41:28.904Z", "description": "LOAN_CREATE", "price": -100, "amount": -100, "profit": -100 } },
+  { "model": "statistic.statistic", "pk": 2,  "fields": { "product": 2, "user": 1, "datetime": "2022-10-03T18:40:37.372Z", "description": "LOAN_EXTEND", "price": 20, "amount": -80, "profit": -80 } },
+  { "model": "statistic.statistic", "pk": 3,  "fields": { "product": 11, "user": 1, "datetime": "2022-10-03T19:24:24.773Z", "description": "LOAN_EXTEND_AFTER_MATURITY", "price": 20, "amount": -60, "profit": -60 } },
+  { "model": "statistic.statistic", "pk": 4,  "fields": { "product": 8, "user": 1, "datetime": "2022-10-03T19:24:24.773Z", "description": "LOAN_RETURN", "price": 120, "amount": 60, "profit": 60 } },
+  { "model": "statistic.statistic", "pk": 5,  "fields": { "product": 4, "user": 1, "datetime": "2022-10-03T19:24:24.773Z", "description": "OFFER_BUY", "price": -100, "amount": -40, "profit": -40 } },
+  { "model": "statistic.statistic", "pk": 6,  "fields": { "product": 9, "user": 1, "datetime": "2022-10-03T19:24:24.773Z", "description": "OFFER_SELL", "price": 120, "amount": 80, "profit": 80 } },
+  { "model": "statistic.statistic", "pk": 7,  "fields": { "product": 5, "user": 1, "datetime": "2022-10-03T19:24:24.773Z", "description": "LOAN_TO_OFFER", "price": 0, "amount": 80, "profit": 80 } },
+  { "model": "statistic.statistic", "pk": 8,  "fields": { "product": null, "user": 1, "datetime": "2022-10-03T19:24:24.773Z", "description": "LOGIN", "price": 0, "amount": 80, "profit": 80 } },
+  { "model": "statistic.statistic", "pk": 9,  "fields": { "product": null, "user": 1, "datetime": "2022-10-03T19:24:24.773Z", "description": "LOGOUT", "price": 0, "amount": 80, "profit": 80 } },
+  { "model": "statistic.statistic", "pk": 10, "fields": { "product": null, "user": 1, "datetime": "2022-10-03T23:22:51.328Z", "description": "RESET", "price": 0, "amount": 80, "profit": 0 } },
+  { "model": "statistic.statistic", "pk": 11, "fields": { "product": 2,  "user": 1, "datetime": "2022-10-04T15:41:28.904Z", "description": "LOAN_CREATE", "price": -100, "amount": -20, "profit": -100 } },
+  { "model": "statistic.statistic", "pk": 12, "fields": { "product": 2,  "user": 1, "datetime": "2022-10-04T18:40:37.372Z", "description": "LOAN_EXTEND", "price": 20, "amount": 0, "profit": -80 } },
+  { "model": "statistic.statistic", "pk": 13, "fields": { "product": 2,  "user": 1, "datetime": "2022-10-04T19:24:24.773Z", "description": "LOAN_EXTEND_AFTER_MATURITY", "price": 20, "amount": 20, "profit": -60 } },
+  { "model": "statistic.statistic", "pk": 14, "fields": { "product": 8,  "user": 1, "datetime": "2022-10-04T19:24:24.773Z", "description": "LOAN_RETURN", "price": 120, "amount": 140, "profit": 60 } },
+  { "model": "statistic.statistic", "pk": 15, "fields": { "product": 5,  "user": 1, "datetime": "2022-10-04T19:24:24.773Z", "description": "OFFER_BUY", "price": -100, "amount": 40, "profit": -40 } },
+  { "model": "statistic.statistic", "pk": 16, "fields": { "product": 9,  "user": 1, "datetime": "2022-10-04T19:24:24.773Z", "description": "OFFER_SELL", "price": 120, "amount": 160, "profit": 80 } },
+  { "model": "statistic.statistic", "pk": 17, "fields": { "product": 4,  "user": 1, "datetime": "2022-10-04T19:24:24.773Z", "description": "LOAN_TO_OFFER", "price": 0, "amount": 160, "profit": 80 } },
+  { "model": "statistic.statistic", "pk": 18, "fields": { "product": 11, "user": 1, "datetime": "2022-10-04T15:41:28.904Z", "description": "LOAN_CREATE", "price": -100, "amount": 60, "profit": -20 } },
+
+  { "model": "statistic.statistic", "pk": 19, "fields": { "product": 21, "user": 1, "datetime": "2022-10-04T15:41:28.904Z", "description": "OFFER_BUY",   "price": -100 , "amount": 60, "profit": -20 } },
+  { "model": "statistic.statistic", "pk": 20, "fields": { "product": 22, "user": 1, "datetime": "2022-10-04T15:41:28.904Z", "description": "OFFER_BUY",   "price": -100 , "amount": -160, "profit": -20 } },
+  { "model": "statistic.statistic", "pk": 21, "fields": { "product": 23, "user": 1, "datetime": "2022-10-04T15:41:28.904Z", "description": "OFFER_BUY",   "price": -100 , "amount": -260, "profit": -20 } },
+  { "model": "statistic.statistic", "pk": 22, "fields": { "product": 24, "user": 1, "datetime": "2022-10-04T15:41:28.904Z", "description": "OFFER_BUY",   "price": -300 , "amount": -560, "profit": -20 } },
+  { "model": "statistic.statistic", "pk": 23, "fields": { "product": 25, "user": 1, "datetime": "2022-10-04T15:41:28.904Z", "description": "OFFER_BUY",   "price": -400 , "amount": -960, "profit": -20 } },
+  { "model": "statistic.statistic", "pk": 24, "fields": { "product": 26, "user": 1, "datetime": "2022-10-04T15:41:28.904Z", "description": "OFFER_BUY",   "price": -500 , "amount": -1360, "profit": -20 } },
+  { "model": "statistic.statistic", "pk": 25, "fields": { "product": 27, "user": 1, "datetime": "2022-10-04T15:41:28.904Z", "description": "OFFER_BUY",   "price": -600 , "amount": -1860, "profit": -20 } },
+  { "model": "statistic.statistic", "pk": 26, "fields": { "product": 28, "user": 1, "datetime": "2022-10-04T15:41:28.904Z", "description": "OFFER_BUY",   "price": -300 , "amount": -2160, "profit": -20 } },
+  { "model": "statistic.statistic", "pk": 27, "fields": { "product": 29, "user": 1, "datetime": "2022-10-04T15:41:28.904Z", "description": "OFFER_BUY",   "price": -800 , "amount": -2960, "profit": -20 } },
+  { "model": "statistic.statistic", "pk": 28, "fields": { "product": 30, "user": 1, "datetime": "2022-10-04T15:41:28.904Z", "description": "OFFER_BUY",   "price": -900 , "amount": -3860, "profit": -20 } },
+  { "model": "statistic.statistic", "pk": 29, "fields": { "product": 31, "user": 1, "datetime": "2022-10-04T15:41:28.904Z", "description": "OFFER_BUY",   "price": -5000, "amount": -8860, "profit": -20 } },
+  { "model": "statistic.statistic", "pk": 30, "fields": { "product": 32, "user": 1, "datetime": "2022-10-04T15:41:28.904Z", "description": "OFFER_BUY",   "price": -1100, "amount": -9960, "profit": -20 } },
+  { "model": "statistic.statistic", "pk": 31, "fields": { "product": 33, "user": 1, "datetime": "2022-10-04T15:41:28.904Z", "description": "OFFER_BUY",   "price": -1200, "amount": -11060, "profit": -20 } },
+  { "model": "statistic.statistic", "pk": 32, "fields": { "product": 34, "user": 1, "datetime": "2022-10-04T15:41:28.904Z", "description": "OFFER_BUY",   "price": -1300, "amount": 0, "profit": -20 } },
+  { "model": "statistic.statistic", "pk": 33, "fields": { "product": 35, "user": 1, "datetime": "2022-10-04T15:41:28.904Z", "description": "OFFER_BUY",   "price": -1400, "amount": 0, "profit": -20 } },
+  { "model": "statistic.statistic", "pk": 34, "fields": { "product": 36, "user": 1, "datetime": "2022-10-04T15:41:28.904Z", "description": "OFFER_BUY",   "price": -1500, "amount": 0, "profit": -20 } },
+  { "model": "statistic.statistic", "pk": 35, "fields": { "product": 37, "user": 1, "datetime": "2022-10-04T15:41:28.904Z", "description": "OFFER_BUY",   "price": -1600, "amount": 0, "profit": -20 } },
+  { "model": "statistic.statistic", "pk": 36, "fields": { "product": 38, "user": 1, "datetime": "2022-10-04T15:41:28.904Z", "description": "OFFER_BUY",   "price": -1700, "amount": 0, "profit": -20 } },
+  { "model": "statistic.statistic", "pk": 37, "fields": { "product": 39, "user": 1, "datetime": "2022-10-04T15:41:28.904Z", "description": "OFFER_BUY",   "price": -1800, "amount": 0, "profit": -20 } },
+  { "model": "statistic.statistic", "pk": 38, "fields": { "product": 40, "user": 1, "datetime": "2022-10-04T15:41:28.904Z", "description": "OFFER_BUY",   "price": -1900, "amount": 0, "profit": -20 } },
+  { "model": "statistic.statistic", "pk": 39, "fields": { "product": 41, "user": 1, "datetime": "2022-10-04T15:41:28.904Z", "description": "OFFER_BUY",   "price": -2000, "amount": 0, "profit": -20 } },
+  { "model": "statistic.statistic", "pk": 40, "fields": { "product": 42, "user": 1, "datetime": "2022-10-04T15:41:28.904Z", "description": "OFFER_BUY",   "price": -2100, "amount": 0, "profit": -20 } },
+  { "model": "statistic.statistic", "pk": 41, "fields": { "product": 43, "user": 1, "datetime": "2022-10-04T15:41:28.904Z", "description": "OFFER_BUY",   "price": -2200, "amount": 0, "profit": -20 } },
+  { "model": "statistic.statistic", "pk": 42, "fields": { "product": 44, "user": 1, "datetime": "2022-10-04T15:41:28.904Z", "description": "OFFER_BUY",   "price": -2300, "amount": 0, "profit": -20 } },
+  { "model": "statistic.statistic", "pk": 43, "fields": { "product": 45, "user": 1, "datetime": "2022-10-04T15:41:28.904Z", "description": "OFFER_BUY",   "price": -2400, "amount": 0, "profit": -20 } },
+  { "model": "statistic.statistic", "pk": 44, "fields": { "product": 46, "user": 1, "datetime": "2022-10-04T15:41:28.904Z", "description": "OFFER_BUY",   "price": -2500, "amount": 0, "profit": -20 } },
+  { "model": "statistic.statistic", "pk": 45, "fields": { "product": 47, "user": 1, "datetime": "2022-10-04T15:41:28.904Z", "description": "OFFER_BUY",   "price": -2600, "amount": 0, "profit": -20 } },
+  { "model": "statistic.statistic", "pk": 46, "fields": { "product": 48, "user": 1, "datetime": "2022-10-04T15:41:28.904Z", "description": "OFFER_BUY",   "price": -2700, "amount": 0, "profit": -20 } },
+  { "model": "statistic.statistic", "pk": 47, "fields": { "product": 49, "user": 1, "datetime": "2022-10-04T15:41:28.904Z", "description": "OFFER_BUY",   "price": -2800, "amount": 0, "profit": -20 } },
+
+  { "model": "statistic.statistic", "pk": 49, "fields": { "product": 43, "user": 1, "datetime": "2022-10-04T15:41:28.904Z", "description": "OFFER_SELL",  "price": 4650, "amount": 1444, "profit": -20 } },
+  { "model": "statistic.statistic", "pk": 50, "fields": { "product": 44, "user": 1, "datetime": "2022-10-04T15:41:28.904Z", "description": "OFFER_SELL",  "price": 4850, "amount": 5000, "profit": -20 } },
+  { "model": "statistic.statistic", "pk": 51, "fields": { "product": 45, "user": 1, "datetime": "2022-10-04T15:41:28.904Z", "description": "OFFER_SELL",  "price": 5050, "amount": 0, "profit": -20 } },
+  { "model": "statistic.statistic", "pk": 52, "fields": { "product": 46, "user": 1, "datetime": "2022-10-04T15:41:28.904Z", "description": "OFFER_SELL",  "price": 5250, "amount": 0, "profit": -20 } },
+  { "model": "statistic.statistic", "pk": 53, "fields": { "product": 47, "user": 1, "datetime": "2022-10-04T15:41:28.904Z", "description": "OFFER_SELL",  "price": 5450, "amount": 0, "profit": -20 } },
+  { "model": "statistic.statistic", "pk": 54, "fields": { "product": 48, "user": 1, "datetime": "2022-10-04T15:41:28.904Z", "description": "OFFER_SELL",  "price": 5650, "amount": 0, "profit": -20 } },
+  { "model": "statistic.statistic", "pk": 55, "fields": { "product": 49, "user": 1, "datetime": "2022-10-04T15:41:28.904Z", "description": "OFFER_SELL",  "price": 5850, "amount": 15680, "profit": 5060 } }
 ]
