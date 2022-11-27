@@ -73,6 +73,7 @@ group_permission = {
         "product.view_product",
         #
         "statistic.view_statistic",
+        "statistic.view_cash_amount",
     ],
 }
 
