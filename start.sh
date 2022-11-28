@@ -10,7 +10,7 @@ AUTHOR='Zdenek Lapes'
 EMAIL='lapes.zdenek@gmail.com'
 
 PROJECT_NAME='pawnshop'
-LOGIN='xlapes02_xbinov00_xbuban00'
+LOGIN='xbinov00'
 
 # Utils
 function error_exit() {
@@ -211,7 +211,7 @@ function web_docker() {
 }
 
 function dev_docker() {
-    set_and_run_cron
+#    set_and_run_cron
 
     django_loaddata
 
@@ -238,7 +238,7 @@ function pack() {
         pawnshop-backend/pyproject.toml \
         pawnshop-backend/Dockerfile.web \
         pawnshop-backend/README.md \
-        pawnshop-backend/env/*.env \
+        pawnshop-backend/env \
         pawnshop-backend/Dockerfile.dev \
         pawnshop-backend/.dockerignore \
         pawnshop-backend/setup.cfg \
@@ -264,7 +264,11 @@ function pack() {
         pawnshop-frontend/.prettierrc.cjs \
         pawnshop-frontend/postcss.config.js \
         pawnshop-frontend/.env.development \
+        pawnshop-frontend/.env.production \
+        pawnshop-frontend/.env.local \
         pawnshop-frontend/src \
+        \
+        docs \
         \
         -x *migrations/* \
         -x *__pycache__/* \
