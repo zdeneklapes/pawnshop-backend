@@ -16,11 +16,11 @@ repos:
         pass_filenames: false
         always_run: true
 
-  - repo: meta
-    hooks:
+#  - repo: meta
+#    hooks:
       #      - id: check-hooks-apply
-      - id: check-useless-excludes
-      - id: identity
+#      - id: check-useless-excludes
+#      - id: identity
 
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v3.4.0
