@@ -11,9 +11,9 @@ class ProductStatusOrData(models.TextChoices):
     # Status
     OFFER = "OFFER", "Bazar"
     LOAN = "LOAN", "Zastavarna"
-    AFTER_MATURITY = "AFTER_MATURITY", "Po splatnosti (Mezisklad)"
-    INACTIVE_LOAN = "INACTIVE_LOAN", "Neaktivni zastava"
-    INACTIVE_OFFER = "INACTIVE_OFFER", "Neaktivni bazar"
+    AFTER_MATURITY = "AFTER_MATURITY", "Mezisklad"
+    INACTIVE_LOAN = "INACTIVE_LOAN", "Neaktivní zastava"
+    INACTIVE_OFFER = "INACTIVE_OFFER", "Neaktivní bazar"
 
 
 class ProductShopData(models.TextChoices):
