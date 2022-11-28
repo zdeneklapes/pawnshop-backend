@@ -114,20 +114,18 @@ class ProductUpdateSerializer(WritableNestedModelSerializer):
 
     def set_data_offer_sell(self, data: dict):
         product = Product.objects.get(id=self.context["view"].kwargs["pk"])
-        data.update(
-            {
-                "status": (
-                    ProductStatusOrData.INACTIVE_OFFER.name
-                    if product.interest_rate_or_quantity - 1 <= 0
-                    else ProductStatusOrData.OFFER.name
-                ),
-                "sell_price": product.sell_price,
-                "date_extend": product.date_extend,
-                "date_end": product.date_end,
-                "interest_rate_or_quantity": product.interest_rate_or_quantity - data["quantity"],
-            }
-        )
-        return data
+        _data = {
+            "status": (
+                ProductStatusOrData.INACTIVE_OFFER.name
+                if product.interest_rate_or_quantity - data["quantity"] <= 0
+                else ProductStatusOrData.OFFER.name
+            ),
+            "sell_price": product.sell_price,
+            "date_extend": product.date_extend,
+            "date_end": product.date_end,
+            "interest_rate_or_quantity": product.interest_rate_or_quantity - data["quantity"],
+        }
+        return _data
 
     def set_data_offer_buy(self, data: dict) -> dict:
         product = Product.objects.get(id=self.context["view"].kwargs["pk"])
