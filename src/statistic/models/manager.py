@@ -47,8 +47,8 @@ class StatisticManager(models.Manager):
                 offer_sell_count=models.Count(
                     "price", filter=models.Q(description=StatisticDescription.OFFER_SELL.name)
                 ),
-                offer_income=models.Sum("price", filter=models.Q(description=StatisticDescription.OFFER_BUY.name)),
-                offer_outcome=models.Sum("price", filter=models.Q(description=StatisticDescription.OFFER_SELL.name)),
+                offer_income=models.Sum("price", filter=models.Q(description=StatisticDescription.OFFER_SELL.name)),
+                offer_outcome=models.Sum("price", filter=models.Q(description=StatisticDescription.OFFER_BUY.name)),
                 offer_profit=models.Sum(
                     "price",
                     filter=models.Q(description=StatisticDescription.OFFER_BUY.name)
@@ -62,7 +62,7 @@ class StatisticManager(models.Manager):
                 ),
                 all_outcome=models.Sum(
                     "price",
-                    filter=models.Q(description=StatisticDescription.OFFER_SELL.name)
+                    filter=models.Q(description=StatisticDescription.LOAN_CREATE.name)
                     | models.Q(description=StatisticDescription.OFFER_BUY.name),
                 ),
                 all_profit=models.Sum(
