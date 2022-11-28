@@ -146,7 +146,7 @@ class ProductUpdateSerializer(WritableNestedModelSerializer):
                 "update": data["update"],
                 "product_name": data["product_name"],
                 "inventory_id": data["inventory_id"],
-                "sell_price": data["sell_price"],
+                # "sell_price": data["sell_price"],
                 "date_create": data["date_create"],
                 "date_extend": data["date_extend"],
             }
@@ -176,6 +176,7 @@ class ProductUpdateSerializer(WritableNestedModelSerializer):
                 "update": data["update"],
                 "product_name": data["product_name"],
                 "inventory_id": data["inventory_id"],
+                "sell_price": data["sell_price"],
             }
 
         raise serializers.ValidationError({"error": "You don't have permission to update this product"})

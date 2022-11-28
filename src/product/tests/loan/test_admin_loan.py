@@ -15,7 +15,7 @@ def test_update_loan(load_all_scope_function, client_admin, product_id, payload_
     client_admin.patch(path=f"/product/{product_id}/", data=payload_data, format="json")
     response_get = client_admin.get(path=f"/product/{product_id}/")
 
-    diff_paths = ["product_name", "inventory_id", "sell_price", "date_create", "date_extend"]
+    diff_paths = ["product_name", "inventory_id", "date_create", "date_extend"]
     diff = DeepDiff(response_get_prev.data, response_get.data, ignore_order=True, exclude_paths=["interest"])
     diff_error = DeepDiff(diff_paths, diff.affected_root_keys.items, ignore_order=True)
 

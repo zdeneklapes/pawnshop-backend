@@ -18,7 +18,7 @@ def test_update_offer(
     client_attendant.patch(path=f"/product/{product_id}/", data=payload_data, format="json")
     response_get = client_attendant.get(path=f"/product/{product_id}/")
 
-    diff_paths = ["product_name", "inventory_id"]
+    diff_paths = ["product_name", "inventory_id", "sell_price"]
     diff = DeepDiff(response_get_prev.data, response_get.data, ignore_order=True)
     diff_error = DeepDiff(diff_paths, diff.affected_root_keys.items, ignore_order=True)
 
