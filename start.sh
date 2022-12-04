@@ -251,7 +251,6 @@ function pack() {
         pawnshop-frontend/README.md \
         pawnshop-frontend/package.json \
         pawnshop-frontend/yarn.lock \
-        pawnshop-frontend/.env.production \
         pawnshop-frontend/tailwind.config.js \
         pawnshop-frontend/next.config.js \
         pawnshop-frontend/.eslintrc.cjs \
@@ -266,14 +265,12 @@ function pack() {
         pawnshop-frontend/.env.development \
         pawnshop-frontend/.env.production \
         pawnshop-frontend/.env.local \
-        pawnshop-frontend/src \
         \
         docs \
         \
-        -x *migrations/* \
-        -x *__pycache__/* \
-        -x .DS_Store \
-        -x *db.sqlite3*
+        -x **__pycache__** \
+        -x **.DS_Store** \
+        -x **db.sqlite3**
 
     cd - || error_exit "cd"
 }
